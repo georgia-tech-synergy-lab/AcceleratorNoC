@@ -28,6 +28,10 @@
 /////////////////////////////////////////////////////////////
 
 module arbitor_last_served_2req(
+    // timing signal
+    clk,
+    rst,
+
     // data signals
 	i_valid,        // valid input data signal
 	i_req_bus,      // input req bus coming into arbitor
@@ -40,6 +44,10 @@ module arbitor_last_served_2req(
 );
     // local parameter
     localparam  NUM_REQ = 2; // only support 2 request
+
+    // timing signal
+    input                          rst;
+    input                          clk;
 
 	// interface
 	input  [NUM_REQ-1:0]           i_req_bus; // bit 0 = Req A; bit 1 = Req B 
@@ -60,26 +68,54 @@ module arbitor_last_served_2req(
 
     initial begin
         o_grant_b_inner = 1'b0;
+        o_valid_inner = 1'b0;
     end
 
-    always@(*)
+    always@(posedge clk)
     begin
         if(i_en)
         begin
-            if(i_valid)
+            if(rst)
             begin
-                out_and = req_b & (~o_grant_b_inner);
-                o_grant_b_inner = (~req_a) | out_and;
-                o_valid_inner = 1'b1;
+                o_grant_b_inner = 1'bz;
+            end
+            else
+            begin
+                if(i_valid)
+                begin
+                    out_and = req_b & (~o_grant_b_inner);
+                    o_grant_b_inner = (~req_a) | out_and;
+                end
             end
         end
         else
         begin
             o_grant_b_inner = 1'bz;
-            o_valid_inner = 1'b0;
         end
     end
     
+    always@(posedge clk)
+    begin
+        if(i_en)
+        begin
+            if(rst)
+            begin
+                o_valid_inner = 1'b0;
+            end
+            else
+            begin
+                if(i_valid)
+                begin
+                    o_valid_inner = req_a | req_b; 
+                end
+            end
+        end
+        else
+        begin
+            o_valid_inner = 1'b0;
+        end
+    end
+
     assign o_grant_b = o_grant_b_inner;
     assign o_valid = o_valid_inner;
 
