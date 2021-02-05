@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
 // Top Module:  mux2_1
 // Data:        Only data width matters.
@@ -32,8 +33,8 @@ module mux_comb2_1#(
 
 	// control signals
 	i_en,           // mux enable
-	i_cmd,          // command 
-)
+	i_cmd           // command 
+);
 	// interface
 	input  [2*DATA_WIDTH-1:0]      i_data_bus;
 	input                          i_valid;             
@@ -52,12 +53,11 @@ module mux_comb2_1#(
 
     always@(*)
     begin
-        if(en)
+        if(i_en)
         begin
             if(i_valid)
             begin
                 case(i_cmd)
-                begin
                     1'b0:
                     begin
                         o_valid_inner = 1'b1;
@@ -73,13 +73,18 @@ module mux_comb2_1#(
                         o_valid_inner = 1'b0;
                         o_data_bus_inner = {DATA_WIDTH{1'b0}};
                     end											
-                end
+                endcase
             end
             else
             begin
                 o_valid_inner = 1'b0;
                 o_data_bus_inner = {DATA_WIDTH{1'b0}};
             end
+        end
+        else
+        begin
+            o_valid_inner <= 1'b0;
+            o_data_bus_inner <= {DATA_WIDTH{1'bz}};
         end
     end
 

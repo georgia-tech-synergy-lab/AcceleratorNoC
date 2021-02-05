@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
 // Top Module:  merge_switch_seq
 // Data:        Only data width matters.
@@ -39,8 +40,8 @@ module merge_switch_seq#(
 
 	// control signals
 	i_en,           // distribute switch enable
-	i_cmd,          // command 
-)
+	i_cmd           // command 
+);
 	// interface
 	input                      clk;
 	input                      rst;
