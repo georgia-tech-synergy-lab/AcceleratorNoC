@@ -50,7 +50,7 @@ module merge_switch_seq#(
 	input  [2*DATA_WIDTH-1:0]  i_data_bus;
 	
 	output [1:0]               o_valid;             
-	output [DATA_WIDTH-1:0]    o_data_bus; //{o_data_a, o_data_b}
+	output [DATA_WIDTH-1:0]    o_data_bus;
 	    
 	input                      i_en;
 	input  [1:0]               i_cmd;
@@ -64,11 +64,13 @@ module merge_switch_seq#(
 	wire                       grant_data;
 
 	arbitor_last_served_2req(
+		.clk(clk),
+		.rst(rst),
 		.i_valid( i_valid[0] | i_valid[1] ),       
 		.i_req_bus(i_valid),    // req A = low; req B = high
 		.o_valid(grant_valid),      
 		.o_grant_b(grant_data), // 0 grants low; 1 grants high 
-		.i_en(i_en)         
+		.i_en(i_en)      
 	);
 
 	mux_seq2_1 #(
