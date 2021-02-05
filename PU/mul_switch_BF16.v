@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
 // Top Module:  multiplier
 // Data:        16-bit input data

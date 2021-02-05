@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
 // Top Module:  arbitor_last_served_2req
 // Data:        1 bit request signal
@@ -35,8 +36,8 @@ module arbitor_last_served_2req(
     o_grant_b,      // output grant
 
 	// control signals
-	i_en,           // arbitor enable
-)
+	i_en            // arbitor enable
+);
     // local parameter
     localparam  NUM_REQ = 2; // only support 2 request
 
@@ -53,9 +54,13 @@ module arbitor_last_served_2req(
     reg                            o_grant_b_inner;
     reg                            o_valid_inner;
 
-    wire out_and;
+    reg  out_and;
     wire req_a = i_req_bus[0];
     wire req_b = i_req_bus[1];
+
+    initial begin
+        o_grant_b_inner = 1'b0;
+    end
 
     always@(*)
     begin
@@ -67,6 +72,11 @@ module arbitor_last_served_2req(
                 o_grant_b_inner = (~req_a) | out_and;
                 o_valid_inner = 1'b1;
             end
+        end
+        else
+        begin
+            o_grant_b_inner = 1'bz;
+            o_valid_inner = 1'b0;
         end
     end
     

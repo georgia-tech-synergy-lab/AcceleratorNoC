@@ -1,8 +1,10 @@
+`timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
 // Top Module:  distribute_switch_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Combinational Logic
+// Timing:      Sequential Logic
+// Reset:       Synchronized Reset [High Reset]
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // Function:     Duplicate           Branch_high      Branch_low
@@ -27,7 +29,11 @@
 
 module distribute_switch_seq#(
 	parameter DATA_WIDTH = 32
-)(	
+)(
+    // timeing signals
+    clk,
+	rst,
+	
     // data signals
 	i_valid,        // valid input data signal
 	i_data_bus,     // input data bus coming into distribute switch
@@ -37,10 +43,12 @@ module distribute_switch_seq#(
 
 	// control signals
 	i_en,           // distribute switch enable
-	i_cmd,          // command 
-)
-
+	i_cmd           // command 
+);
 	// interface
+	input                      clk;
+	input                      rst;
+	
 	input  [1:0]               i_valid;             
 	input  [DATA_WIDTH-1:0]    i_data_bus;
 	
@@ -53,18 +61,21 @@ module distribute_switch_seq#(
 		// 01 --> Branch_low
 		// 10 --> Branch_high
 		// 11 --> Duplicate
+	
 
 `ifdef USING_MUX
 	// inner logic
-	reg [1:0]                   i_valid_inner;
+	reg  [1:0]                 i_valid_inner;
 	always@(*)
 	begin
 		i_valid_inner = i_valid;
 	end
 
-	mux_comb2_1 #(
+	mux_seq2_1 #(
 		.DATA_WIDTH(DATA_WIDTH)
 	) o_data_low_mux(
+		.clk(clk),
+		.rst(rst),
 		.i_valid(i_valid_inner[0]),
 		.i_data_bus({i_data_bus, {DATA_WIDTH{1'b0}}}),
 		.o_valid(o_valid[0]),
@@ -73,9 +84,11 @@ module distribute_switch_seq#(
 		.i_cmd(i_cmd[0])
 	);
 
-	mux_comb2_1 #(
+	mux_seq2_1 #(
 		.DATA_WIDTH(DATA_WIDTH)
-	) o_data_high_mux(
+	)o_data_high_mux(
+		.clk(clk),
+		.rst(rst),
 		.i_valid(i_valid_inner[1]),
 		.i_data_bus({i_data_bus, {DATA_WIDTH{1'b0}}}),
 		.o_valid(o_valid[1]),
@@ -85,54 +98,60 @@ module distribute_switch_seq#(
 	);
 
 `else
+
 	// inner logics
 	reg [DATA_WIDTH-1:0] 	   o_data_bus_inner;
 	reg [1:0]                  o_valid_inner;
 
-
-    always@(*)
+    always@(posedge clk)
     begin
-        if(en)
-        begin		
-			if(i_valid)
+        if(i_en)
+        begin
+            if(rst)
 			begin
-				case(i_cmd)
+				o_data_bus_inner <= {DATA_WIDTH{1'b0}};
+				o_valid_inner <= 2'b00;
+			end
+			else
+			begin
+				if(i_valid)
 				begin
-					2'b00:
-					begin
-						o_valid_inner = 2'b00;
-						o_data_bus_inner = {DATA_WIDTH{1'b0}};
-					end						
-					2'b01:
-					begin
-						o_valid_inner = 2'b01;
-						o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus};
-					end						
-					2'b10:
-					begin
-						o_valid_inner = 2'b10;
-						o_data_bus_inner = {i_data_bus, {DATA_WIDTH{1'b0}}};
-					end						
-					2'b11:
-					begin
-						o_valid_inner = 2'b11;
-						o_data_bus_inner = {i_data_bus, i_data_bus};
-					end	
-					default:
-					begin
-						o_valid_inner = 2'b00;
-						o_data_bus_inner = {DATA_WIDTH{1'b0}};
-					end											
+					case(i_cmd)
+						2'b00:
+						begin
+							o_valid_inner <= 2'b00;
+							o_data_bus_inner <= {DATA_WIDTH{1'b0}};
+						end						
+						2'b01:
+						begin
+							o_valid_inner <= 2'b01;
+							o_data_bus_inner <= {{DATA_WIDTH{1'b0}}, i_data_bus};
+						end						
+						2'b10:
+						begin
+							o_valid_inner <= 2'b10;
+							o_data_bus_inner <= {i_data_bus, {DATA_WIDTH{1'b0}}};
+						end						
+						2'b11:
+						begin
+							o_valid_inner <= 2'b11;
+							o_data_bus_inner <= {i_data_bus, i_data_bus};
+						end	
+						default:
+						begin
+							o_valid_inner <= 2'b00;
+							o_data_bus_inner <= {DATA_WIDTH{1'b0}};
+						end											
+					endcase
 				end
 			end
+
         end
     end
 
 	// output inner logic
 	assign  o_data_bus = o_data_bus_inner;
 	assign  o_valid = o_valid_inner;
-
 `endif 
-
 
 endmodule
