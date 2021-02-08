@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  distribute_switch_seq
+// Top Module:  distribute_1x2_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
@@ -23,9 +23,10 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module tb_distribute_switch_comb();
+module tb_distribute_1x2_comb();
 
 	parameter DATA_WIDTH  = 32;
+	parameter COMMMAND_WIDTH  = 2;
 
     // timing signals
     reg                            clk;
@@ -39,7 +40,7 @@ module tb_distribute_switch_comb();
 
 	// control signals
 	reg                            i_en;           // mux enable
-	reg    [1:0]                   i_cmd;          // command 
+	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // command 
                                 // 0 --> Branch_left
                                 // 1 --> Branch_right
     
@@ -129,8 +130,9 @@ end
 
 
     // instantiate DUT (device under test)
-    distribute_switch_comb #(
-		.DATA_WIDTH(DATA_WIDTH)
+    distribute_1x2_comb #(
+		.DATA_WIDTH(DATA_WIDTH),
+        .COMMMAND_WIDTH(COMMMAND_WIDTH)
 	) dut(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),

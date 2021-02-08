@@ -21,9 +21,10 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module tb_mux_comb2_1();
+module tb_mux_2x1_comb();
 
 	parameter DATA_WIDTH  = 32;
+	parameter COMMMAND_WIDTH  = 1;
 
     // timing signals
     reg                            clk;
@@ -37,7 +38,7 @@ module tb_mux_comb2_1();
 
 	// control signals
 	reg                            i_en;           // mux enable
-	reg                            i_cmd;          // command 
+	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // command 
                                 // 0 --> Branch_left
                                 // 1 --> Branch_right
     
@@ -66,8 +67,9 @@ end
 
 
     // instantiate DUT (device under test)
-    mux_comb2_1 #(
-		.DATA_WIDTH(DATA_WIDTH)
+    mux_2x1_comb #(
+		.DATA_WIDTH(DATA_WIDTH),
+        .COMMMAND_WIDTH(COMMMAND_WIDTH)
 	) dut(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),

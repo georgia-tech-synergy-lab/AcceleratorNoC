@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  mux_seq2_1
+// Top Module:  mux_2x1_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
@@ -22,8 +22,9 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module mux_seq2_1#(
-	parameter DATA_WIDTH = 32
+module mux_2x1_seq#(
+	parameter DATA_WIDTH = 32,
+    parameter COMMMAND_WIDTH = 1
 )(
     // timeing signals
     clk,
@@ -52,7 +53,7 @@ module mux_seq2_1#(
 	output                         o_valid;             
 	    
 	input                          i_en;
-	input                          i_cmd;
+	input  [COMMMAND_WIDTH-1:0]    i_cmd;
                                 // 0 --> Branch_left
                                 // 1 --> Branch_right
 	
