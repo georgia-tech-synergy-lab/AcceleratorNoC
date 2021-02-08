@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  distribute_switch_seq
+// Top Module:  distribute_1x2_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
@@ -13,7 +13,7 @@
 //                   |                   |                 |
 //                   v                   v                 v        
 //                 |¯¯¯|               |¯¯¯|             |¯¯¯| 
-//                 |___|               |___|             |___|     
+//                 |___| <--i_cmd      |___| <--i_cmd    |___| <--i_cmd     
 //                /     \             /                       \
 //       o_data_high  o_data_low  o_data_high               o_data_low
 //
@@ -27,8 +27,9 @@
                   // If not define, use LUT to construct the distribute switch
 
 
-module distribute_switch_seq#(
-	parameter DATA_WIDTH = 32
+module distribute_1x2_seq#(
+	parameter DATA_WIDTH = 32,
+	parameter COMMMAND_WIDTH  = 2
 )(
     // timeing signals
     clk,
@@ -46,17 +47,17 @@ module distribute_switch_seq#(
 	i_cmd           // command 
 );
 	// interface
-	input                      clk;
-	input                      rst;
+	input                         clk;
+	input                         rst;
 	
-	input  [1:0]               i_valid;             
-	input  [DATA_WIDTH-1:0]    i_data_bus;
+	input  [1:0]                  i_valid;             
+	input  [DATA_WIDTH-1:0]       i_data_bus;
 	
-	output [1:0]               o_valid;             
-	output [2*DATA_WIDTH-1:0]  o_data_bus; //{o_data_a, o_data_b}
+	output [1:0]                  o_valid;             
+	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
 	    
-	input                      i_en;
-	input  [1:0]               i_cmd;
+	input                         i_en;
+	input  [COMMMAND_WIDTH-1:0]   i_cmd;
 		// 00 --> NA
 		// 01 --> Branch_low
 		// 10 --> Branch_high
@@ -71,8 +72,9 @@ module distribute_switch_seq#(
 		i_valid_inner = i_valid;
 	end
 
-	mux_seq2_1 #(
-		.DATA_WIDTH(DATA_WIDTH)
+	mux_2x1_seq #(
+		.DATA_WIDTH(DATA_WIDTH),
+		.COMMMAND_WIDTH(COMMMAND_WIDTH)
 	) o_data_low_mux(
 		.clk(clk),
 		.rst(rst),
@@ -84,8 +86,9 @@ module distribute_switch_seq#(
 		.i_cmd(i_cmd[0])
 	);
 
-	mux_seq2_1 #(
-		.DATA_WIDTH(DATA_WIDTH)
+	mux_2x1_seq #(
+		.DATA_WIDTH(DATA_WIDTH),
+		.COMMMAND_WIDTH(COMMMAND_WIDTH)
 	)o_data_high_mux(
 		.clk(clk),
 		.rst(rst),

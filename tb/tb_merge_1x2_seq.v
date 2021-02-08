@@ -24,9 +24,10 @@
 /////////////////////////////////////////////////////////////
 
 
-module tb_merge_switch_seq();
+module tb_merge_1x2_seq();
 
 	parameter DATA_WIDTH  = 32;
+	parameter COMMMAND_WIDTH  = 2;
 
     // timing signals
     reg                            clk;
@@ -34,16 +35,14 @@ module tb_merge_switch_seq();
 
     // data signals
 	reg    [1:0]                   i_valid;        // valid input data signal
-	reg    [DATA_WIDTH-1:0]        i_data_bus;     // input data bus coming into mux
+	reg    [2*DATA_WIDTH-1:0]      i_data_bus;     // input data bus coming into mux
 	
 	wire                           o_valid;        // output valid
-    wire   [2*DATA_WIDTH-1:0]      o_data_bus;     // output data 
+    wire   [DATA_WIDTH-1:0]        o_data_bus;     // output data 
 
 	// control signals
 	reg                            i_en;           // mux enable
-	reg    [1:0]                   i_cmd;          // command 
-                                // 0 --> Branch_left
-                                // 1 --> Branch_right
+	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // i_cmd here is of no use in this module, leave it here for keeping the consistency of the interface.
     
     // Test case declaration
     // all cases for control
@@ -53,18 +52,18 @@ module tb_merge_switch_seq();
         // not enable at start
         #20
         rst = 1'b1;
-        i_valid = 2'b00;
+        i_valid = 2'b11;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
-        i_cmd = 2'b00;
+        i_cmd = 1'b0;
         
         // rst active;
         #20
         rst = 1'b1;
-        i_valid = 2'b11;
+        i_valid = 2'b00;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
-        i_cmd = 2'b00;
+        i_cmd = 1'b0;
         
         // input active -- branch_low
         #20
@@ -72,7 +71,7 @@ module tb_merge_switch_seq();
         i_valid = 2'b11;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
-        i_cmd = 2'b01;
+        i_cmd = 1'b0;
     
         // input active -- branch_high
         #20
@@ -80,15 +79,7 @@ module tb_merge_switch_seq();
         i_valid = 2'b11;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
-        i_cmd = 2'b10;
-        
-        // input active -- duplicate
-        #20
-        rst = 1'b0;
-        i_valid = 2'b11;
-        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
-        i_en = 1'b1;
-        i_cmd = 2'b11;
+        i_cmd = 1'b1;
         
         // disable in progress
         #20
@@ -96,7 +87,7 @@ module tb_merge_switch_seq();
         i_valid = 2'b11;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b0;
-        i_cmd = 2'b11;
+        i_cmd = 1'b1;
          
         
         // enable in progress
@@ -105,7 +96,7 @@ module tb_merge_switch_seq();
         i_valid = 2'b11;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
-        i_cmd = 2'b11;
+        i_cmd = 1'b1;
         
         // reset half way
         #20
@@ -113,7 +104,7 @@ module tb_merge_switch_seq();
         i_valid = 2'b11;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
-        i_cmd = 2'b11;
+        i_cmd = 1'b1;
         
         // change data half way
         #20
@@ -121,29 +112,30 @@ module tb_merge_switch_seq();
         i_valid = 2'b11;
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
-        i_cmd = 2'b11;
+        i_cmd = 1'b1;
         
-        // invalid high output 
+        // invalid high input 
         #20
         rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 2'b00;
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
-        i_cmd = 2'b01;
+        i_cmd = 1'b1;
        
-        // invalid low output 
+        // invalid low input 
         #20
         rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 2'b00;
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
-        i_cmd = 2'b10;
+        i_cmd = 1'b0;
 end
 
 
     // instantiate DUT (device under test)
-    merge_switch_seq #(
-		.DATA_WIDTH(DATA_WIDTH)
+    merge_2x1_seq #(
+		.DATA_WIDTH(DATA_WIDTH),
+        .COMMMAND_WIDTH(COMMMAND_WIDTH)
 	) dut(
 	    .clk(clk),
 	    .rst(rst),
@@ -152,7 +144,7 @@ end
 		.o_valid(o_valid),
 		.o_data_bus(o_data_bus),
 		.i_en(i_en),
-		.i_cmd(i_cmd)
+		.i_cmd(i_cmd)  //i_cmd here is of no use, just make the interface general enough.
 	);
 
     always#5 clk=~clk;
