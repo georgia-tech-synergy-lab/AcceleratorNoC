@@ -1,10 +1,8 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_distribute_2x2_seq
+// Top Module:  tb_distribute_2x2_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Sequential Logic
-// Reset:       Synchronized Reset [High Reset]
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 //
 // Unicast Function:
@@ -52,14 +50,13 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module tb_distribute_2x2_seq();
+module tb_distribute_2x2_comb();
 
 	parameter DATA_WIDTH  = 32;
 	parameter COMMMAND_WIDTH  = 3;
 
     // timing signals
     reg                            clk;
-    reg                            rst;
 
     // data signals
 	reg    [1:0]                   i_valid;        // valid input data signal
@@ -87,23 +84,13 @@ module tb_distribute_2x2_seq();
         clk = 1'b0;
         // not enable at start
         #20
-        rst = 1'b1;
         i_valid = 2'b00;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
         i_cmd = 3'b000;
-        
-        // rst active;
-        #20
-        rst = 1'b1;
-        i_valid = 2'b11;
-        i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
-        i_en = 1'b1;
-        i_cmd = 3'b000;
-        
+     
         // input active -- Pass HighIn BothOut
         #20
-        rst = 1'b0;
         i_valid = 2'b10;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -111,7 +98,6 @@ module tb_distribute_2x2_seq();
     
         // input active -- Pass LowIn BothOut
         #20
-        rst = 1'b0;
         i_valid = 2'b01;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -119,7 +105,6 @@ module tb_distribute_2x2_seq();
         
         // input active -- Pass Through
         #20
-        rst = 1'b0;
         i_valid = 2'b11;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -127,7 +112,6 @@ module tb_distribute_2x2_seq();
          
         // input active -- Pass High
         #20
-        rst = 1'b0;
         i_valid = 2'b10;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -135,7 +119,6 @@ module tb_distribute_2x2_seq();
     
         // input active -- Pass Low
         #20
-        rst = 1'b0;
         i_valid = 2'b01;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -143,7 +126,6 @@ module tb_distribute_2x2_seq();
         
         // input active -- Pass Switch 
         #20
-        rst = 1'b0;
         i_valid = 2'b11;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -151,7 +133,6 @@ module tb_distribute_2x2_seq();
                 
         // input active -- Pass HighIn LowOut
         #20
-        rst = 1'b0;
         i_valid = 2'b11;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -159,7 +140,6 @@ module tb_distribute_2x2_seq();
     
         // input active -- Pass LowIn HighOut
         #20
-        rst = 1'b0;
         i_valid = 2'b01;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -167,7 +147,6 @@ module tb_distribute_2x2_seq();
         
         // disable in progress
         #20
-        rst = 1'b0;
         i_valid = 2'b11;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b0;
@@ -176,7 +155,6 @@ module tb_distribute_2x2_seq();
         
         // enable in progress -- Pass LowIn HighOut
         #20
-        rst = 1'b0;
         i_valid = 2'b11;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -184,7 +162,6 @@ module tb_distribute_2x2_seq();
          
         // reset half way  -- Pass LowIn HighOut
         #20
-        rst = 1'b1;
         i_valid = 2'b11;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -192,7 +169,6 @@ module tb_distribute_2x2_seq();
                 
         // input active -- No Pass
         #20
-        rst = 1'b0;
         i_valid = 2'b00;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -200,7 +176,6 @@ module tb_distribute_2x2_seq();
 
         // change data half way  -- Pass LowIn HighOut
         #20
-        rst = 1'b0;
         i_valid = 2'b11;
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}}};
         i_en = 1'b1;
@@ -208,7 +183,6 @@ module tb_distribute_2x2_seq();
         
         // invalid high output -- Pass LowIn HighOut
         #20
-        rst = 1'b0;
         i_valid = 2'b01;
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}}};
         i_en = 1'b1;
@@ -216,7 +190,6 @@ module tb_distribute_2x2_seq();
        
         // invalid low output  -- Pass LowIn HighOut
         #20
-        rst = 1'b0;
         i_valid = 2'b10;
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}}};
         i_en = 1'b1;
@@ -225,12 +198,10 @@ module tb_distribute_2x2_seq();
     end
 
     // instantiate DUT (device under test)
-    distribute_2x2_seq #(
+    distribute_2x2_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH)
       ) dut(
-	    .clk(clk),
-	    .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),

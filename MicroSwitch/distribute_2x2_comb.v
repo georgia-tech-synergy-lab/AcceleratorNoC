@@ -1,10 +1,8 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  distribute_2x2_seq
+// Top Module:  distribute_2x2_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Sequential Logic
-// Reset:       Synchronized Reset [High Reset]
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 //
 // Unicast Function:
@@ -52,14 +50,10 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module distribute_2x2_seq#(
+module distribute_2x2_comb#(
 	parameter DATA_WIDTH = 32,
 	parameter COMMMAND_WIDTH  = 3
 )(
-    // timeing signals
-    clk,
-	rst,
-	
     // data signals
 	i_valid,        // valid input data signal
 	i_data_bus,     // input data bus coming into distribute switch
@@ -72,9 +66,6 @@ module distribute_2x2_seq#(
 	i_cmd           // command 
 );
 	// interface
-	input                         clk;
-	input                         rst;
-	
 	input  [1:0]                  i_valid;             
 	input  [2*DATA_WIDTH-1:0]     i_data_bus;
 	
@@ -105,10 +96,8 @@ module distribute_2x2_seq#(
 	wire    [1:0]                 dis_o_data_low_valid;
 	
 	reg                           merge_i_data_high_ctrl;
-	reg                           merge_i_data_high_ctrl_shift;
 
 	reg                           merge_i_data_low_ctrl;
-	reg                           merge_i_data_low_ctrl_shift;
 
 	always@(*)
 	begin
@@ -217,20 +206,12 @@ module distribute_2x2_seq#(
 		end
 	end
 
-	// delay control for merge switch for 1 cycle
-	always @(posedge clk) begin
-		merge_i_data_low_ctrl_shift <= merge_i_data_low_ctrl;
-		merge_i_data_high_ctrl_shift <= merge_i_data_high_ctrl;
-	end
-
 
 	// distribute level
-	distribute_1x2_seq #(
+	distribute_1x2_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
 		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
 	) dis_i_data_high(
-		.clk(clk),
-		.rst(rst),
 		.i_valid(i_valid_inner[1]),
 		.i_data_bus(i_data_bus[DATA_WIDTH+:DATA_WIDTH]),
 		.o_valid(dis_o_data_high_valid),
@@ -239,12 +220,10 @@ module distribute_2x2_seq#(
 		.i_cmd(dis_i_data_high_ctrl)
 	);
 
-	distribute_1x2_seq #(
+	distribute_1x2_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
 		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
 	)dis_i_data_low(
-		.clk(clk),
-		.rst(rst),
 		.i_valid(i_valid_inner[0]),
 		.i_data_bus(i_data_bus[0+:DATA_WIDTH]),
 		.o_valid(dis_o_data_low_valid),
@@ -256,32 +235,28 @@ module distribute_2x2_seq#(
 
 
 	// merge level
-	merge_2x1_seq#(
+	merge_2x1_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
 		.COMMMAND_WIDTH(COMMMAND_WIDTH-2)
 	)merge_i_data_high(
-		.clk(clk),
-		.rst(rst),
 		.i_valid({dis_o_data_high_valid[1], dis_o_data_low_valid[1]}),
 		.i_data_bus({dis_o_data_high_data[DATA_WIDTH+:DATA_WIDTH],dis_o_data_low_data[DATA_WIDTH+:DATA_WIDTH]}),
 		.o_valid(o_valid[1]),
 		.o_data_bus(o_data_bus[DATA_WIDTH+:DATA_WIDTH]),
 		.i_en(i_en),
-		.i_cmd(merge_i_data_high_ctrl_shift)
+		.i_cmd(merge_i_data_high_ctrl)
 	);
 
-	merge_2x1_seq#(
+	merge_2x1_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
 		.COMMMAND_WIDTH(COMMMAND_WIDTH-2)
 	)merge_i_data_low(
-		.clk(clk),
-		.rst(rst),
 		.i_valid({dis_o_data_high_valid[0], dis_o_data_low_valid[0]}),
 		.i_data_bus({dis_o_data_high_data[0+:DATA_WIDTH],dis_o_data_low_data[0+:DATA_WIDTH]}),
 		.o_valid(o_valid[0]),
 		.o_data_bus(o_data_bus[0+:DATA_WIDTH]),
 		.i_en(i_en),
-		.i_cmd(merge_i_data_low_ctrl_shift)
+		.i_cmd(merge_i_data_low_ctrl)
 	);
 
 
