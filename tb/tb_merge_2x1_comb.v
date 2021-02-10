@@ -104,6 +104,7 @@ module tb_merge_2x1_comb();
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
         i_cmd = 1'b0;
+        $stop;
 end
 
 

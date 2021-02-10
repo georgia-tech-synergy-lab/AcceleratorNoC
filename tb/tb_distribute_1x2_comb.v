@@ -121,6 +121,7 @@ module tb_distribute_1x2_comb();
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
         i_cmd = 2'b10;
+        $stop;
 end
 
 

@@ -221,8 +221,7 @@ module tb_distribute_2x2_seq();
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}}};
         i_en = 1'b1;
         i_cmd = 3'b101;
-
-
+        $stop;
     end
 
     // instantiate DUT (device under test)
