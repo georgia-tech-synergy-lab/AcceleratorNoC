@@ -82,6 +82,7 @@ module tb_mux_2x1_comb();
         i_en = 1'b1;
         i_cmd = 1'b0;        
         i_data_bus = {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b1}}};
+        $stop;
 end
 
 

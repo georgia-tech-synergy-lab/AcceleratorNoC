@@ -171,7 +171,8 @@ module tb_arbitor_last_served_2req();
         req_a = 1'b0;
         req_b = 1'b1;
         i_req_bus = {req_b, req_a};
-        i_en = 1'b1;                          
+        i_en = 1'b1;     
+        $stop;                     
 end
 
 
