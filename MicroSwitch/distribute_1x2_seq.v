@@ -7,19 +7,20 @@
 // Reset:       Synchronized Reset [High Reset]
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// Function:     Duplicate           Branch_high      Branch_low
+// Function:     Duplicate               Branch_high               Branch_low
 //                
-//               i_data_bus          i_data_bus        i_data_bus
-//                   |                   |                 |
-//                   v                   v                 v        
-//                 |¯¯¯|               |¯¯¯|             |¯¯¯| 
-//                 |___| <--i_cmd      |___| <--i_cmd    |___| <--i_cmd     
-//                /     \             /                       \
-//       o_data_high  o_data_low  o_data_high               o_data_low
+//               i_data_bus               i_data_bus               i_data_bus
+//                   |                        |                        |
+//                   v                        v                        v        
+//                 |¯¯¯| <--i_valid=1'b1    |¯¯¯| <--i_valid=1'b1    |¯¯¯| <--i_valid=1'b1 
+//                 |___| <--i_cmd=2'b11     |___| <--i_cmd=2'b10     |___| <--i_cmd=2'b01    
+//                /     \                  /     \                  /     \
+//       o_data_high  o_data_low    o_data_high  Invalid        Invalid  o_data_low
 //
 //       o_data_high = o_data_bus[2*DATA_WIDTH-1: DATA_WIDTH]
 //       o_data_low  = o_data_bus[DATA_WIDTH-1: 0]
-//
+//       i_valid = 2'b1x; where x indicates "don't care".
+// 
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
@@ -50,7 +51,7 @@ module distribute_1x2_seq#(
 	input                         clk;
 	input                         rst;
 	
-	input  [1:0]                  i_valid;             
+	input                         i_valid;             
 	input  [DATA_WIDTH-1:0]       i_data_bus;
 	
 	output [1:0]                  o_valid;             
@@ -66,40 +67,52 @@ module distribute_1x2_seq#(
 
 `ifdef USING_MUX
 	// inner logic
-	reg  [1:0]                 i_valid_inner;
+	reg                           i_valid_inner;
+	reg    [1:0]                  i_cmd_inner;
+	reg    [1:0]                  o_valid_inner;
+	wire   [1:0]                  mux_o_valid_inner; 
+
 	always@(*)
 	begin
 		i_valid_inner = i_valid;
+		i_cmd_inner = i_cmd;
 	end
 
 	mux_2x1_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH)
+		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
 	) o_data_low_mux(
 		.clk(clk),
 		.rst(rst),
-		.i_valid(i_valid_inner[0]),
+		.i_valid({i_valid_inner,1'b0}),
 		.i_data_bus({i_data_bus, {DATA_WIDTH{1'b0}}}),
-		.o_valid(o_valid[0]),
+		.o_valid(mux_o_valid_inner[0]),
 		.o_data_bus(o_data_bus[0 +: DATA_WIDTH]),
 		.i_en(i_en),
-		.i_cmd(i_cmd[0])
+		.i_cmd(i_cmd_inner[0])
 	);
 
 	mux_2x1_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH)
+		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
 	)o_data_high_mux(
 		.clk(clk),
 		.rst(rst),
-		.i_valid(i_valid_inner[1]),
+		.i_valid({i_valid_inner,1'b0}),
 		.i_data_bus({i_data_bus, {DATA_WIDTH{1'b0}}}),
-		.o_valid(o_valid[1]),
+		.o_valid(mux_o_valid_inner[1]),
 		.o_data_bus(o_data_bus[DATA_WIDTH +: DATA_WIDTH]),
 		.i_en(i_en),
-		.i_cmd(i_cmd[1])
+		.i_cmd(i_cmd_inner[1])
 	);
+	
+	always @(posedge clk) begin
+		o_valid_inner[0] = i_cmd_inner[0] & i_en;
+		o_valid_inner[1] = i_cmd_inner[1] & i_en;
+	end
 
+	assign o_valid = o_valid_inner;		
+	
 `else
 
 	// inner logics

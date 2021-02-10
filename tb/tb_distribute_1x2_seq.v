@@ -7,18 +7,19 @@
 // Reset:       Synchronized Reset [High Reset]
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// Function:     Duplicate           Branch_high      Branch_low
+// Function:     Duplicate               Branch_high               Branch_low
 //                
-//               i_data_bus          i_data_bus        i_data_bus
-//                   |                   |                 |
-//                   v                   v                 v        
-//                 |¯¯¯|               |¯¯¯|             |¯¯¯| 
-//                 |___|               |___|             |___|     
-//                /     \             /                       \
-//       o_data_high  o_data_low  o_data_high               o_data_low
+//               i_data_bus               i_data_bus               i_data_bus
+//                   |                        |                        |
+//                   v                        v                        v        
+//                 |¯¯¯| <--i_valid=2'b11   |¯¯¯| <--i_valid=2'b1x   |¯¯¯| <--i_valid=2'bx1 
+//                 |___| <--i_cmd=2'b11     |___| <--i_cmd=2'b10     |___| <--i_cmd=2'b01    
+//                /     \                  /                              \
+//       o_data_high  o_data_low       o_data_high                     o_data_low
 //
 //       o_data_high = o_data_bus[2*DATA_WIDTH-1: DATA_WIDTH]
 //       o_data_low  = o_data_bus[DATA_WIDTH-1: 0]
+//       i_valid = 2'b1x; where x indicates that we don't care about this bit
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
@@ -33,18 +34,20 @@ module tb_distribute_1x2_seq();
     reg                            rst;
 
     // data signals
-	reg    [1:0]                   i_valid;        // valid input data signal
+	reg                            i_valid;        // valid input data signal
 	reg    [DATA_WIDTH-1:0]        i_data_bus;     // input data bus coming into mux
 	
-	wire                           o_valid;        // output valid
+	wire   [1:0]                   o_valid;        // output valid
     wire   [2*DATA_WIDTH-1:0]      o_data_bus;     // output data 
 
 	// control signals
 	reg                            i_en;           // mux enable
 	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // command 
-                                // 0 --> Branch_left
-                                // 1 --> Branch_right
-    
+                                    // 00 --> NA
+                                    // 01 --> Branch_low
+                                    // 10 --> Branch_high
+                                    // 11 --> Duplicate
+
     // Test case declaration
     // all cases for control
     initial 
@@ -53,7 +56,7 @@ module tb_distribute_1x2_seq();
         // not enable at start
         #20
         rst = 1'b1;
-        i_valid = 2'b00;
+        i_valid = 1'b0;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
         i_cmd = 2'b00;
@@ -61,7 +64,7 @@ module tb_distribute_1x2_seq();
         // rst active;
         #20
         rst = 1'b1;
-        i_valid = 2'b11;
+        i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
         i_cmd = 2'b00;
@@ -69,7 +72,7 @@ module tb_distribute_1x2_seq();
         // input active -- branch_low
         #20
         rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
         i_cmd = 2'b01;
@@ -77,7 +80,7 @@ module tb_distribute_1x2_seq();
         // input active -- branch_high
         #20
         rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
         i_cmd = 2'b10;
@@ -85,7 +88,7 @@ module tb_distribute_1x2_seq();
         // input active -- duplicate
         #20
         rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
         i_cmd = 2'b11;
@@ -93,7 +96,7 @@ module tb_distribute_1x2_seq();
         // disable in progress
         #20
         rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b0;
         i_cmd = 2'b11;
@@ -102,7 +105,7 @@ module tb_distribute_1x2_seq();
         // enable in progress
         #20
         rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
         i_cmd = 2'b11;
@@ -110,7 +113,7 @@ module tb_distribute_1x2_seq();
         // reset half way
         #20
         rst = 1'b1;
-        i_valid = 2'b11;
+        i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
         i_cmd = 2'b11;
@@ -118,7 +121,7 @@ module tb_distribute_1x2_seq();
         // change data half way
         #20
         rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
         i_cmd = 2'b11;
@@ -126,7 +129,7 @@ module tb_distribute_1x2_seq();
         // invalid high output 
         #20
         rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
         i_cmd = 2'b01;
@@ -134,7 +137,7 @@ module tb_distribute_1x2_seq();
         // invalid low output 
         #20
         rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
         i_cmd = 2'b10;

@@ -3,20 +3,22 @@
 // Top Module:  merge_2x1_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Function:                Branch Low                                    Branch High                                       
+//
+// Function:                Branch Low                                    Branch High                                    No Branch                      
 // 
-//       i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)       
-//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]      
-//                           \     /                                       \     /                                 
-//                            v   v                                         v   v                             
-//                           |¯¯¯¯¯|                                       |¯¯¯¯¯|                                
-//                           |_____| <--- i_cmd                            |_____| <--- i_cmd                 
-//                              |                                             |
-//                              v                                             v                                                   
-//                          i_data_bus(low)                             i_data_bus(high)                      
+//       i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)       i_data_bus(high)          i_data_bus(low)  
+//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]   [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0] 
+//                           \     /                                       \     /                                         \     /      
+//                            v   v                                         v   v                                           v   v     
+//                           |¯¯¯¯¯| <--- i_valid=2'b01                    |¯¯¯¯¯| <--- i_valid=2'b10                      |¯¯¯¯¯| <--- i_valid=2'b00                                    
+//                           |_____| <--- i_cmd=1'b0                       |_____| <--- i_cmd=1'b1                         |_____| <--- i_cmd=1'bx            
+//                              |                                             |	                                              |	  
+//                              v                                             v                                               v     
+//                         i_data_bus(low)                              i_data_bus(high)                                   Invalid
 //
 //       o_data_high = o_data_bus[2*DATA_WIDTH-1: DATA_WIDTH]
 //       o_data_low  = o_data_bus[DATA_WIDTH-1: 0]
+//       i_valid = 1'bx; where x indicates "don't care".
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
@@ -41,15 +43,15 @@ module merge_2x1_comb#(
 	input  [1:0]                i_valid;             
 	input  [2*DATA_WIDTH-1:0]   i_data_bus;
 	
-	output [1:0]                o_valid;             
+	output                      o_valid;             
 	output [DATA_WIDTH-1:0]     o_data_bus;
 	    
 	input                       i_en;
 	input  [COMMMAND_WIDTH-1:0] i_cmd;
-		// 0 --> Branch Low
-		// 1 --> Branch High
+                                // 0 --> Branch Low
+                                // 1 --> Branch High
 	
-	mux_2x1_seq_comb #(
+	mux_2x1_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
 		.COMMMAND_WIDTH(COMMMAND_WIDTH)
 	)data_mux(
