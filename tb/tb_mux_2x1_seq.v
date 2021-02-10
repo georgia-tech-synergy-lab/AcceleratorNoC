@@ -31,7 +31,7 @@ module tb_mux_2x1_seq();
     reg                            rst;
 
     // data signals
-	reg                            i_valid;        // valid input data signal
+	reg    [1:0]                   i_valid;        // valid input data signal
 	reg    [2*DATA_WIDTH-1:0]      i_data_bus;     // input data bus coming into mux
 	
 	wire                           o_valid;        // output valid
@@ -40,37 +40,59 @@ module tb_mux_2x1_seq();
 	// control signals
 	reg                            i_en;           // mux enable
 	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // command 
-                                // 0 --> Branch_left
-                                // 1 --> Branch_right
+                                // 0 --> Branch Low
+                                // 1 --> Branch High
     
     // Test case declaration
     initial 
     begin
-        rst = 1'b1;
+        // disable
         clk = 1'b0;
-        #20
         rst = 1'b0;
-        i_valid = 1'b1;
+        i_valid = 2'b11;
         i_data_bus = {{DATA_WIDTH{1'b1}}, {(DATA_WIDTH>>2){4'hA}}};
         i_en = 1'b0;
         i_cmd = 1'b1;
-        #20
-        i_en = 1'b1;
-        i_cmd = 1'b1;
-        #20
-        i_en = 1'b1;
-        i_cmd = 1'b0;
-        #20
-        i_en = 1'b0;
-        i_cmd = 1'b0;
-        #20
-        i_en = 1'b1;
-        i_cmd = 1'b0;
-        i_data_bus = {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b1}}};
+        
+        // enable and reset
         #20
         rst = 1'b1;
-        #10
+        i_valid = 2'b11;
+        i_data_bus = {{DATA_WIDTH{1'b1}}, {(DATA_WIDTH>>2){4'hA}}};
+        i_en = 1'b0;
+        i_cmd = 1'b1;
+
+        // enable & select i_data_bus(high).
+        #20
         rst = 1'b0;
+        i_valid = 2'b10;
+        i_en = 1'b1;
+        i_cmd = 1'b1;
+        
+        // enable & select i_data_bus(low).
+        #20
+        i_valid = 2'b01;
+        i_en = 1'b1;
+        i_cmd = 1'b0;
+        
+        // invalid i_data_high & select i_data_bus(high).
+        #20
+        i_valid = 2'b01;
+        i_en = 1'b1;
+        i_cmd = 1'b1;
+        
+        // invalid i_data_low & select i_data_bus(low).
+        #20
+        i_valid = 2'b10;
+        i_en = 1'b1;
+        i_cmd = 1'b0;
+
+        // change i_data & select i_data_bus(low).
+        #20
+        i_valid = 2'b01;
+        i_en = 1'b1;
+        i_cmd = 1'b0;        
+        i_data_bus = {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b1}}};
 end
 
 

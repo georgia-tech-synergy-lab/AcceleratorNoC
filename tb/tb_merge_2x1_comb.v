@@ -24,14 +24,13 @@
 /////////////////////////////////////////////////////////////
 
 
-module tb_merge_1x2_seq();
+module tb_merge_2x1_comb();
 
 	parameter DATA_WIDTH  = 32;
 	parameter COMMMAND_WIDTH  = 2;
 
     // timing signals
     reg                            clk;
-    reg                            rst;
 
     // data signals
 	reg    [1:0]                   i_valid;        // valid input data signal
@@ -46,44 +45,32 @@ module tb_merge_1x2_seq();
     
     // Test case declaration
     // all cases for control
-    initial 
+   initial 
     begin
         clk = 1'b0;
         // not enable at start
         #20
-        rst = 1'b1;
-        i_valid = 2'b11;
-        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
-        i_en = 1'b1;
-        i_cmd = 1'b0;
-        
-        // rst active;
-        #20
-        rst = 1'b1;
-        i_valid = 2'b00;
+        i_valid = 2'b10;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
         i_cmd = 1'b0;
         
         // input active -- branch_low
         #20
-        rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 2'b01;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
         i_cmd = 1'b0;
     
         // input active -- branch_high
         #20
-        rst = 1'b0;
-        i_valid = 2'b11;
+        i_valid = 2'b10;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
         i_cmd = 1'b1;
         
         // disable in progress
         #20
-        rst = 1'b0;
         i_valid = 2'b11;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b0;
@@ -92,15 +79,6 @@ module tb_merge_1x2_seq();
         
         // enable in progress
         #20
-        rst = 1'b0;
-        i_valid = 2'b11;
-        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
-        i_en = 1'b1;
-        i_cmd = 1'b1;
-        
-        // reset half way
-        #20
-        rst = 1'b1;
         i_valid = 2'b11;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
@@ -108,24 +86,21 @@ module tb_merge_1x2_seq();
         
         // change data half way
         #20
-        rst = 1'b0;
         i_valid = 2'b11;
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
-        i_cmd = 1'b1;
+        i_cmd = 1'b0;
         
         // invalid high input 
         #20
-        rst = 1'b0;
-        i_valid = 2'b00;
+        i_valid = 2'b01;
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
         i_cmd = 1'b1;
        
         // invalid low input 
         #20
-        rst = 1'b0;
-        i_valid = 2'b00;
+        i_valid = 2'b10;
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
         i_cmd = 1'b0;
@@ -133,12 +108,10 @@ end
 
 
     // instantiate DUT (device under test)
-    merge_2x1_seq #(
+    merge_2x1_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH)
 	) dut(
-	    .clk(clk),
-	    .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),
