@@ -5,9 +5,14 @@
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
 // Reset:       Synchronized Reset [High Reset]
+// Latency:     2 cycle for Complex; 1 cycle for Simple
 // Dummy Data:  {DATA_WIDTH{1'b0}}
-//
-// Unicast Function:
+// 
+// Total two versions are supported here, including complex (9 functions[3 bit control]) and simple (4 functions + No Pass[2 bit control]) version
+// uncomment `define SIMPLE to use SIMPLE VERSION
+// ----------------------------------------------
+// Complex Version3 bit control version:
+// Unicast Function 
 //                         Pass_Through                                   Pass_High                                        Pass_Low
 //            
 //       i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)              
@@ -34,7 +39,7 @@
 //                  o_data_low   o_data_high                         Invalid     o_data_high                       o_data_low  Invalid
 //
 //
-// Multicast Function:   Pass_HighIn_BothOut                          Pass_LowIn_BothOut                                   No Pass   
+// Multicast Function:    Multicast_HighIn                             Multicast_LowIn                                   No Pass   
 //                 
 //       i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)              
 //    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]   [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]      
@@ -49,9 +54,110 @@
 //       o_data_high = o_data_bus[2*DATA_WIDTH-1: DATA_WIDTH]
 //       o_data_low  = o_data_bus[DATA_WIDTH-1: 0]
 //
+// ----------------------------------------------
+// simple version 2 bit control
+//
+// Unicast Function:
+//                         Pass_Through                                  Pass_Swtich                         
+//            
+//       i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)                  
+//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]         
+//                           \     /                                       \     /                                                                                                
+//                            v   v                                         v   v                                                            
+//                            |¯¯¯| <--i_valid=2'b11                        |¯¯¯| <--i_valid=2'b11               
+//                            |___| <--i_cmd=2'b10                          |___| <--i_cmd=2'b01                
+//                           /     \                                       /     \                              
+//                          v       v                                     v       v                             
+//                  o_data_high   o_data_low                      o_data_low     o_data_high        
+//
+//
+// Multicast Function:   Multicast_HighIn                              Multicast_LowIn                                     No Pass   
+//                 
+//       i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)              
+//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]   [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]      
+//                           \     /                                       \     /                                         \     /                                                                  
+//                            v   v                                         v   v                                           v   v                             
+//                            |¯¯¯| <--i_valid=2'b1x                        |¯¯¯| <--i_valid=2'bx1                          |¯¯¯| <--i_valid=2'b00
+//                            |___| <--i_cmd=2'b11                          |___| <--i_cmd=2'b00                            |___| <--i_cmd=2'bxx      
+//                           /     \                                       /     \                                         /     \
+//                          v       v                                     v       v                                       v       v
+//                  o_data_high   o_data_high                      o_data_low    o_data_low                            Invalid  Invalid    
+//  
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
+`define SIMPLE
+`ifdef SIMPLE
+module distribute_2x2_seq#(
+	parameter DATA_WIDTH = 32,
+	parameter COMMMAND_WIDTH  = 2
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // command 
+);
+	// interface
+	input                         clk;
+	input                         rst;
+	
+	input  [1:0]                  i_valid;             
+	input  [2*DATA_WIDTH-1:0]     i_data_bus;
+	
+	output [1:0]                  o_valid;             
+	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
+	    
+	input                         i_en;
+	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+		// 11 --> Multicast_HighIn
+		// 00 --> Multicast_LowIn
+		// 10 --> Pass Through
+		// 01 --> Pass Switch 
+	
+	// merge level
+	merge_2x1_seq#(
+		.DATA_WIDTH(DATA_WIDTH),
+		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+	)merge_i_data_high(
+		.clk(clk),
+		.rst(rst),
+		.i_valid(i_valid),
+		.i_data_bus(i_data_bus),
+		.o_valid(o_valid[1]),
+		.o_data_bus(o_data_bus[DATA_WIDTH+:DATA_WIDTH]),
+		.i_en(i_en),
+		.i_cmd(i_cmd[1])
+	);
+
+	merge_2x1_seq#(
+		.DATA_WIDTH(DATA_WIDTH),
+		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+	)merge_i_data_low(
+		.clk(clk),
+		.rst(rst),
+		.i_valid(i_valid),
+		.i_data_bus(i_data_bus),
+		.o_valid(o_valid[0]),
+		.o_data_bus(o_data_bus[0+:DATA_WIDTH]),
+		.i_en(i_en),
+		.i_cmd(i_cmd[0])
+	);
+
+
+endmodule
+
+
+`else
 module distribute_2x2_seq#(
 	parameter DATA_WIDTH = 32,
 	parameter COMMMAND_WIDTH  = 3
@@ -84,7 +190,7 @@ module distribute_2x2_seq#(
 	input                         i_en;
 	input  [COMMMAND_WIDTH-1:0]   i_cmd;
 		// 000 --> Pass HighIn BothOut
-		// 100 --> Pass_LowIn_BothOut
+		// 100 --> Multicast_LowIn
 		// 011 --> Pass Through
 		// 010 --> Pass High
 		// 001 --> Pass Low
@@ -113,6 +219,7 @@ module distribute_2x2_seq#(
 	always@(*)
 	begin
 		i_valid_inner = i_valid;
+		i_data_bus_inner = i_data_bus;
 	end
 	
 	// control generation
@@ -140,7 +247,7 @@ module distribute_2x2_seq#(
 						merge_i_data_low_ctrl <= 1'b1;
 
 					end
-					3'b100: //Pass_LowIn_BothOut
+					3'b100: //Multicast_LowIn
 					begin
 						dis_i_data_high_ctrl <= 2'b00; //don't care, could be arbitrary signals
 						dis_i_data_low_ctrl  <= 2'b11; 
@@ -232,7 +339,7 @@ module distribute_2x2_seq#(
 		.clk(clk),
 		.rst(rst),
 		.i_valid(i_valid_inner[1]),
-		.i_data_bus(i_data_bus[DATA_WIDTH+:DATA_WIDTH]),
+		.i_data_bus(i_data_bus_inner[DATA_WIDTH+:DATA_WIDTH]),
 		.o_valid(dis_o_data_high_valid),
 		.o_data_bus(dis_o_data_high_data),
 		.i_en(i_en),
@@ -246,7 +353,7 @@ module distribute_2x2_seq#(
 		.clk(clk),
 		.rst(rst),
 		.i_valid(i_valid_inner[0]),
-		.i_data_bus(i_data_bus[0+:DATA_WIDTH]),
+		.i_data_bus(i_data_bus_inner[0+:DATA_WIDTH]),
 		.o_valid(dis_o_data_low_valid),
 		.o_data_bus(dis_o_data_low_data),
 		.i_en(i_en),
@@ -286,3 +393,4 @@ module distribute_2x2_seq#(
 
 
 endmodule
+`endif
