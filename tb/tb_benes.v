@@ -33,7 +33,7 @@
 module tb_benes_seq();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 2;
-	parameter NUM_SWITCH_IN = 4;
+	parameter NUM_SWITCH_IN = 2;
 
 	//parameter
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
@@ -72,7 +72,8 @@ module tb_benes_seq();
         #40
         rst = 1'b1;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h7}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        // i_data_bus = {{(DATA_WIDTH>>2){4'h0}} ,{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h7}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
         
@@ -81,7 +82,7 @@ module tb_benes_seq();
         rst = 1'b1;
         i_valid = {NUM_INPUT_DATA{1'b1}};
         // i_data_bus = {(NUM_INPUT_DATA>>1) {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h7}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b00}};
         
@@ -89,7 +90,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h7}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b11}};
     
@@ -97,7 +98,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h7}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b00}};
         
@@ -105,7 +106,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h7}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
         
@@ -113,7 +114,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h7}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b01}};
         
@@ -121,7 +122,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h7}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b0;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
         
@@ -129,7 +130,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h7}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
 
@@ -137,7 +138,7 @@ module tb_benes_seq();
         #40
         rst = 1'b1;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h7}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
                 
@@ -145,7 +146,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h7}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
 
