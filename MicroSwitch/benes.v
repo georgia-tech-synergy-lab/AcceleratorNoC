@@ -24,7 +24,7 @@
 //     i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|-->
 //          
 // Control Signal
-//     i_valid[0]-->|¯¯¯|<--ctrl[2:0] 
+//     i_valid[0]-->|¯¯¯|<--i_cmd[2:0] 
 //     i_valid[1]-->|___|
 //     
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
@@ -81,39 +81,64 @@ module benes#(
 
 
 	// inner logic
-	wire   [WIDTH_INPUT_DATA-1:0]                connection[0:TOTAL_STAGE-1];
-	wire   [NUM_INPUT_DATA-1:0]                  connection_valid[0:TOTAL_STAGE-1];
-	reg    [WIDTH_INPUT_DATA-1:0]                connection_reg[0:TOTAL_STAGE-1];
-	reg    [NUM_INPUT_DATA-1:0]                  connection_valid_reg[0:TOTAL_STAGE-1];
+	wire   [DATA_WIDTH-1:0]                      connection[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
+	wire                                         connection_valid[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
+	// reg    [DATA_WIDTH-1:0]                      connection_reg[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
+	// reg                                          connection_valid_reg[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
+
 	// logic for control pipeline
-	reg    [TOTAL_COMMMAND-1:0]                  i_cmd_reg[0:TOTAL_STAGE-1];
-	genvar k;
+	reg    [COMMMAND_WIDTH-1:0]                  i_cmd_reg[0:TOTAL_STAGE-2][0:TOTAL_STAGE*NUM_SWITCH_IN-1]; // i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.
+
+	genvar i,j;
 	
-	always@(posedge clk)
-		begin
-			i_cmd_reg[0] <= i_cmd;	
-		end	
 	generate
+		for(i=0; i<(TOTAL_STAGE-1); i=i+1) 
+		begin:initialization_stage
+			for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
+			begin: initialization
+				initial
+				begin
+					i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bx}};
+					// connection_reg[i][j] <= {DATA_WIDTH{1'bx}};
+					// connection_valid_reg[i][j] <= {1'bx};
+				end
+			end
+		end
+		
+		for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
+		begin:i_cmd_first_stage
+			always@(posedge clk)
+			begin
+				i_cmd_reg[0][j] <= i_cmd[j*COMMMAND_WIDTH+:COMMMAND_WIDTH];	
+			end
+		end
 
-	for(k=0; k <(TOTAL_STAGE-1); k=k+1) 
-	begin: cmd_pipeline
-		always@(posedge clk)
-		begin
-			i_cmd_reg[k+1] <= i_cmd_reg[k];
-		end	
-	end
-	endgenerate
+		for(i=0; i<(TOTAL_STAGE-2); i=i+1) 
+		begin: i_cmd_pipeline_stage
+			for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
+			begin: i_cmd_stage
+				always@(posedge clk)
+				begin
+					i_cmd_reg[i+1][j] <= i_cmd_reg[i][j];
+				end
+			end
+		end
 
-	always@(posedge clk)
-	begin
-		connection_reg <= connection;
-		connection_valid_reg <= connection_valid;
-	end
 
-	// first stage
-	genvar i;
-	generate
-		for(i=0;i<NUM_SWITCH_IN;i=i+1)
+		// for(i=0; i<TOTAL_STAGE; i=i+1) 
+		// begin: connection_reg_pipeline
+		// 	for(j=0; j<NUM_SWITCH_IN; j=j+1) 
+		// 	begin: connection_reg_stage
+		// 		always@(posedge clk)
+		// 		begin
+		// 			connection_reg[i][j] <= connection[i][j];
+		// 			connection_valid_reg[i][j] <= connection_valid[i][j];
+		// 		end
+		// 	end
+		// end
+
+		// first stage
+		for(i=0; i<NUM_SWITCH_IN; i=i+1)
 		begin:first_stage
 			distribute_2x2_seq #(
 				.DATA_WIDTH(DATA_WIDTH),
@@ -123,43 +148,125 @@ module benes#(
 				.rst(rst),
 				.i_valid(i_valid[2*i+:2]),
 				.i_data_bus(i_data_bus[i*2*DATA_WIDTH+:2*DATA_WIDTH]),
-				.o_valid(connection_valid[2*i+:2]),
-				.o_data_bus(connection[i*2*DATA_WIDTH+:2*DATA_WIDTH]),
+				.o_valid({connection_valid[0][2*i+1], connection_valid[0][2*i]}),
+				.o_data_bus({connection[0][2*i+1], connection[0][2*i]}),
 				.i_en(i_en),
-				.i_cmd(i_cmd[2*i*COMMMAND_WIDTH+:COMMMAND_WIDTH])
+				.i_cmd(i_cmd[i*COMMMAND_WIDTH+:COMMMAND_WIDTH])
 			);
 		end
+
+
+		// // afterward stages
+		// for(j=0;j< TOTAL_STAGE-1;j=j+1)
+		// begin:stage
+		// 	for(i=0;i<NUM_SWITCH_IN;i=i+1)
+		// 	begin:switch
+		// 		// For low input [Loop Right Shift (2*i)]
+		// 		localparam [$clog2(NUM_INPUT_DATA)-1:0] idx = i[$clog2(NUM_INPUT_DATA)-1:0];
+		// 		localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx = (idx<<1);
+		// 		localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_right_shift = l_idx >> 1;
+		// 		localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_LSB_is_1 = l_idx&1'b1;
+		// 		localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_LSB_loop_shift = l_idx_LSB_is_1 << 1;
+		// 		localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_loop_right_shift = l_idx_LSB_loop_shift + l_idx_right_shift;
+
+		// 		// For high input [Loop Right Shift (2*i+1)]
+		// 		localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx = (idx<<1)+1;
+		// 		localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_right_shift = h_idx >> 1;
+		// 		localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_LSB_is_1 = h_idx&1'b1;
+		// 		localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_LSB_loop_shift = h_idx_LSB_is_1 << 1;
+		// 		localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_loop_right_shift = h_idx_LSB_loop_shift + h_idx_right_shift;
+
+		// 		distribute_2x2_seq #(
+		// 			.DATA_WIDTH(DATA_WIDTH),
+		// 			.COMMMAND_WIDTH(COMMMAND_WIDTH)
+		// 		) second_stage(
+		// 			.clk(clk),
+		// 			.rst(rst),
+		// 			.i_valid({connection_valid[j][h_idx_loop_right_shift], connection_valid[j][l_idx_loop_right_shift]}),
+		// 			.i_data_bus({connection[j][h_idx_loop_right_shift], connection[j][l_idx_loop_right_shift]}),
+		// 			.o_valid({connection_valid[j+1][2*i+1], connection_valid[j+1][2*i]}),
+		// 			.o_data_bus({connection[j+1][2*i+1], connection[j+1][2*i]}),
+		// 			.i_en(i_en),
+		// 			.i_cmd(i_cmd_reg[j][NUM_SWITCH_IN+i])
+		// 		);
+		// 	end
+		// end
+
+		// // second stages
+		// for(i=0;i<NUM_SWITCH_IN;i=i+1)
+		// begin:second_stage
+		// 	// For low input [Loop Right Shift (2*i)]
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] idx = i[$clog2(NUM_INPUT_DATA)-1:0];
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx = (idx<<1);
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_right_shift = l_idx >> 1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_LSB_is_1 = l_idx&1'b1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_LSB_loop_shift = l_idx_LSB_is_1 << 1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_loop_right_shift = l_idx_LSB_loop_shift + l_idx_right_shift;
+
+		// 	// For high input [Loop Right Shift (2*i+1)]
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx = (idx<<1)+1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_right_shift = h_idx >> 1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_LSB_is_1 = h_idx&1'b1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_LSB_loop_shift = h_idx_LSB_is_1 << 1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_loop_right_shift = h_idx_LSB_loop_shift + h_idx_right_shift;
+
+		// 	distribute_2x2_seq #(
+		// 		.DATA_WIDTH(DATA_WIDTH),
+		// 		.COMMMAND_WIDTH(COMMMAND_WIDTH)
+		// 	) second_stage(
+		// 		.clk(clk),
+		// 		.rst(rst),
+		// 		.i_valid({connection_valid[0][h_idx_loop_right_shift], connection_valid[0][l_idx_loop_right_shift]}),
+		// 		.i_data_bus({connection[0][h_idx_loop_right_shift], connection[0][l_idx_loop_right_shift]}),
+		// 		.o_valid({connection_valid[1][2*i+1], connection_valid[1][2*i]}),
+		// 		.o_data_bus({connection[1][2*i+1], connection[1][2*i]}),
+		// 		.i_en(i_en),
+		// 		.i_cmd(i_cmd_reg[0][NUM_SWITCH_IN+i])
+		// 	);
+		// end
+
+
+		// // third stages
+		// for(i=0;i<NUM_SWITCH_IN;i=i+1)
+		// begin:third_stage
+		// 	// For low input [Loop Right Shift (2*i)]
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] idx = i[$clog2(NUM_INPUT_DATA)-1:0];
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx = (idx<<1);
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_right_shift = l_idx >> 1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_LSB_is_1 = l_idx&1'b1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_LSB_loop_shift = l_idx_LSB_is_1 << 1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] l_idx_loop_right_shift = l_idx_LSB_loop_shift + l_idx_right_shift;
+
+		// 	// For high input [Loop Right Shift (2*i+1)]
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx = (idx<<1)+1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_right_shift = h_idx >> 1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_LSB_is_1 = h_idx&1'b1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_LSB_loop_shift = h_idx_LSB_is_1 << 1;
+		// 	localparam [$clog2(NUM_INPUT_DATA)-1:0] h_idx_loop_right_shift = h_idx_LSB_loop_shift + h_idx_right_shift;
+
+		// 	distribute_2x2_seq #(
+		// 		.DATA_WIDTH(DATA_WIDTH),
+		// 		.COMMMAND_WIDTH(COMMMAND_WIDTH)
+		// 	) third_stage(
+		// 		.clk(clk),
+		// 		.rst(rst),
+		// 		.i_valid({connection_valid[1][h_idx_loop_right_shift], connection_valid[1][l_idx_loop_right_shift]}),
+		// 		.i_data_bus({connection[1][h_idx_loop_right_shift], connection[1][l_idx_loop_right_shift]}),
+		// 		.o_valid({connection_valid[2][2*i+1], connection_valid[2][2*i]}),
+		// 		.o_data_bus({connection[2][2*i+1], connection[2][2*i]}),
+		// 		.i_en(i_en),
+		// 		.i_cmd(i_cmd_reg[1][NUM_SWITCH_IN+i])
+		// 	);
+		// end
+
+
+	for(i=0;i<NUM_INPUT_DATA;i=i+1)
+	begin: output_data
+		assign o_data_bus[i*DATA_WIDTH+:DATA_WIDTH] = connection[TOTAL_STAGE-1][i];
+		assign o_valid[i+:1] = connection_valid[TOTAL_STAGE-1][i];
+	end
+	 
 	endgenerate
-
-	// assign o_data_bus = connection[0*DATA_WIDTH+:2*NUM_SWITCH_IN*DATA_WIDTH];
-	// assign o_valid = connection_valid[0+:2*NUM_SWITCH_IN];
-
-	// second stages
-	generate
-		for(i=0;i<NUM_SWITCH_IN;i=i+1)
-		begin:second_stage
-			distribute_2x2_seq #(
-				.DATA_WIDTH(DATA_WIDTH),
-				.COMMMAND_WIDTH(COMMMAND_WIDTH)
-			) second_stage(
-				.clk(clk),
-				.rst(rst),
-				.i_valid(connection_valid_reg[2*i+NUM_INPUT_DATA+:2]),
-				.i_data_bus(connection_reg[i*2*DATA_WIDTH+:2*DATA_WIDTH]),
-				.o_valid(connection_valid[NUM_INPUT_DATA+2*i+:2]),
-				.o_data_bus(connection[(i+NUM_SWITCH_IN)*2*DATA_WIDTH+:2*DATA_WIDTH]),
-				.i_en(i_en),
-				// .i_cmd(i_cmd_reg[2*i*COMMMAND_WIDTH+:COMMMAND_WIDTH])
-				.i_cmd(i_cmd_reg[0][2*i*COMMMAND_WIDTH+:COMMMAND_WIDTH])
-			);
-		end
-	endgenerate
-
-	// assign o_data_bus = connection[2*NUM_SWITCH_IN*DATA_WIDTH+:2*NUM_SWITCH_IN*DATA_WIDTH];
-	// assign o_valid = connection_valid[2*NUM_SWITCH_IN+:2*NUM_SWITCH_IN];
-
-	assign o_data_bus = connection[NUM_INPUT_DATA*DATA_WIDTH+:NUM_INPUT_DATA*DATA_WIDTH];
-	assign o_valid = connection_valid[NUM_INPUT_DATA+:NUM_INPUT_DATA];
 
 
 	// second half stages
