@@ -30,6 +30,180 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
+// design the following testbench for 2^n inputs. n could be any integer.
+// `define TEST_4_INPUT_BENES
+// `define TEST_8_INPUT_BENES
+// `define TEST_16_INPUT_BENES
+`define TEST_32_INPUT_BENES
+
+
+`ifdef TEST_4_INPUT_BENES
+module tb_benes_seq();
+    parameter DATA_WIDTH = 4;
+	parameter COMMMAND_WIDTH  = 2;
+	parameter NUM_SWITCH_IN = 2;
+
+	//parameter
+	localparam LEVEL = $clog2(NUM_SWITCH_IN);
+	localparam TOTAL_STAGE = 2*LEVEL+1;
+
+	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	
+	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+
+	// interface
+	reg                                        clk;
+	reg                                        rst;
+	
+	reg  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	reg  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+    wire [NUM_INPUT_DATA-1:0]                  o_valid;             
+	wire [WIDTH_INPUT_DATA-1:0]                o_data_bus; //{o_data_a, o_data_b}
+  
+	reg                                        i_en;
+	reg  [TOTAL_COMMMAND-1:0]                  i_cmd;
+									// 11 --> Multicast_HighIn
+									// 00 --> Multicast_LowIn
+									// 10 --> Pass Through
+									// 01 --> Pass Switch
+
+    // Test case declaration
+    // all cases for control
+    initial
+    begin
+        clk = 1'b0;
+        // not enable at start
+        #40
+        rst = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // rst active;
+        #40
+        rst = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b00}};
+        
+        // reg active -- Multicast_HighIn
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b11}};
+    
+        // reg active -- Multicast_LowIn
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b00}};
+        
+        // reg active -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // reg active -- Pass Switch 
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b01}};
+        
+        // disable in progress
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b0;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // enable in progress -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+
+        // reset half way  -- Pass Swtich
+        #40
+        rst = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+                
+        // reg active -- No Pass
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+
+        // change data half way  -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // invalid high output -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+       
+        // invalid low output  -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        #40
+        $stop;
+    end
+
+    // instantiate DUT (device under test)
+    benes #(
+		.DATA_WIDTH(DATA_WIDTH),
+        .COMMMAND_WIDTH(COMMMAND_WIDTH),
+        .NUM_SWITCH_IN(NUM_SWITCH_IN)
+      ) dut(
+	    .clk(clk),
+	    .rst(rst),
+		.i_valid(i_valid),
+		.i_data_bus(i_data_bus),
+		.o_valid(o_valid),
+		.o_data_bus(o_data_bus),
+		.i_en(i_en),
+		.i_cmd(i_cmd)
+	);
+
+    always#5 clk=~clk;
+
+endmodule
+
+`endif
+
+`ifdef TEST_8_INPUT_BENES
 module tb_benes_seq();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 2;
@@ -43,8 +217,6 @@ module tb_benes_seq();
 	
 	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	
-	localparam NUM_CONNECTION = (TOTAL_STAGE-1)*NUM_INPUT_DATA*DATA_WIDTH;
 
 	// interface
 	reg                                        clk;
@@ -80,7 +252,7 @@ module tb_benes_seq();
         #40
         rst = 1'b1;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b00}};
         
@@ -88,7 +260,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b11}};
     
@@ -96,7 +268,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b00}};
         
@@ -104,7 +276,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
         
@@ -112,7 +284,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b01}};
         
@@ -120,7 +292,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b0;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
         
@@ -128,7 +300,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
 
@@ -136,7 +308,7 @@ module tb_benes_seq();
         #40
         rst = 1'b1;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
                 
@@ -144,7 +316,7 @@ module tb_benes_seq();
         #40
         rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};//,{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hf}}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
         i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
 
@@ -194,3 +366,341 @@ module tb_benes_seq();
     always#5 clk=~clk;
 
 endmodule
+
+`endif
+
+
+
+`ifdef TEST_16_INPUT_BENES
+module tb_benes_seq();
+    parameter DATA_WIDTH = 4;
+	parameter COMMMAND_WIDTH  = 2;
+	parameter NUM_SWITCH_IN = 8;
+
+	//parameter
+	localparam LEVEL = $clog2(NUM_SWITCH_IN);
+	localparam TOTAL_STAGE = 2*LEVEL+1;
+
+	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	
+	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+
+	// interface
+	reg                                        clk;
+	reg                                        rst;
+	
+	reg  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	reg  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+    wire [NUM_INPUT_DATA-1:0]                  o_valid;             
+	wire [WIDTH_INPUT_DATA-1:0]                o_data_bus; //{o_data_a, o_data_b}
+  
+	reg                                        i_en;
+	reg  [TOTAL_COMMMAND-1:0]                  i_cmd;
+									// 11 --> Multicast_HighIn
+									// 00 --> Multicast_LowIn
+									// 10 --> Pass Through
+									// 01 --> Pass Switch
+
+    // Test case declaration
+    // all cases for control
+    initial
+    begin
+        clk = 1'b0;
+        // not enable at start
+        #40
+        rst = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // rst active;
+        #40
+        rst = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b00}};
+        
+        // reg active -- Multicast_HighIn
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b11}};
+    
+        // reg active -- Multicast_LowIn
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b00}};
+        
+        // reg active -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // reg active -- Pass Switch 
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b01}};
+        
+        // disable in progress
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b0;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // enable in progress -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+
+        // reset half way  -- Pass Swtich
+        #40
+        rst = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+                
+        // reg active -- No Pass
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+
+        // change data half way  -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // invalid high output -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+       
+        // invalid low output  -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        #40
+        $stop;
+    end
+
+    // instantiate DUT (device under test)
+    benes #(
+		.DATA_WIDTH(DATA_WIDTH),
+        .COMMMAND_WIDTH(COMMMAND_WIDTH),
+        .NUM_SWITCH_IN(NUM_SWITCH_IN)
+      ) dut(
+	    .clk(clk),
+	    .rst(rst),
+		.i_valid(i_valid),
+		.i_data_bus(i_data_bus),
+		.o_valid(o_valid),
+		.o_data_bus(o_data_bus),
+		.i_en(i_en),
+		.i_cmd(i_cmd)
+	);
+
+    always#5 clk=~clk;
+
+endmodule
+
+`endif
+
+
+
+`ifdef TEST_32_INPUT_BENES
+module tb_benes_seq();
+    parameter DATA_WIDTH = 4;
+	parameter COMMMAND_WIDTH  = 2;
+	parameter NUM_SWITCH_IN = 16;
+
+	//parameter
+	localparam LEVEL = $clog2(NUM_SWITCH_IN);
+	localparam TOTAL_STAGE = 2*LEVEL+1;
+
+	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	
+	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+
+	// interface
+	reg                                        clk;
+	reg                                        rst;
+	
+	reg  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	reg  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+    wire [NUM_INPUT_DATA-1:0]                  o_valid;             
+	wire [WIDTH_INPUT_DATA-1:0]                o_data_bus; //{o_data_a, o_data_b}
+  
+	reg                                        i_en;
+	reg  [TOTAL_COMMMAND-1:0]                  i_cmd;
+									// 11 --> Multicast_HighIn
+									// 00 --> Multicast_LowIn
+									// 10 --> Pass Through
+									// 01 --> Pass Switch
+
+    // Test case declaration
+    // all cases for control
+    initial
+    begin
+        clk = 1'b0;
+        // not enable at start
+        #40
+        rst = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // rst active;
+        #40
+        rst = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b00}};
+        
+        // reg active -- Multicast_HighIn
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b11}};
+    
+        // reg active -- Multicast_LowIn
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b00}};
+        
+        // reg active -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // reg active -- Pass Switch 
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b01}};
+        
+        // disable in progress
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b0;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // enable in progress -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+
+        // reset half way  -- Pass Swtich
+        #40
+        rst = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+                
+        // reg active -- No Pass
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}},{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+
+        // change data half way  -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        
+        // invalid high output -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+       
+        // invalid low output  -- Pass Through
+        #40
+        rst = 1'b0;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}},{(DATA_WIDTH>>2){4'hf}},{(DATA_WIDTH>>2){4'he}},{(DATA_WIDTH>>2){4'hd}},{(DATA_WIDTH>>2){4'hc}},{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
+        i_en = 1'b1;
+        i_cmd = {(TOTAL_COMMMAND>>1){2'b10}};
+        #40
+        $stop;
+    end
+
+    // instantiate DUT (device under test)
+    benes #(
+		.DATA_WIDTH(DATA_WIDTH),
+        .COMMMAND_WIDTH(COMMMAND_WIDTH),
+        .NUM_SWITCH_IN(NUM_SWITCH_IN)
+      ) dut(
+	    .clk(clk),
+	    .rst(rst),
+		.i_valid(i_valid),
+		.i_data_bus(i_data_bus),
+		.o_valid(o_valid),
+		.o_data_bus(o_data_bus),
+		.i_en(i_en),
+		.i_cmd(i_cmd)
+	);
+
+    always#5 clk=~clk;
+
+endmodule
+
+`endif

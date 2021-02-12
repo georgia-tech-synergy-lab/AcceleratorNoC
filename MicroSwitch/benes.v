@@ -60,9 +60,6 @@ module benes#(
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	
-	localparam NUM_CONNECTION = (TOTAL_STAGE-1)*NUM_INPUT_DATA*DATA_WIDTH;
-	localparam NUM_CONNECTION_VALID = NUM_INPUT_DATA*(TOTAL_STAGE-1);
-
 	// interface
 	input                                        clk;
 	input                                        rst;
