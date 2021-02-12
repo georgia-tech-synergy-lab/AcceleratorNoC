@@ -31,9 +31,9 @@
 /////////////////////////////////////////////////////////////
 
 module benes#(
-	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 2,
-	parameter NUM_SWITCH_IN = 8
+	parameter DATA_WIDTH = 32,     // could be arbitrary number
+	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
+	parameter NUM_SWITCH_IN = 8    // multiple be 2^n
 )(
     // timeing signals
     clk,
