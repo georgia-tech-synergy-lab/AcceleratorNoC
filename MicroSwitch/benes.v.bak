@@ -81,33 +81,32 @@ module benes#(
 
 
 	// inner logic
-	wire   [WIDTH_INPUT_DATA-1:0]                connection[0:TOTAL_STAGE-1];
-	wire   [NUM_INPUT_DATA-1:0]                  connection_valid[0:TOTAL_STAGE-1];
-	reg    [WIDTH_INPUT_DATA-1:0]                connection_reg[0:TOTAL_STAGE-1];
-	reg    [NUM_INPUT_DATA-1:0]                  connection_valid_reg[0:TOTAL_STAGE-1];
+	wire   [NUM_CONNECTION-1:0]                  connection;
+	wire   [NUM_CONNECTION_VALID-1:0]            connection_valid;
+	reg    [NUM_CONNECTION-1:0]                  connection_reg;
+	reg    [NUM_CONNECTION_VALID-1:0]            connection_valid_reg;
 	// logic for control pipeline
 	reg    [TOTAL_COMMMAND-1:0]                  i_cmd_reg[0:TOTAL_STAGE-1];
 	genvar k;
 	
-	always@(posedge clk)
-		begin
-			i_cmd_reg[0] <= i_cmd;	
-		end	
 	generate
-
-	for(k=0; k <(TOTAL_STAGE-1); k=k+1) 
-	begin: cmd_pipeline
-		always@(posedge clk)
-		begin
-			i_cmd_reg[k+1] <= i_cmd_reg[k];
-		end	
+	always@(posedge clk)
+	begin
+		i_cmd_reg[0] <= i_cmd;
+		
+			for(k=0; k <(TOTAL_STAGE-1); k=k+1) 
+			begin: cmd_pipeline
+				i_cmd_reg[k+1] <= i_cmd_reg[k];
+			end	
+		
 	end
-	endgenerate
-
+  endgenerate
+	
 	always@(posedge clk)
 	begin
 		connection_reg <= connection;
 		connection_valid_reg <= connection_valid;
+		i_cmd_reg <= i_cmd;
 	end
 
 	// first stage
@@ -136,7 +135,7 @@ module benes#(
 
 	// second stages
 	generate
-		for(i=0;i<NUM_SWITCH_IN;i=i+1)
+		for(i=0;i<NUM_SWITCH_IN-1;i=i+1)
 		begin:second_stage
 			distribute_2x2_seq #(
 				.DATA_WIDTH(DATA_WIDTH),
@@ -149,8 +148,7 @@ module benes#(
 				.o_valid(connection_valid[NUM_INPUT_DATA+2*i+:2]),
 				.o_data_bus(connection[(i+NUM_SWITCH_IN)*2*DATA_WIDTH+:2*DATA_WIDTH]),
 				.i_en(i_en),
-				// .i_cmd(i_cmd_reg[2*i*COMMMAND_WIDTH+:COMMMAND_WIDTH])
-				.i_cmd(i_cmd_reg[0][2*i*COMMMAND_WIDTH+:COMMMAND_WIDTH])
+				.i_cmd(i_cmd_reg[2*i*COMMMAND_WIDTH+:COMMMAND_WIDTH])
 			);
 		end
 	endgenerate
