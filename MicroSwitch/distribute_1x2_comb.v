@@ -71,7 +71,7 @@ module distribute_1x2_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
 		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
 	) o_data_low_mux(
-		.i_valid(i_valid_inner),
+		.i_valid({i_valid_inner,1'b0}),
 		.i_data_bus({i_data_bus, {DATA_WIDTH{1'b0}}}),
 		.o_valid(mux_o_valid_inner[0]),
 		.o_data_bus(o_data_bus[0 +: DATA_WIDTH]),
@@ -83,7 +83,7 @@ module distribute_1x2_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
 		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
 	) o_data_high_mux(
-		.i_valid(i_valid_inner),
+		.i_valid({i_valid_inner,1'b0}),
 		.i_data_bus({i_data_bus, {DATA_WIDTH{1'b0}}}),
 		.o_valid(mux_o_valid_inner[1]),
 		.o_data_bus(o_data_bus[DATA_WIDTH +: DATA_WIDTH]),
