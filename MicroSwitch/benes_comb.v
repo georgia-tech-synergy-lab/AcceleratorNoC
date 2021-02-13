@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  benes_seq
+// Top Module:  benes_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
@@ -9,7 +9,7 @@
 //              Total latency = # stages (cycle)  
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// Function:    Unicast  or  Multicast (Not arbitrary Multicast)
+// Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 //   
 //     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-------->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-------->|¯¯¯|-->
 //     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\ /---->|___|--\ /-->|___|--\ /-->|___|----\ /->|___|-->
@@ -30,15 +30,11 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module benes#(
+module benes_comb#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
 	parameter NUM_SWITCH_IN = 8    // multiple be 2^n
 )(
-    // timeing signals
-    clk,
-	rst,
-	
     // data signals
 	i_valid,        // valid input data signal
 	i_data_bus,     // input data bus coming into distribute switch
@@ -61,9 +57,6 @@ module benes#(
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	
 	// interface
-	input                                        clk;
-	input                                        rst;
-	
 	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
 	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 	
@@ -82,54 +75,16 @@ module benes#(
 	wire   [DATA_WIDTH-1:0]                      connection[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
 	wire                                         connection_valid[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
 
-	// logic for control pipeline
-	reg    [COMMMAND_WIDTH-1:0]                  i_cmd_reg[0:TOTAL_STAGE-2][0:TOTAL_STAGE*NUM_SWITCH_IN-1]; // i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.
-
 	genvar i,j,k,s;
 	
 	generate
-		for(i=0; i<(TOTAL_STAGE-1); i=i+1) 
-		begin:initialization_stage
-			for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
-			begin: initialization
-				initial
-				begin
-					i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bx}};
-					// connection_reg[i][j] <= {DATA_WIDTH{1'bx}};
-					// connection_valid_reg[i][j] <= {1'bx};
-				end
-			end
-		end
-		
-		for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
-		begin:i_cmd_first_stage
-			always@(posedge clk)
-			begin
-				i_cmd_reg[0][j] <= i_cmd[j*COMMMAND_WIDTH+:COMMMAND_WIDTH];	
-			end
-		end
-
-		for(i=0; i<(TOTAL_STAGE-2); i=i+1) 
-		begin: i_cmd_pipeline_stage
-			for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
-			begin: i_cmd_stage
-				always@(posedge clk)
-				begin
-					i_cmd_reg[i+1][j] <= i_cmd_reg[i][j];
-				end
-			end
-		end
-
-
 		// first stage
 		for(i=0; i<NUM_SWITCH_IN; i=i+1)
 		begin:first_stage_switch
-			distribute_2x2_seq #(
+			distribute_2x2_comb #(
 				.DATA_WIDTH(DATA_WIDTH),
 				.COMMMAND_WIDTH(COMMMAND_WIDTH)
 			) first_stage(
-				.clk(clk),
-				.rst(rst),
 				.i_valid(i_valid[2*i+:2]),
 				.i_data_bus(i_data_bus[i*2*DATA_WIDTH+:2*DATA_WIDTH]),
 				.o_valid({connection_valid[0][2*i+1], connection_valid[0][2*i]}),
@@ -138,7 +93,6 @@ module benes#(
 				.i_cmd(i_cmd[i*COMMMAND_WIDTH+:COMMMAND_WIDTH])
 			);
 		end
-
 
 
 		// second stage -> middle stage 
@@ -172,18 +126,16 @@ module benes#(
 					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx_loop_left_shift = h_idx_MSB_loop_shift + h_idx_left_shift;
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]   h_idx_loop_left_shift_group = h_idx_loop_left_shift + group_offset;
 
-					distribute_2x2_seq #(
+					distribute_2x2_comb #(
 						.DATA_WIDTH(DATA_WIDTH),
 						.COMMMAND_WIDTH(COMMMAND_WIDTH)
 					) third_stage(
-						.clk(clk),
-						.rst(rst),
 						.i_valid({connection_valid[s][h_idx_loop_left_shift_group], connection_valid[s][l_idx_loop_left_shift_group]}),
 						.i_data_bus({connection[s][h_idx_loop_left_shift_group], connection[s][l_idx_loop_left_shift_group]}),
 						.o_valid({connection_valid[s+1][2*(i+group_switch_offset)+1], connection_valid[s+1][2*(i+group_switch_offset)]}),
 						.o_data_bus({connection[s+1][2*(i+group_switch_offset)+1], connection[s+1][2*(i+group_switch_offset)]}),
 						.i_en(i_en),
-						.i_cmd(i_cmd_reg[s][(s+1)*NUM_SWITCH_IN + group_switch_offset + i])
+						.i_cmd(i_cmd[((s+1)*NUM_SWITCH_IN + group_switch_offset + i)*COMMMAND_WIDTH+:COMMMAND_WIDTH ])
 					);
 				end
 			end
@@ -220,18 +172,16 @@ module benes#(
 					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] h_idx_loop_right_shift = h_idx_LSB_loop_shift + h_idx_right_shift;
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]           h_idx_loop_right_shift_group = h_idx_loop_right_shift + group_offset;
 
-					distribute_2x2_seq #(
+					distribute_2x2_comb #(
 						.DATA_WIDTH(DATA_WIDTH),
 						.COMMMAND_WIDTH(COMMMAND_WIDTH)
 					) third_stage(
-						.clk(clk),
-						.rst(rst),
 						.i_valid({connection_valid[s][h_idx_loop_right_shift_group], connection_valid[s][l_idx_loop_right_shift_group]}),
 						.i_data_bus({connection[s][h_idx_loop_right_shift_group], connection[s][l_idx_loop_right_shift_group]}),
 						.o_valid({connection_valid[s+1][2*(i+group_switch_offset)+1], connection_valid[s+1][2*(i+group_switch_offset)]}),
 						.o_data_bus({connection[s+1][2*(i+group_switch_offset)+1], connection[s+1][2*(i+group_switch_offset)]}),
 						.i_en(i_en),
-						.i_cmd(i_cmd_reg[s][(s+1)*NUM_SWITCH_IN + group_switch_offset + i])
+						.i_cmd(i_cmd[((s+1)*NUM_SWITCH_IN + group_switch_offset + i)*COMMMAND_WIDTH+:COMMMAND_WIDTH ])
 					);
 				end
 			end

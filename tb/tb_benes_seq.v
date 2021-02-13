@@ -182,7 +182,7 @@ module tb_benes_seq();
     end
 
     // instantiate DUT (device under test)
-    benes #(
+    benes_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH),
         .NUM_SWITCH_IN(NUM_SWITCH_IN)
