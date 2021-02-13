@@ -65,6 +65,7 @@ module benes_comb#(
 
 	input                                        i_en;
 	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+									// For each switch
 									// 11 --> Multicast_HighIn
 									// 00 --> Multicast_LowIn
 									// 10 --> Pass Through
