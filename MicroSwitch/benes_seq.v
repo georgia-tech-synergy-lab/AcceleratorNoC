@@ -9,7 +9,7 @@
 //              Total latency = # stages (cycle)  
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// Function:    Unicast  or  Multicast (Not arbitrary Multicast)
+// Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 //   
 //     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-------->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-------->|¯¯¯|-->
 //     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\ /---->|___|--\ /-->|___|--\ /-->|___|----\ /->|___|-->
@@ -29,8 +29,10 @@
 //     
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
+`define FULL_PIPELINE
 
-module benes#(
+`ifdef FULL_PIPELINE // full pipeline means every stage is a pipeline stage.
+module benes_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
 	parameter NUM_SWITCH_IN = 8    // multiple be 2^n
@@ -95,8 +97,6 @@ module benes#(
 				initial
 				begin
 					i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bx}};
-					// connection_reg[i][j] <= {DATA_WIDTH{1'bx}};
-					// connection_valid_reg[i][j] <= {1'bx};
 				end
 			end
 		end
@@ -246,6 +246,6 @@ module benes#(
 		
 	endgenerate
 
-
 endmodule
+`endif
 
