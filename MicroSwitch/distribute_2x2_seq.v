@@ -189,7 +189,7 @@ module distribute_2x2_seq#(
 	    
 	input                         i_en;
 	input  [COMMMAND_WIDTH-1:0]   i_cmd;
-		// 000 --> Pass HighIn BothOut
+		// 000 --> Multicast HighIN
 		// 100 --> Multicast_LowIn
 		// 011 --> Pass Through
 		// 010 --> Pass High
@@ -225,7 +225,7 @@ module distribute_2x2_seq#(
 	// control generation
 	// Note: generated control for merge swtich will be used 1 cycle after distribute switch
 	always @(*) begin
-		if(i_en)
+		if(i_en&(~rst))
 		begin	
 			if( (~i_valid_inner[0]) & (~i_valid_inner[1]) )
 			begin //No Pass
@@ -238,7 +238,7 @@ module distribute_2x2_seq#(
 			else
 			begin
 				case(i_cmd)
-					3'b000: //Pass HighIn BothOut
+					3'b000: //Multicast HighIn
 					begin
 						dis_i_data_high_ctrl <= 2'b11;
 						dis_i_data_low_ctrl  <= 2'b00;  //don't care, could be arbitrary signals
