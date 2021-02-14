@@ -41,7 +41,7 @@ module adder_var_seq#(
     o_data_bus,     // output data 
 
 	// control signals
-	i_en,           // adder enable
+	i_en            // adder enable
 );
     // timing signals
     input                          clk;

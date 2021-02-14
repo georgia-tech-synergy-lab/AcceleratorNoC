@@ -36,7 +36,7 @@ module adder_var_comb#(
     o_data_bus,     // output data 
 
 	// control signals
-	i_en,           // adder enable
+	i_en            // adder enable
 );
 	// interface
 	input  [2*DATA_WIDTH-1:0]      i_data_bus;

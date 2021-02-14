@@ -53,7 +53,7 @@ module adder_var_tree_comb#(
     o_data_bus,     // output data 
 
 	// control signals
-	i_en,           // distribute switch enable
+	i_en            // distribute switch enable
 );
     // inner parameter and logic
     localparam   NUM_LEVEL = $clog2(NUM_INPUT_DATA); // Note: inner ceiling: e.g. $clog2(18) = 5, (2^5=32).
