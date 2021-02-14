@@ -4,7 +4,6 @@
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
-// Reset:       Synchronized Reset [High Reset]
 // Pipeline:    For benes constructed with sequential switches, every stage is a pipeline stage
 //              Total latency = # stages (cycle)  
 // Dummy Data:  {DATA_WIDTH{1'b0}}

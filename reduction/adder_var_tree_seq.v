@@ -1,14 +1,17 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  adder_tree_comb [valid signals are not supported yet]
+// Top Module:  adder_var_tree_seq [valid signals are not supported yet]
 // Data:        Only data width matters.
-// Format:      keeping the input format unchange
-// Timing:      Combinational Logic
-// Dummy Data:  {DATA_WIDTH{1'bx}}
+// Format:      Output has LEVEL more bit than input data
+// Timing:      Sequential Logic
+// Reset:       Synchronized Reset [High Reset]
+// Dummy Data:  {(DATA_WIDTH+LEVELx){1'bx}}
 //
-// Parameter:   NUM_INPUT_DATA could be arbitrary integer below 1024.
+// Parameter:   NUM_INPUT_DATA could be arbitrary integer. 
+//              When it's not power of 2, redundent adder will not be instantiated.
 //
-// Function:   sum all input together
+// Function:    sum all input together
+//
 //   \     /     \     / ... \     /     \     /
 //    v   v       v   v  ...  v   v       v   v    
 //    |¯¯¯|       |¯¯¯|  ...  |¯¯¯|       |¯¯¯|
@@ -39,10 +42,14 @@
 /////////////////////////////////////////////////////////////
 
 
-module adder_tree_comb#(
+module adder_var_tree_seq#(
     parameter NUM_INPUT_DATA = 300,
     parameter DATA_WIDTH = 16
 )(
+    // timing signals
+    clk,
+    rst,
+
     // data signals
 	i_valid,        // valid input data signal
 	i_data_bus,     // input data bus coming into distribute switch
@@ -53,21 +60,24 @@ module adder_tree_comb#(
 	// control signals
 	i_en            // distribute switch enable
 );
+    // inner parameter and logic
+    localparam   NUM_LEVEL = $clog2(NUM_INPUT_DATA); // Note: inner ceiling: e.g. $clog2(18) = 5, (2^5=32).
+    // use ceiling to add 1 extra level to support all possible input cases (input not exactly 2^n).
+    // If the input is exactly 2^n, then the num_switch in the last level will be 0.
 
+    // timing signals
+    input                                        clk;
+    input                                        rst;
+      
 	// interface
 	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
 	input  [NUM_INPUT_DATA*DATA_WIDTH-1:0]       i_data_bus;
 	
 	output                                       o_valid;             
-	output [DATA_WIDTH-1:0]                      o_data_bus; //{o_data_a, o_data_b}
+	output [DATA_WIDTH+NUM_LEVEL-1:0]            o_data_bus; //{o_data_a, o_data_b}
 
 	input                                        i_en;
-
-    // inner parameter and logic
-    localparam   NUM_LEVEL = $clog2(NUM_INPUT_DATA); // Note: inner ceiling: e.g. $clog2(18) = 5, (2^5=32).
-    // use ceiling to add 1 extra level to support all possible input cases (input not exactly 2^n).
-    // If the input is exactly 2^n, then the num_switch in the last level will be 0.
-    
+   
     // define output wire for all switches of different level.
     genvar i,j;
     generate
@@ -82,12 +92,12 @@ module adder_tree_comb#(
         localparam NUM_SWITCH_LEVEL = (NOT_ADD_EXTRA_SWITCH_THIS_LEVEL)? NUM_SWITCH_SHIFT: (NUM_SWITCH_SHIFT + 1); 
         
         // define the output wire for switches of level i
-        wire       [DATA_WIDTH-1:0]              inner_wire_data[0:NUM_SWITCH_LEVEL-1];
+        wire       [DATA_WIDTH+i-1:0]            inner_wire_data[0:NUM_SWITCH_LEVEL-1];
         wire                                     inner_wire_valid[0:NUM_SWITCH_LEVEL-1];
     end
 
     // output latch
-    reg    [DATA_WIDTH-1:0]                      o_data_bus_inner;
+    reg    [DATA_WIDTH+NUM_LEVEL-1:0]            o_data_bus_inner;
     reg                                          o_valid_inner;
 
     // connect i_data_bus to input of adder tree.
@@ -104,11 +114,13 @@ module adder_tree_comb#(
         begin: adder_in_level
             if( j==(wire_level[i+1].NUM_SWITCH_LEVEL -1) && ((wire_level[i].NUM_SWITCH_LEVEL >> 1) != wire_level[i+1].NUM_SWITCH_LEVEL) )
             begin
-                adder_comb #(
-                    .DATA_WIDTH(DATA_WIDTH)
+                adder_var_seq #(
+                    .DATA_WIDTH(DATA_WIDTH+i)
                 ) adder(
+                    .clk(clk),
+                    .rst(rst),
                     .i_valid({{1'b1},wire_level[i].inner_wire_valid[2*j]}),
-                    .i_data_bus({{DATA_WIDTH{1'b0}}, wire_level[i].inner_wire_data[2*j]}),
+                    .i_data_bus({{(DATA_WIDTH+i){1'b0}}, wire_level[i].inner_wire_data[2*j]}),
                     .o_valid(wire_level[i+1].inner_wire_valid[j]),
                     .o_data_bus(wire_level[i+1].inner_wire_data[j]),
                     .i_en(i_en)
@@ -116,9 +128,11 @@ module adder_tree_comb#(
             end 
             else
             begin
-                adder_comb #(
-                    .DATA_WIDTH(DATA_WIDTH)
+                adder_var_seq #(
+                    .DATA_WIDTH(DATA_WIDTH+i)
                 ) adder(
+                    .clk(clk),
+                    .rst(rst),
                     .i_valid({wire_level[i].inner_wire_valid[2*j+1],wire_level[i].inner_wire_valid[2*j]}),
                     .i_data_bus({wire_level[i].inner_wire_data[2*j+1], wire_level[i].inner_wire_data[2*j]}),
                     .o_valid(wire_level[i+1].inner_wire_valid[j]),

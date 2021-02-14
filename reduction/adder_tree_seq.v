@@ -1,11 +1,14 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  adder_tree_comb [valid signals are not supported yet]
+// Top Module:  adder_tree_seq [valid signals are not supported yet]
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Combinational Logic
-// Dummy Data:  {DATA_WIDTH{1'bx}}
+// Timing:      Sequential Logic
+// Reset:       Synchronized Reset [High Reset]
+// Latency:     # of LEVEL(every LEVEL is a pipeline stage)
 //
+// Dummy Data:  {DATA_WIDTH{1'bx}}
+// 
 // Parameter:   NUM_INPUT_DATA could be arbitrary integer below 1024.
 //
 // Function:   sum all input together
@@ -39,10 +42,14 @@
 /////////////////////////////////////////////////////////////
 
 
-module adder_tree_comb#(
+module adder_tree_seq#(
     parameter NUM_INPUT_DATA = 300,
     parameter DATA_WIDTH = 16
 )(
+    // timeing signals
+    clk,
+	rst,
+	
     // data signals
 	i_valid,        // valid input data signal
 	i_data_bus,     // input data bus coming into distribute switch
@@ -53,7 +60,10 @@ module adder_tree_comb#(
 	// control signals
 	i_en            // distribute switch enable
 );
-
+    // timing signals
+    input                                        clk;
+    input                                        rst;
+    
 	// interface
 	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
 	input  [NUM_INPUT_DATA*DATA_WIDTH-1:0]       i_data_bus;
@@ -104,9 +114,11 @@ module adder_tree_comb#(
         begin: adder_in_level
             if( j==(wire_level[i+1].NUM_SWITCH_LEVEL -1) && ((wire_level[i].NUM_SWITCH_LEVEL >> 1) != wire_level[i+1].NUM_SWITCH_LEVEL) )
             begin
-                adder_comb #(
+                adder_seq #(
                     .DATA_WIDTH(DATA_WIDTH)
                 ) adder(
+                    .clk(clk),
+                    .rst(rst),
                     .i_valid({{1'b1},wire_level[i].inner_wire_valid[2*j]}),
                     .i_data_bus({{DATA_WIDTH{1'b0}}, wire_level[i].inner_wire_data[2*j]}),
                     .o_valid(wire_level[i+1].inner_wire_valid[j]),
@@ -116,9 +128,11 @@ module adder_tree_comb#(
             end 
             else
             begin
-                adder_comb #(
+                adder_seq #(
                     .DATA_WIDTH(DATA_WIDTH)
                 ) adder(
+                    .clk(clk),
+                    .rst(rst),
                     .i_valid({wire_level[i].inner_wire_valid[2*j+1],wire_level[i].inner_wire_valid[2*j]}),
                     .i_data_bus({wire_level[i].inner_wire_data[2*j+1], wire_level[i].inner_wire_data[2*j]}),
                     .o_valid(wire_level[i+1].inner_wire_valid[j]),
