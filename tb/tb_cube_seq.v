@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_butterfly_seq
+// Top Module:  tb_cube_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
@@ -35,11 +35,11 @@
 // Note: use the UNICAST_ONLY version distribute_2x2_seq.
 // Need to set "`define UNICAST_ONLY in distribute_2x2_seq.v"
 
-// `define TEST_4_BUTTERFLY
-`define TEST_8_BUTTERFLY
+`define TEST_4_cube
+// `define TEST_8_cube
 
-`ifdef TEST_8_BUTTERFLY
-module tb_butterfly_seq();
+`ifdef TEST_8_cube
+module tb_cube_seq();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 1;
     parameter NUM_INPUT_DATA = 8;
@@ -65,11 +65,8 @@ module tb_butterfly_seq();
   
 	reg                                        i_en;
 	reg  [TOTAL_COMMMAND-1:0]                  i_cmd;
-									// 11 --> Multicast_HighIn
-									// 00 --> Multicast_LowIn
-									// 10 --> Pass Through
-									// 01 --> Pass Switch
-
+									// 0 --> Pass Through
+									// 1 --> Pass Switch
 // Test case declaration
     // all cases for control
     initial
@@ -143,7 +140,7 @@ module tb_butterfly_seq();
     end
 
     // instantiate DUT (device under test)
-    butterfly_seq #(
+    cube_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_INPUT_DATA(NUM_INPUT_DATA),
         .COMMMAND_WIDTH(COMMMAND_WIDTH)
@@ -166,8 +163,8 @@ endmodule
 
 
 
-`ifdef TEST_4_BUTTERFLY
-module tb_butterfly_seq();
+`ifdef TEST_4_cube
+module tb_cube_seq();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 1;
     parameter NUM_INPUT_DATA = 4;
@@ -271,7 +268,7 @@ module tb_butterfly_seq();
     end
 
     // instantiate DUT (device under test)
-    butterfly_comb #(
+    cube_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_INPUT_DATA(NUM_INPUT_DATA),
         .COMMMAND_WIDTH(COMMMAND_WIDTH)

@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  butterfly_extra_link
+// Top Module:  distribute_noc
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
@@ -35,8 +35,8 @@
 //     i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/          \->|¯¯¯|-/    \->|¯¯¯|-->
 //                                              |___|-------------->|___|-------->|___|
 //              
-//        CONNECTION FUNCTION                        CUBE + STAIGHT   CUBE + STAIGHT  
-//       CONNECTION GROUP SIZE                         8               4 
+//        CONNECTION FUNCTION                           BUTTERFLY       BUTTERFLY  
+//       CONNECTION GROUP SIZE                             16               8 
 //
 // Control Signal
 //     i_valid[0]-->|¯¯¯|<--i_cmd[2:0] 
@@ -46,7 +46,7 @@
 /////////////////////////////////////////////////////////////
 
 
-module butterfly_extra_link#(
+module distribute_noc#(
 	parameter DATA_WIDTH = 32,    // could be arbitrary number
 	parameter NUM_DATA_IN = 8,    // multiple be 2^n
     parameter COMMMAND_WIDTH = NUM_DATA_OUT // one-hot -> need to translated to dst tag inside the module

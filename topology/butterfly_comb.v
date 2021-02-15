@@ -5,24 +5,25 @@
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
 // Dummy Data:  {DATA_WIDTH{1'b0}}
-// 
+// Control:     Use destination tag
+//
 // Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 //                                              
-//     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-\     /->|¯¯¯|-\  /->|¯¯¯|-->
-//     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\\   //->|___|-\\//->|___|-->
-//                                                     \\ //          XX                                  
-//     i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-\ \X/ /->|¯¯¯|-//\\->|¯¯¯|-->
-//     i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\\/X\//->|___|-/  \->|___|-->
-//                                                     XX XX                               
-//     i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-//\X/\\->|¯¯¯|-\  /->|¯¯¯|-->
-//     i_data_bus[5*DATA_WIDTH+:DATA_WIDTH]  -->|___|-/ /X\ \->|___|-\\//->|___|-->
-//                                                     // \\          XX              
-//     i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-//   \\->|¯¯¯|-//\\->|¯¯¯|-->
-//     i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|___|-/     \->|___|-/  \->|___|-->
+//     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-------->|¯¯¯|----->|¯¯¯|-->
+//     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\    /->|___|-\ /->|___|-->
+//                                                     \  /          X                                  
+//     i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|---\/--->|¯¯¯|-/ \->|¯¯¯|-->
+//     i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\ /\ /->|___|----->|___|-->
+//                                                     X  X                               
+//     i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \/ \->|¯¯¯|----->|¯¯¯|-->
+//     i_data_bus[5*DATA_WIDTH+:DATA_WIDTH]  -->|___|---/\--->|___|-\ /->|___|-->
+//                                                     /  \          X              
+//     i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/    \->|¯¯¯|-/ \->|¯¯¯|-->
+//     i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|___|-------->|___|----->|___|-->
 //                                                        
 //              
-//        CONNECTION FUNCTION                          CUBE          CUBE  
-//       CONNECTION GROUP SIZE                          8             4 
+//        CONNECTION FUNCTION                        BUTTERFLY    BUTTERFLY  
+//       CONNECTION GROUP SIZE                          8            4 
 //
 // Control Signal
 //     i_valid[0]-->|¯¯¯|<--i_cmd[2:0] 
@@ -31,13 +32,12 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-// Note: use the UNICAST_ONLY version distribute_2x2_seq.
-// Need to set "`define UNICAST_ONLY in distribute_2x2_seq.v"
 
 module butterfly_comb#(
 	parameter DATA_WIDTH = 32,    // could be arbitrary number
-	parameter NUM_INPUT_DATA = 8,    // multiple be 2^n
-    parameter COMMMAND_WIDTH = 1  // destination tag, each level consumes 1 bit.
+	parameter NUM_INPUT_DATA = 8, // multiple be 2^n
+    parameter COMMMAND_WIDTH = $clog2(NUM_INPUT_DATA), // destination tag, each level consumes 1 bit.
+    parameter DESTINATION_TAG_WIDTH = COMMMAND_WIDTH // destination tag, each level consumes 1 bit.
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -48,7 +48,8 @@ module butterfly_comb#(
 
 	// control signals
 	i_en,           // distribute switch enable
-	i_cmd           // dst_tag 
+	i_cmd           // !Note: The control here should be the index of destination in binary.
+	                // Each input data has its own destination tag.
 );
 	// parameter
 	localparam  NUM_STAGE = $clog2(NUM_INPUT_DATA);
@@ -63,17 +64,17 @@ module butterfly_comb#(
 	output [WIDTH_INPUT_DATA-1:0]                              o_data_bus; //{o_data_a, o_data_b}
 
 	input                                                      i_en;
-	input  [NUM_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH-1:0]        i_cmd;
-									// For each switch
-									// 0 --> Pass Through
-									// 1 --> Pass Switch
-
+	input  [NUM_INPUT_DATA*DESTINATION_TAG_WIDTH-1:0]          i_cmd;
+									// For each data with COMMAND_WIDTH destination tag. 
+									// e.g. For 8-data input cube
+									// 4-th input data has destination tag = 010 
+									// 010 -> goes the 3th destination.
 
 	// inner logic
 	reg    [NUM_INPUT_DATA-1:0]                                i_valid_inner;             
 	reg    [WIDTH_INPUT_DATA-1:0]                              i_data_bus_inner;	
 	reg    [NUM_INPUT_DATA-1:0]                                o_valid_inner;             
-	reg    [WIDTH_INPUT_DATA-1:0]                              o_data_bus_inner;	
+	reg    [NUM_INPUT_DATA*DATA_WIDTH-1:0]                     o_data_bus_inner;	
 
 	always@(*)
 	begin
@@ -93,36 +94,42 @@ module butterfly_comb#(
 		assign wire_valid_inner[0][i] = i_valid_inner[i+:1];
 	end
 
-	// command generation
-	reg        [COMMMAND_WIDTH-1:0]                        reg_cmd_inner[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1];
+	// command inner stage definition
+	for(s=0; s<NUM_STAGE-1; s=s+1)
+	begin:o_cmd_stage	 
+	    // index 0 is for the output wire of the first stage
+		wire [DESTINATION_TAG_WIDTH-2-s:0]                     o_cmd_data_wire_inner[0:NUM_INPUT_DATA-1];       
+		wire                                                   o_cmd_valid_wire_inner[0:NUM_INPUT_DATA-1];
+	end
 
-	for (s =0; s< NUM_STAGE; s=s+1)
-    begin: command_define
-		for(i=0; i<NUM_SWITCH_IN; i=i+1)
+	// command generation
+	reg     [DESTINATION_TAG_WIDTH-1:0]                        reg_cmd_inner[0:NUM_INPUT_DATA-1];
+
+	for(i=0; i<NUM_INPUT_DATA; i=i+1)
+	begin: command_in_first_stage
+		always@(*)
 		begin
-			always@(*)
-			begin
-				reg_cmd_inner[s][i] = i_cmd[((s*NUM_SWITCH_IN + i)*COMMMAND_WIDTH)+:COMMMAND_WIDTH];
-			end
+			reg_cmd_inner[i] = i_cmd[i*DESTINATION_TAG_WIDTH+:DESTINATION_TAG_WIDTH];
 		end
 	end
 
 	// first stage
 	for(i=0; i< NUM_SWITCH_IN; i=i+1)
 	begin:switch_first_stage			
-		distribute_2x2_comb #(
+		distribute_2x2_dst_tag_comb #(
 			.DATA_WIDTH(DATA_WIDTH),
-			.COMMMAND_WIDTH(COMMMAND_WIDTH)
+			.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH)
 		) dis_2x2(
 			.i_valid({wire_valid_inner[0][2*i+1], wire_valid_inner[0][2*i]}),
 			.i_data_bus({wire_data_inner[0][2*i+1], wire_data_inner[0][2*i]}),
 			.o_valid({wire_valid_inner[1][2*i+1], wire_valid_inner[1][2*i]}),
 			.o_data_bus({wire_data_inner[1][2*i+1], wire_data_inner[1][2*i]}),
 			.i_en(i_en),
-			.i_cmd(reg_cmd_inner[0][i])
+			.i_cmd({reg_cmd_inner[2*i+1], reg_cmd_inner[2*i]}),
+			.o_cmd({o_cmd_stage[0].o_cmd_data_wire_inner[2*i+1], o_cmd_stage[0].o_cmd_data_wire_inner[2*i]}),
+			.o_cmd_valid({o_cmd_stage[0].o_cmd_valid_wire_inner[2*i+1], o_cmd_stage[0].o_cmd_valid_wire_inner[2*i]})
 		);
 	end
-	
 
 	// stages afterward
 	for(s=0; s<NUM_STAGE-1; s=s+1)
@@ -138,25 +145,48 @@ module butterfly_comb#(
 				// inverse the MSB of the index of switch inside the group
 				// For low input [Inverse MSB [$clog2(NUM_INPUT_DATA)-1-s] ]
 				localparam [$clog2(NUM_INPUT_DATA)-1-s:0] HighDataInIdx =  (idx << 1) + 1;
-				localparam [$clog2(NUM_INPUT_DATA)-1-s:0] HighDataInIdxMSBInverse = {~HighDataInIdx[$clog2(NUM_INPUT_DATA)-1-s], HighDataInIdx[$clog2(NUM_INPUT_DATA)-2-s:0]};
-				localparam [$clog2(NUM_INPUT_DATA)-1:0] HighDataInIdxMSBInverseOffset = HighDataInIdxMSBInverse + group_data_offset;
+				localparam [$clog2(NUM_INPUT_DATA)-1-s:0] HighDataInIdxLSB2MSB = {HighDataInIdx[0], HighDataInIdx[$clog2(NUM_INPUT_DATA)-2-s:0]};
+				localparam [$clog2(NUM_INPUT_DATA)-1-s:0] HighDataInIdxLSB_MSB_SWAP = {HighDataInIdxLSB2MSB[$clog2(NUM_INPUT_DATA)-1-s:1], HighDataInIdx[$clog2(NUM_INPUT_DATA)-1-s]};
+				localparam [$clog2(NUM_INPUT_DATA)-1:0] HighDataInIdxMSBInverseOffset = HighDataInIdxLSB_MSB_SWAP + group_data_offset;
 				
 				// For high input [Inverse MSB [$clog2(NUM_INPUT_DATA)-1-s] ]
 				localparam [$clog2(NUM_INPUT_DATA)-1-s:0] LowDataInIdx =  (idx << 1);
-				localparam [$clog2(NUM_INPUT_DATA)-1-s:0] LowDataInIdxMSBInverse = {~LowDataInIdx[$clog2(NUM_INPUT_DATA)-1-s], LowDataInIdx[$clog2(NUM_INPUT_DATA)-2-s:0]};
-				localparam [$clog2(NUM_INPUT_DATA)-1:0] LowDataInIdxMSBInverseOffset = LowDataInIdxMSBInverse + group_data_offset;	
+				localparam [$clog2(NUM_INPUT_DATA)-1-s:0] LowDataInIdxLSB2MSB = {LowDataInIdx[0], LowDataInIdx[$clog2(NUM_INPUT_DATA)-2-s:0]};
+				localparam [$clog2(NUM_INPUT_DATA)-1-s:0] LowDataInIdxLSB_MSB_SWAP = {LowDataInIdxLSB2MSB[$clog2(NUM_INPUT_DATA)-1-s:1], LowDataInIdx[$clog2(NUM_INPUT_DATA)-1-s]};
+				localparam [$clog2(NUM_INPUT_DATA)-1:0] LowDataInIdxMSBInverseOffset = LowDataInIdxLSB_MSB_SWAP + group_data_offset;	
 				
-				distribute_2x2_comb #(
-					.DATA_WIDTH(DATA_WIDTH),
-					.COMMMAND_WIDTH(COMMMAND_WIDTH)
-				) dis_2x2(
-					.i_valid({wire_valid_inner[s+1][HighDataInIdxMSBInverseOffset], wire_valid_inner[s+1][LowDataInIdxMSBInverseOffset]}),
-					.i_data_bus({wire_data_inner[s+1][HighDataInIdxMSBInverseOffset], wire_data_inner[s+1][LowDataInIdxMSBInverseOffset]}),
-					.o_valid({wire_valid_inner[s+2][2*(i+group_switch_offset)+1], wire_valid_inner[s+2][2*(i+group_switch_offset)]}),
-					.o_data_bus({wire_data_inner[s+2][2*(i+group_switch_offset)+1], wire_data_inner[s+2][2*(i+group_switch_offset)]}),
-					.i_en(i_en),
-					.i_cmd(reg_cmd_inner[s+1][i+group_switch_offset])
-				);
+				if(s==(NUM_STAGE-2))
+				begin
+					distribute_2x2_dst_tag_comb #(
+						.DATA_WIDTH(DATA_WIDTH),
+        				.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH - s - 1)
+					) dis_2x2(
+						.i_valid({ (o_cmd_stage[s].o_cmd_valid_wire_inner[HighDataInIdxMSBInverseOffset] & wire_valid_inner[s+1][HighDataInIdxMSBInverseOffset]), (o_cmd_stage[s].o_cmd_valid_wire_inner[LowDataInIdxMSBInverseOffset] & wire_valid_inner[s+1][LowDataInIdxMSBInverseOffset]) }),
+						.i_data_bus({wire_data_inner[s+1][HighDataInIdxMSBInverseOffset], wire_data_inner[s+1][LowDataInIdxMSBInverseOffset]}),
+						.o_valid({wire_valid_inner[s+2][2*(i+group_switch_offset)+1], wire_valid_inner[s+2][2*(i+group_switch_offset)]}),
+						.o_data_bus({wire_data_inner[s+2][2*(i+group_switch_offset)+1], wire_data_inner[s+2][2*(i+group_switch_offset)]}),
+						.i_en(i_en),
+						.i_cmd({o_cmd_stage[s].o_cmd_data_wire_inner[HighDataInIdxMSBInverseOffset], o_cmd_stage[s].o_cmd_data_wire_inner[LowDataInIdxMSBInverseOffset]}),
+						.o_cmd(),
+						.o_cmd_valid()
+					);
+				end
+				else
+				begin
+					distribute_2x2_dst_tag_comb #(
+						.DATA_WIDTH(DATA_WIDTH),
+						.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH - s - 1)
+					) dis_2x2(
+						.i_valid({ (o_cmd_stage[s].o_cmd_valid_wire_inner[HighDataInIdxMSBInverseOffset] & wire_valid_inner[s+1][HighDataInIdxMSBInverseOffset]), (o_cmd_stage[s].o_cmd_valid_wire_inner[LowDataInIdxMSBInverseOffset] & wire_valid_inner[s+1][LowDataInIdxMSBInverseOffset]) }),
+						.i_data_bus({wire_data_inner[s+1][HighDataInIdxMSBInverseOffset], wire_data_inner[s+1][LowDataInIdxMSBInverseOffset]}),
+						.o_valid({wire_valid_inner[s+2][2*(i+group_switch_offset)+1], wire_valid_inner[s+2][2*(i+group_switch_offset)]}),
+						.o_data_bus({wire_data_inner[s+2][2*(i+group_switch_offset)+1], wire_data_inner[s+2][2*(i+group_switch_offset)]}),
+						.i_en(i_en),
+						.i_cmd({o_cmd_stage[s].o_cmd_data_wire_inner[HighDataInIdxMSBInverseOffset], o_cmd_stage[s].o_cmd_data_wire_inner[LowDataInIdxMSBInverseOffset]}),
+						.o_cmd({o_cmd_stage[s+1].o_cmd_data_wire_inner[2*i+1], o_cmd_stage[s+1].o_cmd_data_wire_inner[2*i]}),
+						.o_cmd_valid({o_cmd_stage[s+1].o_cmd_valid_wire_inner[2*i+1], o_cmd_stage[s+1].o_cmd_valid_wire_inner[2*i]})
+					);
+				end
 			end
 		end
 	end
