@@ -19,6 +19,9 @@
 //                                                     X              X            X              X 
 //     i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \---->|¯¯¯|--/ \-->|¯¯¯|--/ \-->|¯¯¯|----/ \->|¯¯¯|-->
 //     i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|-->
+//
+//        CONNECTION FUNCTION                   INVERSE SHUFFLE      ,,         SHUFFLE       SHUFFLE
+//       CONNECTION GROUP SIZE                         8             4             4             8
 //          
 // Control Signal
 //     i_valid[0]-->|¯¯¯|<--ctrl[2:0] 
@@ -38,15 +41,15 @@
 module tb_benes_comb();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 2;
-	parameter NUM_SWITCH_IN = 2;
+    parameter NUM_INPUT_DATA = 4;
 
 	//parameter
+	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
 	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
 	
-	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
 	// interface
@@ -168,7 +171,7 @@ module tb_benes_comb();
     benes_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH),
-        .NUM_SWITCH_IN(NUM_SWITCH_IN)
+        .NUM_INPUT_DATA(NUM_INPUT_DATA)
       ) dut(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
@@ -188,15 +191,15 @@ endmodule
 module tb_benes_comb();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 2;
-	parameter NUM_SWITCH_IN = 4;
+    parameter NUM_INPUT_DATA = 8;
 
 	//parameter
+	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
 	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
 	
-	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
 	// interface
@@ -318,7 +321,7 @@ module tb_benes_comb();
     benes_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH),
-        .NUM_SWITCH_IN(NUM_SWITCH_IN)
+        .NUM_INPUT_DATA(NUM_INPUT_DATA)
       ) dut(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
@@ -340,15 +343,15 @@ endmodule
 module tb_benes_comb();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 2;
-	parameter NUM_SWITCH_IN = 8;
+    parameter NUM_INPUT_DATA = 16;
 
 	//parameter
+	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
 	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
 	
-	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
 	// interface
@@ -470,7 +473,7 @@ module tb_benes_comb();
     benes_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH),
-        .NUM_SWITCH_IN(NUM_SWITCH_IN)
+        .NUM_INPUT_DATA(NUM_INPUT_DATA)
       ) dut(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
@@ -492,15 +495,15 @@ endmodule
 module tb_benes_comb();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 2;
-	parameter NUM_SWITCH_IN = 16;
+    parameter NUM_INPUT_DATA = 32;
 
 	//parameter
+	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
 	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
 	
-	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
 	// interface
@@ -622,7 +625,7 @@ module tb_benes_comb();
     benes_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH),
-        .NUM_SWITCH_IN(NUM_SWITCH_IN)
+        .NUM_INPUT_DATA(NUM_INPUT_DATA)
       ) dut(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),

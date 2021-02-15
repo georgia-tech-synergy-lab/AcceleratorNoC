@@ -22,7 +22,10 @@
 //                                                     X              X            X              X 
 //     i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \---->|¯¯¯|--/ \-->|¯¯¯|--/ \-->|¯¯¯|----/ \->|¯¯¯|-->
 //     i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|-->
-//          
+//
+//        CONNECTION FUNCTION                   INVERSE SHUFFLE      ,,         SHUFFLE       SHUFFLE
+//       CONNECTION GROUP SIZE                         8             4             4             8
+//        
 // Control Signal
 //     i_valid[0]-->|¯¯¯|<--i_cmd[2:0] 
 //     i_valid[1]-->|___|
@@ -30,10 +33,12 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
+// Note: use the SIMPLE version distribute_2x2_comb.
+// Need to set "`define in distribute_2x2_comb.v"
 module benes_comb#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
-	parameter NUM_SWITCH_IN = 8    // multiple be 2^n
+	parameter NUM_INPUT_DATA = 8    // multiple be 2^n
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -47,7 +52,7 @@ module benes_comb#(
 	i_cmd           // command 
 );
 	//parameter
-	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
+	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 
 	localparam LEVEL = $clog2(NUM_INPUT_DATA);
 	localparam TOTAL_STAGE = 2*LEVEL-1;
@@ -76,7 +81,7 @@ module benes_comb#(
 	wire   [DATA_WIDTH-1:0]                      connection[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
 	wire                                         connection_valid[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
 
-	genvar i,j,k,s;
+	genvar i,k,s;
 	
 	generate
 		// first stage
