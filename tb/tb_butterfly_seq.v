@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_butterfly_comb
+// Top Module:  tb_butterfly_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
@@ -33,15 +33,15 @@
 /////////////////////////////////////////////////////////////
 
 
-// `define TEST_4_butterfly
-`define TEST_8_butterfly
+`define TEST_4_butterfly
+// `define TEST_8_butterfly
 
 `ifdef TEST_8_butterfly
-module tb_butterfly_comb();
+module tb_butterfly_seq();
     parameter DATA_WIDTH = 4;
     parameter NUM_INPUT_DATA = 8;
 	parameter COMMMAND_WIDTH  = $clog2(NUM_INPUT_DATA);   // = length of index of destination in binary 
-    parameter DESTINATION_TAG_WIDTH = COMMMAND_WIDTH; // destination tag, each level consumes 1 bit.
+    parameter DESTINATION_TAG_WIDTH = COMMMAND_WIDTH;     // destination tag, each level consumes 1 bit.
 	
     // parameter
 	localparam  NUM_STAGE = $clog2(NUM_INPUT_DATA);
@@ -50,6 +50,7 @@ module tb_butterfly_comb();
 	
 	// interface
 	reg                                                        clk;
+	reg                                                        rst;
 
 	reg    [NUM_INPUT_DATA-1:0]                                i_valid;             
 	reg    [WIDTH_INPUT_DATA-1:0]                              i_data_bus;
@@ -67,13 +68,23 @@ module tb_butterfly_comb();
         clk = 1'b0;
         // not enable at start
         #40
+        rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b0;
         i_cmd = {3'b111,3'b011,3'b110,3'b010,3'b101,3'b001,3'b100,3'b000};
         
+        // reset
+        #40
+        rst = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {3'b111,3'b011,3'b110,3'b010,3'b101,3'b001,3'b100,3'b000};
+        
         // reg active -- Pass Through
         #40
+        rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
@@ -81,6 +92,7 @@ module tb_butterfly_comb();
     
         // reg active -- Pass Switch
         #40
+        rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
@@ -88,6 +100,7 @@ module tb_butterfly_comb();
                 
         // reg active -- No Pass
         #40
+        rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b0}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
@@ -95,6 +108,7 @@ module tb_butterfly_comb();
 
         // change data half way  -- Pass Through
         #40
+        rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
@@ -102,6 +116,7 @@ module tb_butterfly_comb();
         
         // invalid high output -- Pass Through
         #40
+        rst = 1'b0;
         i_valid = {(NUM_INPUT_DATA>>1){2'b10}};
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
         i_en = 1'b1;
@@ -109,6 +124,7 @@ module tb_butterfly_comb();
        
         // invalid low output  -- Pass Through
         #40
+        rst = 1'b0;
         i_valid = {(NUM_INPUT_DATA>>1){2'b01}};
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
         i_en = 1'b1;
@@ -118,10 +134,12 @@ module tb_butterfly_comb();
     end
 
     // instantiate DUT (device under test)
-    butterfly_comb #(
+    butterfly_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_INPUT_DATA(NUM_INPUT_DATA)
       ) dut(
+		.clk(clk),
+	    .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),
@@ -139,7 +157,7 @@ endmodule
 
 
 `ifdef TEST_4_butterfly
-module tb_butterfly_comb();
+module tb_butterfly_seq();
     parameter DATA_WIDTH = 4;
     parameter NUM_INPUT_DATA = 4;
 	parameter COMMMAND_WIDTH  = $clog2(NUM_INPUT_DATA);   // = length of index of destination in binary 
@@ -152,6 +170,7 @@ module tb_butterfly_comb();
 	
 	// interface
 	reg                                                        clk;
+	reg                                                        rst;
 
 	reg    [NUM_INPUT_DATA-1:0]                                i_valid;             
 	reg    [WIDTH_INPUT_DATA-1:0]                              i_data_bus;
@@ -171,13 +190,23 @@ module tb_butterfly_comb();
         clk = 1'b0;
         // not enable at start
         #40
+        rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b0;
         i_cmd = {2'b11,2'b01,2'b10,2'b00};
 
+        // reset
+        #40
+        rst = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
+        i_en = 1'b1;
+        i_cmd = {2'b11,2'b01,2'b10,2'b00};
+    
         // reg active -- Pass Through
         #40
+        rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
@@ -185,6 +214,7 @@ module tb_butterfly_comb();
     
         // reg active -- Pass Switch
         #40
+        rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
@@ -192,6 +222,7 @@ module tb_butterfly_comb();
                 
         // reg active -- No Pass
         #40
+        rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b0}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
@@ -199,6 +230,7 @@ module tb_butterfly_comb();
 
         // change data half way  -- Pass Through
         #40
+        rst = 1'b0;
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
         i_en = 1'b1;
@@ -206,6 +238,7 @@ module tb_butterfly_comb();
         
         // invalid high output -- Pass Through
         #40
+        rst = 1'b0;
         i_valid = {(NUM_INPUT_DATA>>1){2'b10}};
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
         i_en = 1'b1;
@@ -213,6 +246,7 @@ module tb_butterfly_comb();
        
         // invalid low output  -- Pass Through
         #40
+        rst = 1'b0;
         i_valid = {(NUM_INPUT_DATA>>1){2'b01}};
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
         i_en = 1'b1;
@@ -222,10 +256,12 @@ module tb_butterfly_comb();
     end
 
     // instantiate DUT (device under test)
-    butterfly_comb #(
+    butterfly_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_INPUT_DATA(NUM_INPUT_DATA)
     ) dut(
+		.clk(clk),
+	    .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),
