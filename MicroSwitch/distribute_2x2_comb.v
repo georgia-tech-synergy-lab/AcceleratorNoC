@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  distribute_2x2_seq
+// Top Module:  distribute_2x2_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
@@ -53,7 +53,7 @@
 //       o_data_low  = o_data_bus[DATA_WIDTH-1: 0]
 //
 // ----------------------------------------------
-// simple version 2 bit control
+// simple version: 2 bit control
 //
 // Unicast Function:
 //                         Pass_Through                                  Pass_Swtich                         
@@ -80,11 +80,103 @@
 //                           /     \                                       /     \                                         /     \
 //                          v       v                                     v       v                                       v       v
 //                  o_data_high   o_data_high                      o_data_low    o_data_low                            Invalid  Invalid    
-//  
+//
+//
+// ----------------------------------------------
+// unicast only verion: 1 bit control
+//
+// Unicast Function:
+//                         Pass_Through                                  Pass_Swtich                         
+//            
+//       i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)                  
+//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]         
+//                           \     /                                       \     /                                                                                                
+//                            v   v                                         v   v                                                            
+//                            |¯¯¯| <--i_valid=2'b11                        |¯¯¯| <--i_valid=2'b11               
+//                            |___| <--i_cmd=1'b0                           |___| <--i_cmd=1'b1                
+//                           /     \                                       /     \                              
+//                          v       v                                     v       v                             
+//                  o_data_high   o_data_low                      o_data_low     o_data_high        
+//
+// Note: the output port is Invalid when corresponding input data is invalid
+//
+// Special Function:       No Pass   
+//                 
+//       i_data_bus(high)          i_data_bus(low)            
+//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    
+//                        \     /                                                                  
+//                         v   v                             
+//                         |¯¯¯| <--i_valid=2'b00
+//                         |___| <--i_cmd=1'bx      
+//                        /     \
+//                       v       v
+//                  Invalid  Invalid    
+//
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-`define SIMPLE
+// `define COMPLEX    // 3 bit command
+// `define SIMPLE     // 2 bit command
+`define UNICAST_ONLY  // 1 bit command
+
+`ifdef UNICAST_ONLY
+module distribute_2x2_comb#(
+	parameter DATA_WIDTH = 32,
+	parameter COMMMAND_WIDTH  = 1
+)(
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // command 
+);
+	// interface
+	input  [1:0]                  i_valid;             
+	input  [2*DATA_WIDTH-1:0]     i_data_bus;
+	
+	output [1:0]                  o_valid;             
+	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
+	    
+	input                         i_en;
+	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+		// 11 --> Multicast_HighIn
+		// 00 --> Multicast_LowIn
+		// 10 --> Pass Through
+		// 01 --> Pass Switch 
+
+	// merge level
+	merge_2x1_comb#(
+		.DATA_WIDTH(DATA_WIDTH),
+		.COMMMAND_WIDTH(COMMMAND_WIDTH)
+	)merge_i_data_high(
+		.i_valid({i_valid[0], i_valid[1]}),
+		.i_data_bus({i_data_bus[0+:DATA_WIDTH], i_data_bus[DATA_WIDTH+:DATA_WIDTH]}),
+		.o_valid(o_valid[1]),
+		.o_data_bus(o_data_bus[DATA_WIDTH+:DATA_WIDTH]),
+		.i_en(i_en),
+		.i_cmd(i_cmd)
+	);
+
+	merge_2x1_comb#(
+		.DATA_WIDTH(DATA_WIDTH),
+		.COMMMAND_WIDTH(COMMMAND_WIDTH)
+	)merge_i_data_low(
+		.i_valid(i_valid),
+		.i_data_bus(i_data_bus),
+		.o_valid(o_valid[0]),
+		.o_data_bus(o_data_bus[0+:DATA_WIDTH]),
+		.i_en(i_en),
+		.i_cmd(i_cmd)
+	);
+endmodule
+`endif
+
+
 `ifdef SIMPLE
 module distribute_2x2_comb#(
 	parameter DATA_WIDTH = 32,
@@ -140,9 +232,9 @@ module distribute_2x2_comb#(
 		.i_cmd(i_cmd[0])
 	);
 endmodule
+`endif
 
-
-`else
+`ifdef COMPLEX
 module distribute_2x2_comb#(
 	parameter DATA_WIDTH = 32,
 	parameter COMMMAND_WIDTH  = 3

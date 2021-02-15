@@ -24,7 +24,10 @@
 //                                                     X              X            X              X 
 //     i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \---->|¯¯¯|--/ \-->|¯¯¯|--/ \-->|¯¯¯|----/ \->|¯¯¯|-->
 //     i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|-->
-//          
+//
+//        CONNECTION FUNCTION                   INVERSE SHUFFLE      ,,         SHUFFLE       SHUFFLE
+//       CONNECTION GROUP SIZE                         8             4             4             8
+//        
 // Control Signal
 //     i_valid[0]-->|¯¯¯|<--i_cmd[2:0] 
 //     i_valid[1]-->|___|
@@ -36,10 +39,13 @@
 // `define PIPELINE2STAGE
 
 `ifdef FULL_PIPELINE // full pipeline means every stage is a pipeline stage.
+
+// Note: use the SIMPLE version distribute_2x2_seq.
+// Need to set "`define SIMPLE in distribute_2x2_seq.v"
 module benes_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
-	parameter NUM_SWITCH_IN = 8    // multiple be 2^n
+	parameter NUM_INPUT_DATA = 8    // multiple be 2^n
 )(
     // timeing signals
     clk,
@@ -57,7 +63,7 @@ module benes_seq#(
 	i_cmd           // command 
 );
 	//parameter
-	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
+	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 
 	localparam LEVEL = $clog2(NUM_INPUT_DATA);
 	localparam TOTAL_STAGE = 2*LEVEL-1;
@@ -258,11 +264,13 @@ endmodule
                        // first half and second half are separately different two pipeline stages.
 				       // first pipeline stage has 0~2 (3 stages in total) 
 				       // second pipeline stage has 3~4 (2 stages in total) 
-					   
+
+// Note: use the SIMPLE version distribute_2x2_seq.
+// Need to set "`define SIMPLE in distribute_2x2_seq.v"			   
 module benes_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
-	parameter NUM_SWITCH_IN = 8    // multiple be 2^n
+	parameter NUM_INPUT_DATA = 8    // multiple be 2^n
 )(
     // timeing signals
     clk,
@@ -280,7 +288,7 @@ module benes_seq#(
 	i_cmd           // command 
 );
 	//parameter
-	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
+	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 
 	localparam LEVEL = $clog2(NUM_INPUT_DATA);
 
@@ -320,7 +328,6 @@ module benes_seq#(
 	reg    [COMMMAND_WIDTH-1:0]                  pipeline_i_cmd_reg[0:NUM_PIPELINE_STAGE-1][0:TOTAL_STAGE*NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 0 at 2 pipeline stage code.
 	reg    [DATA_WIDTH-1:0]                      pipeline_data_bus_reg[0:NUM_PIPELINE_STAGE-1][0:NUM_INPUT_DATA-1];
 	reg                                          pipeline_data_valid_reg[0:NUM_PIPELINE_STAGE-1][0:NUM_INPUT_DATA-1];
-
 
 	genvar i,j,k,s;
 	
@@ -576,5 +583,4 @@ module benes_seq#(
 
 
 endmodule
-
 `endif

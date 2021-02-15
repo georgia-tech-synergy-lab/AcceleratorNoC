@@ -22,6 +22,9 @@
 //                                                     X              X            X              X 
 //     i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \---->|¯¯¯|--/ \-->|¯¯¯|--/ \-->|¯¯¯|----/ \->|¯¯¯|-->
 //     i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|-->
+//
+//        CONNECTION FUNCTION                   INVERSE SHUFFLE      ,,         SHUFFLE       SHUFFLE
+//       CONNECTION GROUP SIZE                         8             4             4             8
 //          
 // Control Signal
 //     i_valid[0]-->|¯¯¯|<--ctrl[2:0] 
@@ -31,25 +34,25 @@
 /////////////////////////////////////////////////////////////
 
 // design the following testbench for 2^n inputs. n could be any integer.
-// `define TEST_4_INPUT_BENES
+`define TEST_4_INPUT_BENES
 // `define TEST_8_INPUT_BENES  //change #10 into #20
 // `define TEST_16_INPUT_BENES //change #10 into #40
-`define TEST_32_INPUT_BENES    //change #10 into #80
+// `define TEST_32_INPUT_BENES    //change #10 into #80
 
 
 `ifdef TEST_4_INPUT_BENES
 module tb_benes_seq();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 2;
-	parameter NUM_SWITCH_IN = 2;
+	parameter NUM_INPUT_DATA = 4;
 
 	//parameter
+    localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
 	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
-	
-	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
+
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
 	// interface
@@ -185,7 +188,7 @@ module tb_benes_seq();
     benes_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH),
-        .NUM_SWITCH_IN(NUM_SWITCH_IN)
+        .NUM_INPUT_DATA(NUM_INPUT_DATA)
       ) dut(
 	    .clk(clk),
 	    .rst(rst),
@@ -207,15 +210,15 @@ endmodule
 module tb_benes_seq();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 2;
-	parameter NUM_SWITCH_IN = 4;
+	parameter NUM_INPUT_DATA = 8;
 
 	//parameter
+    localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
 	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
-	
-	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
+
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
 	// interface
@@ -351,7 +354,7 @@ module tb_benes_seq();
     benes_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH),
-        .NUM_SWITCH_IN(NUM_SWITCH_IN)
+        .NUM_INPUT_DATA(NUM_INPUT_DATA)
       ) dut(
 	    .clk(clk),
 	    .rst(rst),
@@ -375,15 +378,15 @@ endmodule
 module tb_benes_seq();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 2;
-	parameter NUM_SWITCH_IN = 8;
+	parameter NUM_INPUT_DATA = 16;
 
 	//parameter
+    localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
 	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
 	
-	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
 	// interface
@@ -519,7 +522,7 @@ module tb_benes_seq();
     benes_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH),
-        .NUM_SWITCH_IN(NUM_SWITCH_IN)
+        .NUM_INPUT_DATA(NUM_INPUT_DATA)
       ) dut(
 	    .clk(clk),
 	    .rst(rst),
@@ -543,15 +546,15 @@ endmodule
 module tb_benes_seq();
     parameter DATA_WIDTH = 4;
 	parameter COMMMAND_WIDTH  = 2;
-	parameter NUM_SWITCH_IN = 16;
+	parameter NUM_INPUT_DATA = 32;
 
 	//parameter
+    localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
 	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
 	
-	localparam NUM_INPUT_DATA = 2*NUM_SWITCH_IN;
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
 	// interface
@@ -687,7 +690,7 @@ module tb_benes_seq();
     benes_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH),
-        .NUM_SWITCH_IN(NUM_SWITCH_IN)
+        .NUM_INPUT_DATA(NUM_INPUT_DATA)
       ) dut(
 	    .clk(clk),
 	    .rst(rst),
