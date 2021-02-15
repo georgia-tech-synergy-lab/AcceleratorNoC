@@ -85,7 +85,7 @@ module distribute_2x2_dst_tag_seq#(
 	// localparam
 	parameter NUM_DATA_IN = 2;
 	parameter IN_COMMAND_WIDTH = NUM_DATA_IN * DESTINATION_TAG_WIDTH;
-	parameter OUT_COMMAND_WIDTH = (IN_COMMAND_WIDTH>2)?(IN_COMMAND_WIDTH-2):1;
+	parameter OUT_COMMAND_WIDTH = (IN_COMMAND_WIDTH>2)?(IN_COMMAND_WIDTH-2):2;
 
 	// interface
 	input                           clk;
@@ -166,7 +166,7 @@ module distribute_2x2_dst_tag_seq#(
 		// output command
 		always@(posedge clk)
 		begin
-			o_cmd_inner <= {1'bx, 1'bx};
+			o_cmd_inner <= {1'bx,1'bx};
 			o_cmd_valid_inner <= {1'b0, 1'b0};
 		end
 	end
