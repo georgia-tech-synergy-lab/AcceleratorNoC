@@ -113,12 +113,55 @@
 //                       v       v
 //                  Invalid  Invalid    
 //
+// ----------------------------------------------
+// DESTINATION_TAG verion: 1 bit control
+//
+// Unicast Function:
+//                  Both_Contention_Highout                        Both_Contention_Lowout
+//
+//       i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)
+//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]
+//                           \     /                                       \     /
+//                            v   v                                         v   v
+//                            |¯¯¯| <--i_valid=2'b11                        |¯¯¯| <--i_valid=2'b11
+//                            |___| <--i_cmd=2'b11                          |___| <--i_cmd=2'b00
+//                           /     \                                       /     \
+//                          v       v                                     v       v
+//                  o_data_high   Invalid                             Invalid   o_data_low
+//
+//
+//                         Pass Through                                  Pass Switch
+//
+//       i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)
+//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]
+//                           \     /                                       \     /
+//                            v   v                                         v   v
+//                            |¯¯¯| <--i_valid=2'b11                        |¯¯¯| <--i_valid=2'b11
+//                            |___| <--i_cmd=2'b10                          |___| <--i_cmd=2'b01
+//                           /     \                                       /     \
+//                          v       v                                     v       v
+//                  o_data_high   o_data_low                        o_data_low   o_data_high
+//
+// Note: the output port is Invalid when corresponding input data is invalid
+//
+// Special Function:       No Pass   
+//                 
+//       i_data_bus(high)          i_data_bus(low)            
+//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    
+//                        \     /                                                                  
+//                         v   v                             
+//                         |¯¯¯| <--i_valid=2'b00
+//                         |___| <--i_cmd=2'bxx      
+//                        /     \
+//                       v       v
+//                  Invalid  Invalid    
+//
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-// `define COMPLEX    // 3 bit command
-// `define SIMPLE     // 2 bit command
-`define UNICAST_ONLY  // 1 bit command
+// `define COMPLEX         // 3 bit command
+// `define SIMPLE          // 2 bit command
+`define UNICAST_ONLY    // 1 bit command
 
 `ifdef UNICAST_ONLY
 module distribute_2x2_seq#(
