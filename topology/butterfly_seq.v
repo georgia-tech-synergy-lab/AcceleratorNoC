@@ -109,7 +109,6 @@ module butterfly_seq#(
 	begin:o_cmd_stage	 
 	    // index 0 is for the output wire of the first stage
 		wire [DESTINATION_TAG_WIDTH-2-s:0]                     o_cmd_data_wire_inner[0:NUM_INPUT_DATA-1];       
-		wire                                                   o_cmd_valid_wire_inner[0:NUM_INPUT_DATA-1];
 	end
 
 	// command generation
@@ -138,8 +137,7 @@ module butterfly_seq#(
 			.o_data_bus({wire_data_inner[1][2*i+1], wire_data_inner[1][2*i]}),
 			.i_en(i_en),
 			.i_cmd({reg_cmd_inner[2*i+1], reg_cmd_inner[2*i]}),
-			.o_cmd({o_cmd_stage[0].o_cmd_data_wire_inner[2*i+1], o_cmd_stage[0].o_cmd_data_wire_inner[2*i]}),
-			.o_cmd_valid({o_cmd_stage[0].o_cmd_valid_wire_inner[2*i+1], o_cmd_stage[0].o_cmd_valid_wire_inner[2*i]})
+			.o_cmd({o_cmd_stage[0].o_cmd_data_wire_inner[2*i+1], o_cmd_stage[0].o_cmd_data_wire_inner[2*i]})
 		);
 	end
 
@@ -175,14 +173,13 @@ module butterfly_seq#(
 					) dis_2x2(
 						.clk(clk),
 						.rst(rst),
-						.i_valid({ (o_cmd_stage[s].o_cmd_valid_wire_inner[HighDataInIdxMSBInverseOffset] & wire_valid_inner[s+1][HighDataInIdxMSBInverseOffset]), (o_cmd_stage[s].o_cmd_valid_wire_inner[LowDataInIdxMSBInverseOffset] & wire_valid_inner[s+1][LowDataInIdxMSBInverseOffset]) }),
+						.i_valid( {wire_valid_inner[s+1][HighDataInIdxMSBInverseOffset],  wire_valid_inner[s+1][LowDataInIdxMSBInverseOffset]} ),
 						.i_data_bus({wire_data_inner[s+1][HighDataInIdxMSBInverseOffset], wire_data_inner[s+1][LowDataInIdxMSBInverseOffset]}),
 						.o_valid({wire_valid_inner[s+2][2*(i+group_switch_offset)+1], wire_valid_inner[s+2][2*(i+group_switch_offset)]}),
 						.o_data_bus({wire_data_inner[s+2][2*(i+group_switch_offset)+1], wire_data_inner[s+2][2*(i+group_switch_offset)]}),
 						.i_en(i_en),
 						.i_cmd({o_cmd_stage[s].o_cmd_data_wire_inner[HighDataInIdxMSBInverseOffset], o_cmd_stage[s].o_cmd_data_wire_inner[LowDataInIdxMSBInverseOffset]}),
-						.o_cmd(),
-						.o_cmd_valid()
+						.o_cmd()
 					);
 				end
 				else
@@ -193,14 +190,13 @@ module butterfly_seq#(
 					) dis_2x2(
 						.clk(clk),
 						.rst(rst),
-						.i_valid({ (o_cmd_stage[s].o_cmd_valid_wire_inner[HighDataInIdxMSBInverseOffset] & wire_valid_inner[s+1][HighDataInIdxMSBInverseOffset]), (o_cmd_stage[s].o_cmd_valid_wire_inner[LowDataInIdxMSBInverseOffset] & wire_valid_inner[s+1][LowDataInIdxMSBInverseOffset]) }),
+						.i_valid( {wire_valid_inner[s+1][HighDataInIdxMSBInverseOffset],  wire_valid_inner[s+1][LowDataInIdxMSBInverseOffset]} ),
 						.i_data_bus({wire_data_inner[s+1][HighDataInIdxMSBInverseOffset], wire_data_inner[s+1][LowDataInIdxMSBInverseOffset]}),
 						.o_valid({wire_valid_inner[s+2][2*(i+group_switch_offset)+1], wire_valid_inner[s+2][2*(i+group_switch_offset)]}),
 						.o_data_bus({wire_data_inner[s+2][2*(i+group_switch_offset)+1], wire_data_inner[s+2][2*(i+group_switch_offset)]}),
 						.i_en(i_en),
 						.i_cmd({o_cmd_stage[s].o_cmd_data_wire_inner[HighDataInIdxMSBInverseOffset], o_cmd_stage[s].o_cmd_data_wire_inner[LowDataInIdxMSBInverseOffset]}),
-						.o_cmd({o_cmd_stage[s+1].o_cmd_data_wire_inner[2*(i+group_switch_offset)+1], o_cmd_stage[s+1].o_cmd_data_wire_inner[2*(i+group_switch_offset)]}),
-						.o_cmd_valid({o_cmd_stage[s+1].o_cmd_valid_wire_inner[2*(i+group_switch_offset)+1], o_cmd_stage[s+1].o_cmd_valid_wire_inner[2*(i+group_switch_offset)]})
+						.o_cmd({o_cmd_stage[s+1].o_cmd_data_wire_inner[2*(i+group_switch_offset)+1], o_cmd_stage[s+1].o_cmd_data_wire_inner[2*(i+group_switch_offset)]})
 					);
 				end
 			end

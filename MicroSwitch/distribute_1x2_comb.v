@@ -18,7 +18,7 @@
 //
 //       o_data_high = o_data_bus[2*DATA_WIDTH-1: DATA_WIDTH]
 //       o_data_low  = o_data_bus[DATA_WIDTH-1: 0]
-//       i_valid = 2'b1x; where x indicates that we don't care about this bit
+//       i_valid = 2'b1?; where ? indicates that we don't care about this bit
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////

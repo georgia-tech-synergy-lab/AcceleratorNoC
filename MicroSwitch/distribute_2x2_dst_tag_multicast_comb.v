@@ -1,11 +1,12 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  distribute_2x2_dst_tag_comb
+// Top Module:  distribute_2x2_dst_tag_multicast_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
 // Dummy Data:  {DATA_WIDTH{1'bz}}
-// 
+// Note:        !Use "1'bx" command to enable multicast !
+//
 // ----------------------------------------------
 // DESTINATION_TAG verion: 1 bit control for each data.
 //
@@ -20,7 +21,8 @@
 //      o_cmd=(n-2)b'???? <-- |___| <--i_cmd=n'b11????  o_cmd=(n-2)b'???? <-- |___| <--i_cmd=n'b00????
 //                           /     \                                         /     \
 //                          v       v                                       v       v
-//                  o_data_high   Invalid                               Invalid   o_data_low
+//                  o_data_high   Invalid                               Invalid   o_data_high
+//    When both input compete for the same output port, then the highIn has higher priority 
 //
 //
 //                         Pass Through                                    Pass Switch
@@ -35,6 +37,22 @@
 //                          v       v                                       v       v
 //                  o_data_high   o_data_low                          o_data_low   o_data_high
 //
+//
+// Multicast Function:
+//                     Multicast_HighIn                                  Multicast_LowIn
+//
+//       i_data_bus(high)          i_data_bus(low)         i_data_bus(high)          i_data_bus(low)
+//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]      [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]
+//                           \     /                                         \     /
+//                            v   v                                           v   v
+//                            |¯¯¯| <--i_valid=2'b11                          |¯¯¯| <--i_valid=2'b11
+//      o_cmd=(n-2)b'???? <-- |___| <--i_cmd=n'bx?????  o_cmd=(n-2)b'???? <-- |___| <--i_cmd=n'b0x???? or n'b1x????
+//                           /     \            ||                           /     \            ||
+//                          v       v           vv                          v       v           vv 
+//                o_data_high     o_data_high   used                o_data_low     o_data_low  used
+//  Note: If both Input want to be multicasted, highIn has the higher priority.
+//
+//
 // Note: the output port is Invalid when corresponding input data is invalid
 //
 // Special Function:      No Pass   
@@ -44,10 +62,10 @@
 //                        \     /                                                                  
 //                         v   v                             
 //                         |¯¯¯| <--i_valid=2'b00
-//    o_cmd=(n-2)b'???? <--|___| <--i_cmd=n'b????      
-//                        /     \
-//                       v       v
-//                  Invalid  Invalid    
+//    o_cmd=(n-2)b'???? <--|___| <--i_cmd=n'b??????  
+//                        /     \            ||
+//                       v       v           vv
+//                  Invalid  Invalid        used
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
@@ -56,7 +74,8 @@
                         // When both input choose the same output port then HighIn has higher priority
 
 
-module distribute_2x2_dst_tag_comb#(
+
+module distribute_2x2_dst_tag_multicast_comb#(
 	parameter DATA_WIDTH = 32,
 	parameter DESTINATION_TAG_WIDTH = 2
 )(
@@ -87,10 +106,16 @@ module distribute_2x2_dst_tag_comb#(
 	    
 	input                           i_en;
 	input  [IN_COMMAND_WIDTH-1:0]   i_cmd;
-		// 1x --> HighIn chooses HighOut
-		// 0x --> HighIn chooses LowOut
-		// x1 --> LowIn chooses HighOut
-		// x0 --> LowIn chooses LowOut
+		// "x" command has higher priority than 0/1.
+		// If both input want to be multicasted, high input has the higher priority.
+		// both input want to be multicasted should not appear in input.  
+		//
+		// xx,x0,x1 --> Multicast HighOut
+		// 0x,1x    --> Multicast LowOut
+		// 1?       --> HighIn chooses HighOut
+		// 0?       --> HighIn chooses LowOut
+		// ?1       --> LowIn chooses HighOut
+		// ?0       --> LowIn chooses LowOut
 		// when both input choose the same output port
 		// HighIn has higher priority.
 	
@@ -135,6 +160,18 @@ module distribute_2x2_dst_tag_comb#(
 						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_valid_inner = (i_valid[0])? ((i_valid[1])?2'b11:2'b10) : ((i_valid[1])?2'b01:2'b00);
 					end
+					2'b1x, 2'b0x: // Multicast LowIn
+					begin
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_valid_inner = (i_valid[0])?2'b11:2'b00;
+					end
+					2'bx0,2'bx1,2'bxx: // Multicast HighIn
+					begin
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_valid_inner = (i_valid[1])?2'b11:2'b00;
+					end
 					default:
 					begin
 						o_valid_inner = 2'b00;
@@ -174,7 +211,7 @@ module distribute_2x2_dst_tag_comb#(
 					2'b00: // Both_Contention_Lowout
 					begin
 						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid[0])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_valid_inner = (i_valid[0])?2'b01:2'b00;
 					
 						o_cmd_inner = { {(DESTINATION_TAG_WIDTH-1){1'bz}}, i_cmd[0+:(DESTINATION_TAG_WIDTH-1)]};
@@ -194,6 +231,22 @@ module distribute_2x2_dst_tag_comb#(
 						o_valid_inner = (i_valid[0])? ((i_valid[1])?2'b11:2'b10) : ((i_valid[1])?2'b01:2'b00);
 
 						o_cmd_inner = {i_cmd[0+:(DESTINATION_TAG_WIDTH-1)], i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)]};
+					end
+					2'b1x, 2'b0x: // Multicast LowIn
+					begin
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_valid_inner = (i_valid[0])?2'b11:2'b00;
+
+						o_cmd_inner = (i_valid[0])?{i_cmd[0+:(DESTINATION_TAG_WIDTH-1)], i_cmd[0+:(DESTINATION_TAG_WIDTH-1)]} :{{(DESTINATION_TAG_WIDTH-1){1'bz}}, {(DESTINATION_TAG_WIDTH-1){1'bz}}};
+					end
+					2'bx0,2'bx1,2'bxx: // Multicast HighIn
+					begin
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_valid_inner = (i_valid[1])?2'b11:2'b00;
+
+						o_cmd_inner = (i_valid[1])?{i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)], i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)]} :{{(DESTINATION_TAG_WIDTH-1){1'bz}}, {(DESTINATION_TAG_WIDTH-1){1'bz}}};
 					end
 					default:
 					begin
