@@ -6,52 +6,53 @@
 // Timing:      Sequential Logic
 // Reset:       Synchronized Reset [High Reset]
 // Latency:     2 cycle for Complex; 1 cycle for Simple
-// Dummy Data:  {DATA_WIDTH{1'b0}}
-// 
-// Total two versions are supported here, including complex (9 functions[3 bit control]) and simple (4 functions + No Pass[2 bit control]) version
-// uncomment `define SIMPLE to use SIMPLE VERSION
+// Dummy Data:  {DATA_WIDTH{1'bz}}
+// Note:        This distribute_2x2 switch is specially designed for
+//              destination-tag-based routing topology like cube_dst_tag
+//
 // ----------------------------------------------
-// DESTINATION_TAG verion: 1 bit control
+// DESTINATION_TAG verion: 1 bit control for each data.
 //
 // Unicast Function:
-//                  Both_Contention_Highout                        Both_Contention_Lowout
+//                  Both_Contention_Highout                          Both_Contention_Lowout
 //
-//       i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)
-//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]
-//                           \     /                                       \     /
-//                            v   v                                         v   v
-//                            |¯¯¯| <--i_valid=2'b11                        |¯¯¯| <--i_valid=2'b11
-//                            |___| <--i_cmd=2'b11                          |___| <--i_cmd=2'b00
-//                           /     \                                       /     \
-//                          v       v                                     v       v
-//                  o_data_high   Invalid                             Invalid   o_data_low
+//       i_data_bus(high)          i_data_bus(low)         i_data_bus(high)          i_data_bus(low)
+//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]      [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]
+//                           \     /                                         \     /
+//                            v   v                                           v   v
+//                            |¯¯¯| <--i_valid=2'b11                          |¯¯¯| <--i_valid=2'b11
+//      o_cmd=(n-2)b'???? <-- |___| <--i_cmd=n'b11????  o_cmd=(n-2)b'???? <-- |___| <--i_cmd=n'b00????
+//                           /     \                                         /     \
+//                          v       v                                       v       v
+//                  o_data_high   Invalid                               Invalid   o_data_low
 //
 //
-//                         Pass Through                                  Pass Switch
+//                         Pass Through                                    Pass Switch
 //
-//       i_data_bus(high)          i_data_bus(low)      i_data_bus(high)          i_data_bus(low)
-//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]
-//                           \     /                                       \     /
-//                            v   v                                         v   v
-//                            |¯¯¯| <--i_valid=2'b11                        |¯¯¯| <--i_valid=2'b11
-//                            |___| <--i_cmd=2'b10                          |___| <--i_cmd=2'b01
-//                           /     \                                       /     \
-//                          v       v                                     v       v
-//                  o_data_high   o_data_low                        o_data_low   o_data_high
+//       i_data_bus(high)          i_data_bus(low)        i_data_bus(high)          i_data_bus(low)
+//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]      [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]
+//                           \     /                                         \     /
+//                            v   v                                           v   v
+//                            |¯¯¯| <--i_valid=2'b11                          |¯¯¯| <--i_valid=2'b11
+//      o_cmd=(n-2)b'???? <-- |___| <--i_cmd=n'b10????  o_cmd=(n-2)b'???? <-- |___| <--i_cmd=n'b01????
+//                           /     \                                         /     \
+//                          v       v                                       v       v
+//                  o_data_high   o_data_low                          o_data_low   o_data_high
 //
 // Note: the output port is Invalid when corresponding input data is invalid
 //
-// Special Function:       No Pass   
+// Special Function:      No Pass   
 //                 
 //       i_data_bus(high)          i_data_bus(low)            
 //    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]    
 //                        \     /                                                                  
 //                         v   v                             
 //                         |¯¯¯| <--i_valid=2'b00
-//                         |___| <--i_cmd=2'bxx      
+//    o_cmd=(n-2)b'???? <--|___| <--i_cmd=n'b????     
 //                        /     \
 //                       v       v
 //                  Invalid  Invalid    
+//
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
@@ -82,8 +83,7 @@ module tb_distribute_2x2_dst_tag_seq();
                                        // 11 --> Pass Through
                                        // 00 --> Pass Switch 
 
-    wire   [1:0]                      o_cmd_valid;        // output valid
-    wire   [OUT_COMMAND_WIDTH-1:0]    o_cmd;     // output data 
+    wire   [OUT_COMMAND_WIDTH-1:0]    o_cmd;          // output data 
     
     // Test case declaration
     // all cases for control
@@ -204,8 +204,7 @@ module tb_distribute_2x2_dst_tag_seq();
 		.o_data_bus(o_data_bus),
 		.i_en(i_en),
 		.i_cmd(i_cmd),
-        .o_cmd(o_cmd),
-        .o_cmd_valid(o_cmd_valid)
+        .o_cmd(o_cmd)
 	);
 
     always#5 clk=~clk;

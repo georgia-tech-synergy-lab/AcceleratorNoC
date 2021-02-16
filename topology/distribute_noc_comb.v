@@ -34,7 +34,7 @@
 //                                                     /        \          /  \                   
 //     i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/          \->|¯¯¯|-/    \->|¯¯¯|-->
 //                                              |___|-------------->|___|-------->|___|
-//              
+//
 //        CONNECTION FUNCTION                           BUTTERFLY       BUTTERFLY  
 //       CONNECTION GROUP SIZE                             16               8 
 //
@@ -49,8 +49,10 @@
 module distribute_noc_comb#(
 	parameter DATA_WIDTH = 32,    // could be arbitrary number
 	parameter NUM_INPUT_DATA = 8, // multiple be 2^n
+	parameter NUM_OUTPUT_DATA = 8,tjm
+	tjm
     parameter COMMMAND_WIDTH = $clog2(NUM_INPUT_DATA), // destination tag, each level consumes 1 bit.
-    parameter DESTINATION_TAG_WIDTH = COMMMAND_WIDTH // destination tag, each level consumes 1 bit.
+    parameter DESTINATION_TAG_WIDTH = COMMMAND_WIDTH  // destination tag, each level consumes 1 bit.
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -84,28 +86,9 @@ module distribute_noc_comb#(
 									// 010 -> goes the 3th destination.
 
 	// inner logic
-	reg    [NUM_INPUT_DATA-1:0]                                i_valid_inner;             
-	reg    [WIDTH_INPUT_DATA-1:0]                              i_data_bus_inner;	
-	reg    [NUM_INPUT_DATA-1:0]                                o_valid_inner;             
-	reg    [NUM_INPUT_DATA*DATA_WIDTH-1:0]                     o_data_bus_inner;	
-
-	always@(*)
-	begin
-		i_valid_inner = i_valid;
-		i_data_bus_inner = i_data_bus;
-	end
-
-	wire                                                       wire_valid_inner[0:NUM_STAGE][0:NUM_INPUT_DATA-1];
-	wire   [DATA_WIDTH-1:0]                                    wire_data_inner[0:NUM_STAGE][0:NUM_INPUT_DATA-1];
-
-	// input for the first stage
-	genvar i,s,g;
-	generate
-	for(i = 0; i< NUM_INPUT_DATA; i=i+1)
-	begin: i_wire_first_stage
-		assign wire_data_inner[0][i] = i_data_bus_inner[i*DATA_WIDTH+:DATA_WIDTH];
-		assign wire_valid_inner[0][i] = i_valid_inner[i+:1];
-	end
+	// wire data & valid inner the butterfly
+	wire                                                       wire_valid_inner[0:NUM_STAGE-1][0:NUM_INPUT_DATA-1];
+	wire   [DATA_WIDTH-1:0]                                    wire_data_inner[0:NUM_STAGE-1][0:NUM_INPUT_DATA-1];
 
 	// command inner stage definition
 	for(s=0; s<NUM_STAGE-1; s=s+1)
@@ -115,30 +98,19 @@ module distribute_noc_comb#(
 		wire                                                   o_cmd_valid_wire_inner[0:NUM_INPUT_DATA-1];
 	end
 
-	// command generation
-	reg     [DESTINATION_TAG_WIDTH-1:0]                        reg_cmd_inner[0:NUM_INPUT_DATA-1];
-
-	for(i=0; i<NUM_INPUT_DATA; i=i+1)
-	begin: command_in_first_stage
-		always@(*)
-		begin
-			reg_cmd_inner[i] = i_cmd[i*DESTINATION_TAG_WIDTH+:DESTINATION_TAG_WIDTH];
-		end
-	end
-
 	// first stage
-	for(i=0; i< NUM_SWITCH_IN; i=i+1)
+	for(i=0; i< NUM_DATA_IN; i=i+1)
 	begin:switch_first_stage			
-		distribute_2x2_dst_tag_comb #(
+		distribute_1x2_dst_tag_comb #(
 			.DATA_WIDTH(DATA_WIDTH),
 			.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH)
-		) dis_2x2(
-			.i_valid({wire_valid_inner[0][2*i+1], wire_valid_inner[0][2*i]}),
-			.i_data_bus({wire_data_inner[0][2*i+1], wire_data_inner[0][2*i]}),
-			.o_valid({wire_valid_inner[1][2*i+1], wire_valid_inner[1][2*i]}),
-			.o_data_bus({wire_data_inner[1][2*i+1], wire_data_inner[1][2*i]}),
+		) first_stage(
+			.i_valid(i_valid[i+:1]),
+			.i_data_bus(i_data_bus[i*DATA_WIDTH+:DATA_WIDTH]),
+			.o_valid({wire_valid_inner[0][2*i+1], wire_valid_inner[0][2*i]}),
+			.o_data_bus({wire_data_inner[0][2*i+1], wire_data_inner[0][2*i]}),
 			.i_en(i_en),
-			.i_cmd({reg_cmd_inner[2*i+1], reg_cmd_inner[2*i]}),
+			.i_cmd(i_cmd[i*DESTINATION_TAG_WIDTH+:DESTINATION_TAG_WIDTH]),
 			.o_cmd({o_cmd_stage[0].o_cmd_data_wire_inner[2*i+1], o_cmd_stage[0].o_cmd_data_wire_inner[2*i]}),
 			.o_cmd_valid({o_cmd_stage[0].o_cmd_valid_wire_inner[2*i+1], o_cmd_stage[0].o_cmd_valid_wire_inner[2*i]})
 		);
@@ -174,10 +146,10 @@ module distribute_noc_comb#(
 						.DATA_WIDTH(DATA_WIDTH),
         				.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH - s - 1)
 					) dis_2x2(
-						.i_valid({ (o_cmd_stage[s].o_cmd_valid_wire_inner[HighDataInIdxMSBInverseOffset] & wire_valid_inner[s+1][HighDataInIdxMSBInverseOffset]), (o_cmd_stage[s].o_cmd_valid_wire_inner[LowDataInIdxMSBInverseOffset] & wire_valid_inner[s+1][LowDataInIdxMSBInverseOffset]) }),
-						.i_data_bus({wire_data_inner[s+1][HighDataInIdxMSBInverseOffset], wire_data_inner[s+1][LowDataInIdxMSBInverseOffset]}),
-						.o_valid({wire_valid_inner[s+2][2*(i+group_switch_offset)+1], wire_valid_inner[s+2][2*(i+group_switch_offset)]}),
-						.o_data_bus({wire_data_inner[s+2][2*(i+group_switch_offset)+1], wire_data_inner[s+2][2*(i+group_switch_offset)]}),
+						.i_valid({ (o_cmd_stage[s].o_cmd_valid_wire_inner[HighDataInIdxMSBInverseOffset] & wire_valid_inner[s][HighDataInIdxMSBInverseOffset]), (o_cmd_stage[s].o_cmd_valid_wire_inner[LowDataInIdxMSBInverseOffset] & wire_valid_inner[s][LowDataInIdxMSBInverseOffset]) }),
+						.i_data_bus({wire_data_inner[s][HighDataInIdxMSBInverseOffset], wire_data_inner[s][LowDataInIdxMSBInverseOffset]}),
+						.o_valid({wire_valid_inner[s+1][2*(i+group_switch_offset)+1], wire_valid_inner[s+1][2*(i+group_switch_offset)]}),
+						.o_data_bus({wire_data_inner[s+1][2*(i+group_switch_offset)+1], wire_data_inner[s+1][2*(i+group_switch_offset)]}),
 						.i_en(i_en),
 						.i_cmd({o_cmd_stage[s].o_cmd_data_wire_inner[HighDataInIdxMSBInverseOffset], o_cmd_stage[s].o_cmd_data_wire_inner[LowDataInIdxMSBInverseOffset]}),
 						.o_cmd(),
