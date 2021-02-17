@@ -3,11 +3,8 @@
 // Top Module:  benes_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Sequential Logic
-// Reset:       Synchronized Reset [High Reset]
-// Pipeline:    For benes constructed with sequential switches, every stage is a pipeline stage
-//              Total latency = # stages (cycle)  
-// Dummy Data:  {DATA_WIDTH{1'b0}}
+// Timing:      Combinational Logic
+// Dummy Data:  {DATA_WIDTH{1'bz}}
 // 
 // Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 //   
