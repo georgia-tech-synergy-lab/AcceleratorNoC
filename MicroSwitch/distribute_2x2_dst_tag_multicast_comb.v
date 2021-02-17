@@ -45,11 +45,11 @@
 //    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]      [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]
 //                           \     /                                         \     /
 //                            v   v                                           v   v
-//                            |¯¯¯| <--i_valid=2'b11                          |¯¯¯| <--i_valid=2'b11
+//                            |¯¯¯| <--i_valid=2'b10                          |¯¯¯| <--i_valid=2'b01
 //      o_cmd=(n-2)b'???? <-- |___| <--i_cmd=n'bx?????  o_cmd=(n-2)b'???? <-- |___| <--i_cmd=n'b0x???? or n'b1x????
 //                           /     \            ||                           /     \            ||
 //                          v       v           vv                          v       v           vv 
-//                o_data_high     o_data_high   used                o_data_low     o_data_low  used
+//                o_data_high     o_data_high  used                 o_data_low     o_data_low  used
 //  Note: If both Input want to be multicasted, highIn has the higher priority.
 //
 //
@@ -126,8 +126,6 @@ module distribute_2x2_dst_tag_multicast_comb#(
 	reg    [1:0]                    o_valid_inner;
 	reg    [OUT_COMMAND_WIDTH-1:0]  o_cmd_inner;
 
-
-
 	if(IN_COMMAND_WIDTH==2)
 	begin
 		// output data
@@ -148,25 +146,25 @@ module distribute_2x2_dst_tag_multicast_comb#(
 						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid[0])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_valid_inner = (i_valid[0])?2'b01:2'b00;
 					end
-					2'b10: // Pass Through
+					2'b10, 2'b1z, 2'bz0: // Pass Through
 					begin
 						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[0])? ((i_valid[1])?2'b11:2'b01) : ((i_valid[1])?2'b01:2'b00);
+						o_valid_inner = (i_valid[0])? ((i_valid[1])?2'b11:2'b01) : ((i_valid[1])?2'b10:2'b00);
 					end
-					2'b01: // Pass Switch
+					2'b01, 2'b0z, 2'bz1: // Pass Switch
 					begin
 						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_valid_inner = (i_valid[0])? ((i_valid[1])?2'b11:2'b10) : ((i_valid[1])?2'b01:2'b00);
 					end
-					2'b1x, 2'b0x: // Multicast LowIn
+					2'b1x, 2'b0x, 2'bzx: // Multicast LowIn
 					begin
 						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_valid_inner = (i_valid[0])?2'b11:2'b00;
 					end
-					2'bx0,2'bx1,2'bxx: // Multicast HighIn
+					2'bx0,2'bx1,2'bxx,2'bxz: // Multicast HighIn
 					begin
 						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
@@ -216,15 +214,15 @@ module distribute_2x2_dst_tag_multicast_comb#(
 					
 						o_cmd_inner = { {(DESTINATION_TAG_WIDTH-1){1'bz}}, i_cmd[0+:(DESTINATION_TAG_WIDTH-1)]};
 					end
-					2'b10: // Pass Through
+					2'b10, 2'b1z, 2'bz0: // Pass Through
 					begin
 						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[0])? ((i_valid[1])?2'b11:2'b01) : ((i_valid[1])?2'b01:2'b00);
+						o_valid_inner = (i_valid[0])? ((i_valid[1])?2'b11:2'b01) : ((i_valid[1])?2'b10:2'b00);
 
 						o_cmd_inner = {i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)], i_cmd[0+:(DESTINATION_TAG_WIDTH-1)]};
 					end
-					2'b01: // Pass Switch
+					2'b01, 2'b0z, 2'bz1: // Pass Switch
 					begin
 						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
@@ -232,7 +230,7 @@ module distribute_2x2_dst_tag_multicast_comb#(
 
 						o_cmd_inner = {i_cmd[0+:(DESTINATION_TAG_WIDTH-1)], i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)]};
 					end
-					2'b1x, 2'b0x: // Multicast LowIn
+					2'b1x, 2'b0x, 2'bzx: // Multicast LowIn
 					begin
 						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
@@ -240,7 +238,7 @@ module distribute_2x2_dst_tag_multicast_comb#(
 
 						o_cmd_inner = (i_valid[0])?{i_cmd[0+:(DESTINATION_TAG_WIDTH-1)], i_cmd[0+:(DESTINATION_TAG_WIDTH-1)]} :{{(DESTINATION_TAG_WIDTH-1){1'bz}}, {(DESTINATION_TAG_WIDTH-1){1'bz}}};
 					end
-					2'bx0,2'bx1,2'bxx: // Multicast HighIn
+					2'bx0,2'bx1,2'bxx, 2'bxz: // Multicast HighIn
 					begin
 						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
 						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};

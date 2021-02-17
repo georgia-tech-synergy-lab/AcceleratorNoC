@@ -1,55 +1,54 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  adder_tree_seq
+// Top Module:  merge_tree_autopick_multi_output_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
 // Reset:       Synchronized Reset [High Reset]
-// Latency:     # of LEVEL(every LEVEL is a pipeline stage)
-//
+// Latency:     # of LEVEL
 // Dummy Data:  {DATA_WIDTH{1'bz}}
-// 
-// Parameter:   NUM_INPUT_DATA could be arbitrary integer
 //
-// Function:   sum all input together
-//   \     /     \     / ... \     /     \     /
-//    v   v       v   v  ...  v   v       v   v    
-//    |¯¯¯|       |¯¯¯|  ...  |¯¯¯|       |¯¯¯|
-//    |___|       |___|  ...  |___|       |___|
-//      v           v    ...     v           v
-//       \         /     ...      \         /    
-//        \       /      ...       \       /
-//         \     /       ...        \     /
-//          v   v        ...         v   v
-//          |¯¯¯|        ...         |¯¯¯|       
+// Parameter:   NUM_INPUT_DATA could be arbitrary integer
+//              ! The NUM_OUTPUT_DATA determines the # of level                     
+//
+// Function:    output 1 valid input from all input ports
+//              When multiple input valid -> input with higher 
+//              address in the input bus has higher priority. 
+//
+//   \     /     \     / ... \     /     \     /      ---
+//    v   v       v   v  ...  v   v       v   v        ^
+//    |¯¯¯|       |¯¯¯|  ...  |¯¯¯|       |¯¯¯|        |
+//    |___|       |___|  ...  |___|       |___|        |
+//      v           v    ...     v           v         |
+//       \         /     ...      \         /          |
+//        \       /      ...       \       /           |
+//         \     /       ...        \     /            |
+//          v   v        ...         v   v          
+//          |¯¯¯|        ...         |¯¯¯|          NUM_LEVEL=$clog2(NUM_INPUT_DATA) - $clog2(NUM_OUTPUT_DATA); 
 //          |___|        ...         |___|       
-//            v                        v
-//             \                      /     
-//              \                    /  
-//               ...              ...
-//                ...           ...        
-//                 ...        ...      
-//                    \       /
-//                     \     /
-//                      v   v
-//                      |¯¯¯|           
-//                      |___| 
-//                        |       
-//                        v
-//                   o_data_bus(summation of all input data)
+//            v                        v               |
+//             \                      /                |
+//              \                    /                 |
+//               ...              ...                  |
+//                ...           ...                    |
+//                 ...        ...                      v
+//                   v        v                       ---
+//       o_data_bus(pick several valid input from all input data)
+//            
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
 
-module adder_tree_seq#(
+module merge_tree_autopick_multi_output_seq#(
     parameter NUM_INPUT_DATA = 300,
+    parameter NUM_OUTPUT_DATA = 4,
     parameter DATA_WIDTH = 16
 )(
-    // timeing signals
+    // timing signals
     clk,
-	rst,
-	
+    rst,
+
     // data signals
 	i_valid,        // valid input data signal
 	i_data_bus,     // input data bus coming into distribute switch
@@ -60,23 +59,22 @@ module adder_tree_seq#(
 	// control signals
 	i_en            // distribute switch enable
 );
+    // localparam 
+    localparam  NUM_LEVEL = $clog2(NUM_INPUT_DATA) - $clog2(NUM_OUTPUT_DATA); 
+            // --- Note: inner ceiling: e.g. $clog2(18) = 5, (2^5=32).
+
     // timing signals
     input                                        clk;
     input                                        rst;
-    
+
 	// interface
 	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
 	input  [NUM_INPUT_DATA*DATA_WIDTH-1:0]       i_data_bus;
 	
-	output                                       o_valid;             
-	output [DATA_WIDTH-1:0]                      o_data_bus; //{o_data_a, o_data_b}
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [NUM_OUTPUT_DATA*DATA_WIDTH-1:0]      o_data_bus; //{o_data_a, o_data_b}
 
 	input                                        i_en;
-
-    // inner parameter and logic
-    localparam   NUM_LEVEL = $clog2(NUM_INPUT_DATA); // Note: inner ceiling: e.g. $clog2(18) = 5, (2^5=32).
-    // use ceiling to add 1 extra level to support all possible input cases (input not exactly 2^n).
-    // If the input is exactly 2^n, then the num_switch in the last level will be 0.
     
     // define output wire for all switches of different level.
     genvar i,j;
@@ -97,8 +95,8 @@ module adder_tree_seq#(
     end
 
     // output latch
-    reg    [DATA_WIDTH-1:0]                      o_data_bus_inner;
-    reg                                          o_valid_inner;
+    reg    [NUM_OUTPUT_DATA*DATA_WIDTH-1:0]      o_data_bus_inner;
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_inner;
 
     // connect i_data_bus to input of adder tree.
     for (j = 0; j< NUM_INPUT_DATA; j=j+1)
@@ -114,9 +112,9 @@ module adder_tree_seq#(
         begin: adder_in_level
             if( j==(wire_level[i+1].NUM_SWITCH_LEVEL -1) && ((wire_level[i].NUM_SWITCH_LEVEL >> 1) != wire_level[i+1].NUM_SWITCH_LEVEL) )
             begin
-                adder_seq #(
+                merge_2x1_autopick_seq #(
                     .DATA_WIDTH(DATA_WIDTH)
-                ) adder(
+                ) merger(
                     .clk(clk),
                     .rst(rst),
                     .i_valid({{1'b1},wire_level[i].inner_wire_valid[2*j]}),
@@ -128,9 +126,9 @@ module adder_tree_seq#(
             end 
             else
             begin
-                adder_seq #(
+                merge_2x1_autopick_seq #(
                     .DATA_WIDTH(DATA_WIDTH)
-                ) adder(
+                ) merger(
                     .clk(clk),
                     .rst(rst),
                     .i_valid({wire_level[i].inner_wire_valid[2*j+1],wire_level[i].inner_wire_valid[2*j]}),
@@ -143,12 +141,26 @@ module adder_tree_seq#(
         end
     end
 
-    always @(*) 
+    if(NUM_OUTPUT_DATA==1)
     begin
-        o_data_bus_inner = wire_level[NUM_LEVEL].inner_wire_data[0];
-        o_valid_inner = wire_level[NUM_LEVEL].inner_wire_valid[0];
+        always @(posedge clk) 
+        begin
+            o_data_bus_inner = wire_level[NUM_LEVEL].inner_wire_data[0];
+            o_valid_inner = wire_level[NUM_LEVEL].inner_wire_valid[0];
+        end
     end
-
+    else
+    begin
+        for(i=0; i< NUM_OUTPUT_DATA; i=i+1)
+        begin
+            always @(posedge clk) 
+            begin
+                o_data_bus_inner[i*DATA_WIDTH+:DATA_WIDTH] = wire_level[NUM_LEVEL].inner_wire_data[i];
+                o_valid_inner[i+:1] = wire_level[NUM_LEVEL].inner_wire_valid[i];
+            end
+        end
+    end
+    
     endgenerate
 
 
