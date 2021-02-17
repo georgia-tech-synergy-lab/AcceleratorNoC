@@ -160,8 +160,8 @@
 /////////////////////////////////////////////////////////////
 
 // `define COMPLEX         // 3 bit command
-// `define SIMPLE          // 2 bit command
-`define UNICAST_ONLY    // 1 bit command
+`define SIMPLE          // 2 bit command
+// `define UNICAST_ONLY    // 1 bit command
 
 `ifdef UNICAST_ONLY
 module distribute_2x2_seq#(
