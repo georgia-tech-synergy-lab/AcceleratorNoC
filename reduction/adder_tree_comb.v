@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  adder_tree_comb [valid signals are not supported yet]
+// Top Module:  adder_tree_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
-// Dummy Data:  {DATA_WIDTH{1'bx}}
+// Dummy Data:  {DATA_WIDTH{1'bz}}
 //
-// Parameter:   NUM_INPUT_DATA could be arbitrary integer below 1024.
+// Parameter:   NUM_INPUT_DATA could be arbitrary integer
 //
 // Function:   sum all input together
 //   \     /     \     / ... \     /     \     /

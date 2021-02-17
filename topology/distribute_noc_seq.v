@@ -1,11 +1,13 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  distribute_noc_comb
+// Top Module:  distribute_noc_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
-// Pipeline:    every stage is a pipeline stage
-//              Total latency = # stages (cycle)  
+// Timing:      Sequential Logic
+// Reset:       Synchronized Reset [High Reset]
+// Pipeline:    [full pipeline]every stage is a pipeline stage
+// Latency:     Total latency = # stages (cycle)
 // Dummy Data:  {DATA_WIDTH{1'bz}}
 // 
 // Function:    Unicast  or  Multicast(Not arbitrary Multicast)
@@ -45,13 +47,17 @@
 /////////////////////////////////////////////////////////////
 
 
-module distribute_noc_comb#(
+module distribute_noc_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter NUM_INPUT_DATA = 8,  // must be 2^n
 	parameter NUM_OUTPUT_DATA = 4, // must be 2^n
     parameter COMMMAND_WIDTH = $clog2(NUM_OUTPUT_DATA), // destination tag, each level consumes 1 bit.
     parameter DESTINATION_TAG_WIDTH = COMMMAND_WIDTH    // destination tag, each level consumes 1 bit.
 )(
+	// timeing signals
+	clk,
+	rst,
+	
     // data signals
 	i_valid,        // valid input data signal
 	i_data_bus,     // input data bus coming into distribute switch
@@ -78,6 +84,9 @@ module distribute_noc_comb#(
 	localparam  NUM_LEVEL = $clog2(NUM_INPUT_DATA) - $clog2(NUM_OUTPUT_DATA);
 
 	// interface
+	input                                                      clk;
+	input                                                      rst;
+	
 	input  [NUM_INPUT_DATA-1:0]                                i_valid;             
 	input  [WIDTH_INPUT_DATA-1:0]                              i_data_bus;
 	
@@ -114,10 +123,12 @@ module distribute_noc_comb#(
 	// first butterfly stage
 	for(i=0; i< NUM_INPUT_DATA; i=i+1)
 	begin:switch_first_stage			
-		distribute_1x2_dst_tag_multicast_comb #(
+		distribute_1x2_dst_tag_multicast_seq #(
 			.DATA_WIDTH(DATA_WIDTH),
 			.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH)
 		) first_stage(
+			.clk(clk),
+			.rst(rst),
 			.i_valid(i_valid[i+:1]),
 			.i_data_bus(i_data_bus[i*DATA_WIDTH+:DATA_WIDTH]),
 			.o_valid({wire_valid_butterfly_inner[0][2*i+1], wire_valid_butterfly_inner[0][2*i]}),
@@ -163,10 +174,12 @@ module distribute_noc_comb#(
 				begin
 					if(s==(NUM_STAGE-2))
 					begin: last_stage_of_butterfly
-						distribute_2x2_dst_tag_multicast_comb #(
+						distribute_2x2_dst_tag_multicast_seq #(
 							.DATA_WIDTH(DATA_WIDTH),
 							.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH - s - 1)
 						) dis_2x2(
+							.clk(clk),
+							.rst(rst),
 							.i_valid( {wire_valid_butterfly_inner[s][HighDataInIdxMSBInverseOffset], wire_valid_butterfly_inner[s][LowDataInIdxMSBInverseOffset]} ),
 							.i_data_bus({wire_data_butterfly_inner[s][HighDataInIdxMSBInverseOffset], wire_data_butterfly_inner[s][LowDataInIdxMSBInverseOffset]}),
 							.o_valid({wire_valid_butterfly_inner[s+1][2*(i+group_switch_offset)+1], wire_valid_butterfly_inner[s+1][2*(i+group_switch_offset)]}),
@@ -178,10 +191,12 @@ module distribute_noc_comb#(
 					end
 					else
 					begin: stage_of_butterfly
-						distribute_2x2_dst_tag_multicast_comb #(
+						distribute_2x2_dst_tag_multicast_seq #(
 							.DATA_WIDTH(DATA_WIDTH),
 							.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH - s - 1)
 						) dis_2x2(
+							.clk(clk),
+							.rst(rst),
 							.i_valid( {wire_valid_butterfly_inner[s][HighDataInIdxMSBInverseOffset], wire_valid_butterfly_inner[s][LowDataInIdxMSBInverseOffset]} ),
 							.i_data_bus({wire_data_butterfly_inner[s][HighDataInIdxMSBInverseOffset], wire_data_butterfly_inner[s][LowDataInIdxMSBInverseOffset]}),
 							.o_valid({wire_valid_butterfly_inner[s+1][2*(i+group_switch_offset)+1], wire_valid_butterfly_inner[s+1][2*(i+group_switch_offset)]}),
@@ -197,11 +212,13 @@ module distribute_noc_comb#(
 	end
 	
 	// merge stage
-	merge_tree_autopick_multi_output_comb #(
+	merge_tree_autopick_multi_output_seq #(
 		.NUM_INPUT_DATA(NUM_INPUT_DATA_BUTTERFLY),
 		.NUM_OUTPUT_DATA(NUM_OUTPUT_DATA),
 		.DATA_WIDTH(DATA_WIDTH)
 	) merge_autopick(
+		.clk(clk),
+		.rst(rst),
 		.i_valid(i_data_valid_merge_tree_inner),
 		.i_data_bus(i_data_merge_tree_inner),
 		.o_valid(o_valid),

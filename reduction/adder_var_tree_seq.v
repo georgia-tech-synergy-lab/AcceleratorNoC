@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  adder_var_tree_seq [valid signals are not supported yet]
+// Top Module:  adder_var_tree_seq
 // Data:        Only data width matters.
 // Format:      Output has LEVEL more bit than input data
 // Timing:      Sequential Logic
 // Reset:       Synchronized Reset [High Reset]
-// Dummy Data:  {(DATA_WIDTH+LEVELx){1'bx}}
+// Dummy Data:  {(DATA_WIDTH+LEVELx){1'bz}}
 //
 // Parameter:   NUM_INPUT_DATA could be arbitrary integer. 
 //              When it's not power of 2, redundent adder will not be instantiated.

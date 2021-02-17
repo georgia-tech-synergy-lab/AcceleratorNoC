@@ -70,8 +70,8 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-`define DESTINATION_TAG_WIDTH1
 
+`define DESTINATION_TAG_WIDTH1
 
 `ifdef DESTINATION_TAG_WIDTH2
 module tb_distribute_2x2_dst_tag_multicast_comb();

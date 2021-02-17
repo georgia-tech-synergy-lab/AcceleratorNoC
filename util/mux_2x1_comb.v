@@ -64,25 +64,25 @@ module mux_2x1_comb#(
             casex({i_cmd,i_valid_inner[1],i_valid_inner[0]})
                 3'b0x1:
                 begin
-                    o_valid_inner <= 1'b1;
-                    o_data_bus_inner <= i_data_bus[0 +:DATA_WIDTH];
+                    o_valid_inner = 1'b1;
+                    o_data_bus_inner = i_data_bus[0 +:DATA_WIDTH];
                 end						
                 3'b11x:
                 begin
-                    o_valid_inner <= 1'b1;
-                    o_data_bus_inner <= i_data_bus[DATA_WIDTH +:DATA_WIDTH];
+                    o_valid_inner = 1'b1;
+                    o_data_bus_inner = i_data_bus[DATA_WIDTH +:DATA_WIDTH];
                 end						
                 default:
                 begin
-                    o_valid_inner <= 1'b0;
-                    o_data_bus_inner <= {DATA_WIDTH{1'b0}};
+                    o_valid_inner = 1'b0;
+                    o_data_bus_inner = {DATA_WIDTH{1'b0}};
                 end											
             endcase
         end
         else
         begin
-            o_valid_inner <= 1'b0;
-            o_data_bus_inner <= {DATA_WIDTH{1'bz}};
+            o_valid_inner = 1'b0;
+            o_data_bus_inner = {DATA_WIDTH{1'bz}};
         end
     end
 
