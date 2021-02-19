@@ -107,8 +107,8 @@ module distribute_1x2_seq#(
 	);
 	
 	always @(posedge clk) begin
-		o_valid_inner[0] = i_cmd_inner[0] & i_en;
-		o_valid_inner[1] = i_cmd_inner[1] & i_en;
+		o_valid_inner[0] <= i_cmd_inner[0] & i_en;
+		o_valid_inner[1] <= i_cmd_inner[1] & i_en;
 	end
 
 	assign o_valid = o_valid_inner;		

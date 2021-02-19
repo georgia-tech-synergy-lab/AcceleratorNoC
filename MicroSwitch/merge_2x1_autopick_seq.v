@@ -64,7 +64,7 @@ module merge_2x1_autopick_seq#(
     reg    [1:0]                   i_valid_inner; 
 
     always @(*) begin
-        i_valid_inner = i_valid;
+        i_valid_inner <= i_valid;
     end
 
     always@(posedge clk)
@@ -74,25 +74,25 @@ module merge_2x1_autopick_seq#(
             case({i_valid_inner[1],i_valid_inner[0]})
                 2'b01,2'bx1,2'bz1:
                 begin
-                    o_valid_inner = 1'b1;
-                    o_data_bus_inner = i_data_bus[0 +:DATA_WIDTH];
+                    o_valid_inner <= 1'b1;
+                    o_data_bus_inner <= i_data_bus[0 +:DATA_WIDTH];
                 end						
                 2'b1x,2'b10,2'b1z,2'b11:
                 begin
-                    o_valid_inner = 1'b1;
-                    o_data_bus_inner = i_data_bus[DATA_WIDTH +:DATA_WIDTH];
+                    o_valid_inner <= 1'b1;
+                    o_data_bus_inner <= i_data_bus[DATA_WIDTH +:DATA_WIDTH];
                 end		
                 default:
                 begin
-                    o_valid_inner = 1'b0;
-                    o_data_bus_inner = {DATA_WIDTH{1'b0}};
+                    o_valid_inner <= 1'b0;
+                    o_data_bus_inner <= {DATA_WIDTH{1'b0}};
                 end											
             endcase
         end
         else
         begin
-            o_valid_inner = 1'b0;
-            o_data_bus_inner = {DATA_WIDTH{1'bz}};
+            o_valid_inner <= 1'b0;
+            o_data_bus_inner <= {DATA_WIDTH{1'bz}};
         end
     end
 
