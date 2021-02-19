@@ -94,43 +94,74 @@ module benes_seq#(
 	wire   [DATA_WIDTH-1:0]                      connection[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
 	wire                                         connection_valid[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
 
-	// logic for control pipeline
-	reg    [COMMMAND_WIDTH-1:0]                  pipeline_i_cmd_reg[0:TOTAL_STAGE-2][0:TOTAL_STAGE*NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.
-
-	genvar i,j,k,s;
-	
+	genvar i,j,k,s,p;
 	generate
-		for(i=0; i<(TOTAL_STAGE-1); i=i+1) 
-		begin:initialization_stage
-			for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
-			begin: initialization
-				initial
+
+		// reg    [COMMMAND_WIDTH-1:0]                  pipeline_i_cmd_reg[0:TOTAL_STAGE-2][0:TOTAL_STAGE*NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.
+
+		// for(i=0; i<(TOTAL_STAGE-1); i=i+1) 
+		// begin:initialization_stage
+		// 	for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
+		// 	begin: initialization
+		// 		initial
+		// 		begin
+		// 			pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
+		// 		end
+		// 	end
+		// end
+		
+		// for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
+		// begin:i_cmd_first_stage
+		// 	always@(posedge clk)
+		// 	begin
+		// 		pipeline_i_cmd_reg[0][j] <= i_cmd[j*COMMMAND_WIDTH+:COMMMAND_WIDTH];	
+		// 	end
+		// end
+
+		// for(i=0; i<(TOTAL_STAGE-2); i=i+1) 
+		// begin: i_cmd_pipeline_stage
+		// 	for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
+		// 	begin: i_cmd_stage
+		// 		always@(posedge clk)
+		// 		begin
+		// 			pipeline_i_cmd_reg[i+1][j] <= pipeline_i_cmd_reg[i][j];
+		// 		end
+		// 	end
+		// end
+
+		// logic for control pipeline
+		for(i=0; i<TOTAL_STAGE-1;i=i+1)
+		begin:cmd_pipeline_stage
+			localparam NUM_STAGE = TOTAL_STAGE-i-1;
+			reg  [COMMMAND_WIDTH-1:0]                pipeline_i_cmd_reg[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.    
+		end
+		
+		for(i=0;i<TOTAL_STAGE-1;i=i+1)  // from second stage to the end;
+		begin
+			for(j=0;j<NUM_SWITCH_IN;j=j+1)
+			begin
+				always@(posedge clk)
 				begin
-					pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
+					cmd_pipeline_stage[0].pipeline_i_cmd_reg[i][j] <= i_cmd[((i+1)*NUM_SWITCH_IN+j)*COMMMAND_WIDTH+:COMMMAND_WIDTH];
 				end
 			end
 		end
 		
-		for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
-		begin:i_cmd_first_stage
-			always@(posedge clk)
+		for(p=0; p<TOTAL_STAGE-2;p=p+1)
+		begin
+			localparam NUM_STAGE_IN_PIPELINE = TOTAL_STAGE-p-1;
+			for(i=0;i<NUM_STAGE_IN_PIPELINE;i=i+1)  // from second stage to the end;
 			begin
-				pipeline_i_cmd_reg[0][j] <= i_cmd[j*COMMMAND_WIDTH+:COMMMAND_WIDTH];	
-			end
-		end
-
-		for(i=0; i<(TOTAL_STAGE-2); i=i+1) 
-		begin: i_cmd_pipeline_stage
-			for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
-			begin: i_cmd_stage
-				always@(posedge clk)
+				for(j=0;j<NUM_SWITCH_IN;j=j+1)
 				begin
-					pipeline_i_cmd_reg[i+1][j] <= pipeline_i_cmd_reg[i][j];
+					always@(posedge clk)
+					begin
+						cmd_pipeline_stage[p+1].pipeline_i_cmd_reg[i][j] <= cmd_pipeline_stage[p].pipeline_i_cmd_reg[i+1][j];
+					end
 				end
 			end
 		end
-
-
+		
 		// first stage
 		for(i=0; i<NUM_SWITCH_IN; i=i+1)
 		begin:first_stage_switch
@@ -193,7 +224,7 @@ module benes_seq#(
 						.o_valid({connection_valid[s+1][2*(i+group_switch_offset)+1], connection_valid[s+1][2*(i+group_switch_offset)]}),
 						.o_data_bus({connection[s+1][2*(i+group_switch_offset)+1], connection[s+1][2*(i+group_switch_offset)]}),
 						.i_en(i_en),
-						.i_cmd(pipeline_i_cmd_reg[s][(s+1)*NUM_SWITCH_IN + group_switch_offset + i])
+						.i_cmd(cmd_pipeline_stage[s].pipeline_i_cmd_reg[0][group_switch_offset + i])
 					);
 				end
 			end
@@ -241,7 +272,7 @@ module benes_seq#(
 						.o_valid({connection_valid[s+1][2*(i+group_switch_offset)+1], connection_valid[s+1][2*(i+group_switch_offset)]}),
 						.o_data_bus({connection[s+1][2*(i+group_switch_offset)+1], connection[s+1][2*(i+group_switch_offset)]}),
 						.i_en(i_en),
-						.i_cmd(pipeline_i_cmd_reg[s][(s+1)*NUM_SWITCH_IN + group_switch_offset + i])
+						.i_cmd(cmd_pipeline_stage[s].pipeline_i_cmd_reg[0][group_switch_offset + i])
 					);
 				end
 			end
