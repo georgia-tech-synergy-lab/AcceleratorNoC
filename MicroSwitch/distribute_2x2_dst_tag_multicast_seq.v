@@ -165,15 +165,15 @@ module distribute_2x2_dst_tag_multicast_seq#(
 					end
 					2'b1x, 2'b0x, 2'bzx: // Multicast LowIn
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[0])?2'b11:2'b00;
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] <=  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] <=  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_valid_inner <= (i_valid[0])?2'b11:2'b00;
 					end
 					2'bx0,2'bx1,2'bxx, 2'bxz: // Multicast HighIn
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[1])?2'b11:2'b00;
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] <=  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] <=  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_valid_inner <= (i_valid[1])?2'b11:2'b00;
 					end
 					default:
 					begin
@@ -237,19 +237,19 @@ module distribute_2x2_dst_tag_multicast_seq#(
 					end
 					2'b1x, 2'b0x, 2'bzx: // Multicast LowIn
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[0])?2'b11:2'b00;
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] <=  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] <=  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_valid_inner <= (i_valid[0])?2'b11:2'b00;
 
-						o_cmd_inner = (i_valid[0])?{i_cmd[0+:(DESTINATION_TAG_WIDTH-1)], i_cmd[0+:(DESTINATION_TAG_WIDTH-1)]} :{{(DESTINATION_TAG_WIDTH-1){1'bz}}, {(DESTINATION_TAG_WIDTH-1){1'bz}}};
+						o_cmd_inner <= (i_valid[0])?{i_cmd[0+:(DESTINATION_TAG_WIDTH-1)], i_cmd[0+:(DESTINATION_TAG_WIDTH-1)]} :{{(DESTINATION_TAG_WIDTH-1){1'bz}}, {(DESTINATION_TAG_WIDTH-1){1'bz}}};
 					end
 					2'bx0,2'bx1,2'bxx,2'bxz: // Multicast HighIn
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[1])?2'b11:2'b00;
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] <=  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] <=  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
+						o_valid_inner <= (i_valid[1])?2'b11:2'b00;
 
-						o_cmd_inner = (i_valid[1])?{i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)], i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)]} :{{(DESTINATION_TAG_WIDTH-1){1'bz}}, {(DESTINATION_TAG_WIDTH-1){1'bz}}};
+						o_cmd_inner <= (i_valid[1])?{i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)], i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)]} :{{(DESTINATION_TAG_WIDTH-1){1'bz}}, {(DESTINATION_TAG_WIDTH-1){1'bz}}};
 					end
 					default:
 					begin

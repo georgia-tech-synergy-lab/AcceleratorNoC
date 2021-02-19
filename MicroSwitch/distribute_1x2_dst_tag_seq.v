@@ -87,34 +87,34 @@ module distribute_1x2_dst_tag_seq#(
 				case({i_cmd[IN_COMMAND_WIDTH-1]})
 					1'b1: // In chooses HighOut
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid)?2'b10:2'b00;
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] <= (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] <= {DATA_WIDTH{1'bz}};
+						o_valid_inner <= (i_valid)?2'b10:2'b00;
 					end
 					1'b0: // In chooses LowOut
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid)?2'b01:2'b00;
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] <= (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
+						o_valid_inner <= (i_valid)?2'b01:2'b00;
 					end
 					default:
 					begin
-						o_valid_inner = 2'b00;
-						o_data_bus_inner = {2*DATA_WIDTH{1'bz}};
+						o_valid_inner <= 2'b00;
+						o_data_bus_inner <= {2*DATA_WIDTH{1'bz}};
 					end
 				endcase
 			end
 			else
 			begin
-				o_valid_inner = 2'b00;
-				o_data_bus_inner = {2*DATA_WIDTH{1'bz}};	
+				o_valid_inner <= 2'b00;
+				o_data_bus_inner <= {2*DATA_WIDTH{1'bz}};	
 			end
 		end
 		
 		// output command
 		always@(posedge clk)
 		begin
-			o_cmd_inner = {1'bz, 1'bz};
+			o_cmd_inner <= {1'bz, 1'bz};
 		end
 	end
 	else
@@ -127,34 +127,34 @@ module distribute_1x2_dst_tag_seq#(
 				case(i_cmd[IN_COMMAND_WIDTH-1])
 					1'b1: // In chooses HighOut
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid)?2'b10:2'b00;
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] <= (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] <= {DATA_WIDTH{1'bz}};
+						o_valid_inner <= (i_valid)?2'b10:2'b00;
 
-						o_cmd_inner = {i_cmd[DESTINATION_TAG_WIDTH-2:0], {(DESTINATION_TAG_WIDTH-1){1'bz}}};
+						o_cmd_inner <= {i_cmd[DESTINATION_TAG_WIDTH-2:0], {(DESTINATION_TAG_WIDTH-1){1'bz}}};
 					end
 					1'b0: // In chooses LowOut
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid)?2'b01:2'b00;
+						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'bz}};
+						o_data_bus_inner[0+:DATA_WIDTH] <= (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
+						o_valid_inner <= (i_valid)?2'b01:2'b00;
 
-						o_cmd_inner = { {(DESTINATION_TAG_WIDTH-1){1'bz}}, i_cmd[DESTINATION_TAG_WIDTH-2:0]};
+						o_cmd_inner <= { {(DESTINATION_TAG_WIDTH-1){1'bz}}, i_cmd[DESTINATION_TAG_WIDTH-2:0]};
 					end
 					default:
 					begin
-						o_valid_inner = 2'b00;
-						o_data_bus_inner = {2*DATA_WIDTH{1'bz}};
+						o_valid_inner <= 2'b00;
+						o_data_bus_inner <= {2*DATA_WIDTH{1'bz}};
 
-						o_cmd_inner = {{(DESTINATION_TAG_WIDTH-1){1'bz}}, {(DESTINATION_TAG_WIDTH-1){1'bz}}};
+						o_cmd_inner <= {{(DESTINATION_TAG_WIDTH-1){1'bz}}, {(DESTINATION_TAG_WIDTH-1){1'bz}}};
 					end
 				endcase
 			end
 			else
 			begin
-				o_valid_inner = 2'b00;
-				o_data_bus_inner = {2*DATA_WIDTH{1'bz}};
-				o_cmd_inner = {{(DESTINATION_TAG_WIDTH-1){1'bz}},{(DESTINATION_TAG_WIDTH-1){1'bz}}};
+				o_valid_inner <= 2'b00;
+				o_data_bus_inner <= {2*DATA_WIDTH{1'bz}};
+				o_cmd_inner <= {{(DESTINATION_TAG_WIDTH-1){1'bz}},{(DESTINATION_TAG_WIDTH-1){1'bz}}};
 			end
 		end
 	end

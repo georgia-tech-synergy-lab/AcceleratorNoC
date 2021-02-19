@@ -98,9 +98,17 @@ module merge_tree_autopick_multi_output_comb#(
     //instantiate adder tree
     for (i = 0; i< NUM_LEVEL; i=i+1)
     begin: adder_tree_level
-        for (j = 0; j< wire_level[i+1].NUM_SWITCH_LEVEL; j=j+1)
+        localparam NUM_SWITCH_SHIFT =  NUM_INPUT_DATA >> i;
+        localparam NOT_ADD_EXTRA_SWITCH_THIS_LEVEL = ((NUM_INPUT_DATA - ((NUM_INPUT_DATA >> i) << i)) == 0);
+        localparam NUM_SWITCH_LEVEL = (NOT_ADD_EXTRA_SWITCH_THIS_LEVEL)? NUM_SWITCH_SHIFT: (NUM_SWITCH_SHIFT + 1); 
+        
+        localparam NUM_SWITCH_SHIFT_NEXT_LEVEL =  NUM_INPUT_DATA >> (i+1);
+        localparam NOT_ADD_EXTRA_SWITCH_NEXT_LEVEL = ((NUM_INPUT_DATA - ((NUM_INPUT_DATA >> (i+1)) << (i+1))) == 0);
+        localparam NUM_SWITCH_NEXT_LEVEL = (NOT_ADD_EXTRA_SWITCH_NEXT_LEVEL)? NUM_SWITCH_SHIFT_NEXT_LEVEL: (NUM_SWITCH_SHIFT_NEXT_LEVEL + 1);  
+
+        for (j = 0; j< NUM_SWITCH_NEXT_LEVEL; j=j+1)
         begin: adder_in_level
-            if( j==(wire_level[i+1].NUM_SWITCH_LEVEL -1) && ((wire_level[i].NUM_SWITCH_LEVEL >> 1) != wire_level[i+1].NUM_SWITCH_LEVEL) )
+            if( j==(NUM_SWITCH_NEXT_LEVEL -1) && ((NUM_SWITCH_LEVEL >> 1) != NUM_SWITCH_NEXT_LEVEL) )
             begin
                 merge_2x1_autopick_comb #(
                     .DATA_WIDTH(DATA_WIDTH)
