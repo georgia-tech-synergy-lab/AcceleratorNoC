@@ -9,7 +9,7 @@
 //              [full pipeline]every stage is a pipeline stage
 //                             Total latency = # stages (cycle)
 //              [2 stage pipeline] 0~LEVEL is the first pipeline stage.   
-// Dummy Data:  {DATA_WIDTH{1'bx}}
+// Dummy Data:  {DATA_WIDTH{1'bz}}
 // 
 // Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 //   
@@ -106,7 +106,7 @@ module benes_seq#(
 			begin: initialization
 				initial
 				begin
-					pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bx}};
+					pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
 				end
 			end
 		end
@@ -325,7 +325,12 @@ module benes_seq#(
 	wire                                         connection_valid[0:TOTAL_STAGE+1][0:NUM_INPUT_DATA-1];         // two more stages to connect output from the previous pipeline into the input of the next pipeline
 
 	// logic for control pipeline
-	reg    [COMMMAND_WIDTH-1:0]                  pipeline_i_cmd_reg[0:NUM_PIPELINE_STAGE-1][0:TOTAL_STAGE*NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 0 at 2 pipeline stage code.
+	localparam NUM_SWITCH_IN_SECOND_PIPELINE_STAGE = NUM_SWITCH_IN * STAGE_NUM_IN_SECOND_PIPELINE;
+	localparam NUM_SWITCH_IN_FIRST_PIPELINE_STAGE = NUM_SWITCH_IN * STAGE_NUM_IN_FIRST_PIPELINE;
+
+	reg    [COMMMAND_WIDTH-1:0]                  first_pipeline_i_cmd_reg[0:TOTAL_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 0 at 2 pipeline stage code.
+	reg    [COMMMAND_WIDTH-1:0]                  second_pipeline_i_cmd_reg[0:NUM_SWITCH_IN_SECOND_PIPELINE_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 0 at 2 pipeline stage code.
+	
 	reg    [DATA_WIDTH-1:0]                      pipeline_data_bus_reg[0:NUM_PIPELINE_STAGE-1][0:NUM_INPUT_DATA-1];
 	reg                                          pipeline_data_valid_reg[0:NUM_PIPELINE_STAGE-1][0:NUM_INPUT_DATA-1];
 
@@ -333,13 +338,24 @@ module benes_seq#(
 	
 	generate
 		// initialization for command and pipeline reg
-		for(i=0; i<STAGE_NUM_IN_SECOND_PIPELINE; i=i+1) 
-		begin:initialization_pipeline_cmd
+		for(i=0; i<TOTAL_STAGE; i=i+1) 
+		begin:initialization_first_pipeline_cmd
 			for(j=0; j<NUM_SWITCH_IN; j=j+1) 
 			begin: initialization
 				initial
 				begin
-					pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bx}};
+					first_pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
+				end
+			end
+		end
+
+		for(i=0; i<STAGE_NUM_IN_SECOND_PIPELINE; i=i+1) 
+		begin:initialization_second_pipeline_cmd
+			for(j=0; j<NUM_SWITCH_IN; j=j+1) 
+			begin: initialization
+				initial
+				begin
+					second_pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
 				end
 			end
 		end
@@ -350,7 +366,7 @@ module benes_seq#(
 			begin:initialization
 				initial
 				begin
-					pipeline_data_bus_reg[s][i] <= {NUM_INPUT_DATA{1'bx}};
+					pipeline_data_bus_reg[s][i] <= {NUM_INPUT_DATA{1'bz}};
 					pipeline_data_valid_reg[s][i] <= 1'b0;
 				end
 			end
@@ -364,20 +380,13 @@ module benes_seq#(
 			begin: i_cmd_stage
 				always@(posedge clk)
 				begin
-					if(i_en)
+					if(i_en & (~rst))
 					begin
-						if(rst)
-						begin
-							pipeline_i_cmd_reg[0][i*NUM_SWITCH_IN + j] <= {COMMMAND_WIDTH{1'b0}};					
-						end
-						else
-						begin
-							pipeline_i_cmd_reg[0][i*NUM_SWITCH_IN + j] <= i_cmd[((i*NUM_SWITCH_IN + j)*COMMMAND_WIDTH) +: COMMMAND_WIDTH ];
-						end
+						first_pipeline_i_cmd_reg[i][j] <= i_cmd[((i*NUM_SWITCH_IN + j)*COMMMAND_WIDTH) +: COMMMAND_WIDTH ];
 					end
 					else
 					begin
-						pipeline_i_cmd_reg[0][i*NUM_SWITCH_IN + j] <= {COMMMAND_WIDTH{1'bx}};
+						first_pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
 					end
 				end
 			end
@@ -404,7 +413,7 @@ module benes_seq#(
 				end
 				else
 				begin
-					pipeline_data_bus_reg[0][i] <= {DATA_WIDTH{1'bx}};
+					pipeline_data_bus_reg[0][i] <= {DATA_WIDTH{1'bz}};
 					pipeline_data_valid_reg[0][i] <= 1'b0;						
 				end
 			end
@@ -429,7 +438,7 @@ module benes_seq#(
 				.o_valid({connection_valid[1][2*i+1], connection_valid[1][2*i]}),
 				.o_data_bus({connection[1][2*i+1], connection[1][2*i]}),
 				.i_en(i_en),
-				.i_cmd(pipeline_i_cmd_reg[0][i])
+				.i_cmd(first_pipeline_i_cmd_reg[0][i])
 			);
 		end
 
@@ -474,7 +483,7 @@ module benes_seq#(
 						.o_valid({connection_valid[s+2][2*(i+group_switch_offset)+1], connection_valid[s+2][2*(i+group_switch_offset)]}),
 						.o_data_bus({connection[s+2][2*(i+group_switch_offset)+1], connection[s+2][2*(i+group_switch_offset)]}),
 						.i_en(i_en),
-						.i_cmd(pipeline_i_cmd_reg[0][(s+1)*NUM_SWITCH_IN + group_switch_offset + i])
+						.i_cmd(first_pipeline_i_cmd_reg[s+1][group_switch_offset + i])
 					);
 				end
 			end
@@ -483,7 +492,7 @@ module benes_seq#(
 
 		// [Second pipeline] cmd pipeline
 		// cmd for the first pipeline also gets propogated, they are redundent logic
-		for(i=STAGE_NUM_IN_FIRST_PIPELINE; i<TOTAL_STAGE; i=i+1) 
+		for(i=0; i<STAGE_NUM_IN_SECOND_PIPELINE; i=i+1) 
 		begin: i_cmd_2nd_pipeline
 			for(j=0; j<NUM_SWITCH_IN; j=j+1) 
 			begin: i_cmd_stage
@@ -491,11 +500,11 @@ module benes_seq#(
 				begin
 					if(i_en &(~rst))
 					begin
-						pipeline_i_cmd_reg[1][i*NUM_SWITCH_IN + j] <= pipeline_i_cmd_reg[0][i*NUM_SWITCH_IN + j];	
+						second_pipeline_i_cmd_reg[i][j] <= first_pipeline_i_cmd_reg[i+STAGE_NUM_IN_FIRST_PIPELINE][j];	
 					end
 					else
 					begin
-						pipeline_i_cmd_reg[1][i*NUM_SWITCH_IN + j] <= {COMMMAND_WIDTH{1'bx}};
+						second_pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
 					end
 				end
 			end
@@ -513,7 +522,7 @@ module benes_seq#(
 				end
 				else
 				begin
-					pipeline_data_bus_reg[1][i] <= {DATA_WIDTH{1'bx}};
+					pipeline_data_bus_reg[1][i] <= {DATA_WIDTH{1'bz}};
 					pipeline_data_valid_reg[1][i] <= 1'b0;
 				end
 			end
@@ -566,7 +575,7 @@ module benes_seq#(
 						.o_valid({connection_valid[s+3][2*(i+group_switch_offset)+1], connection_valid[s+3][2*(i+group_switch_offset)]}),
 						.o_data_bus({connection[s+3][2*(i+group_switch_offset)+1], connection[s+3][2*(i+group_switch_offset)]}),
 						.i_en(i_en),
-						.i_cmd(pipeline_i_cmd_reg[1][(s+1)*NUM_SWITCH_IN + group_switch_offset + i])
+						.i_cmd(second_pipeline_i_cmd_reg[s-(LEVEL-1)][group_switch_offset + i])
 					);
 				end
 			end
