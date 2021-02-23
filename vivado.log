@@ -1,0 +1,31 @@
+#-----------------------------------------------------------
+# Vivado v2020.2 (64-bit)
+# SW Build 3064766 on Wed Nov 18 09:12:47 MST 2020
+# IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
+# Start of session at: Tue Feb 23 22:17:51 2021
+# Process ID: 24159
+# Current directory: /home/jimmy/work/work_tushar/AcceleratorNoC
+# Command line: vivado
+# Log file: /home/jimmy/work/work_tushar/AcceleratorNoC/vivado.log
+# Journal file: /home/jimmy/work/work_tushar/AcceleratorNoC/vivado.jou
+#-----------------------------------------------------------
+start_gui
+create_project benes_merge_test /home/jimmy/work/work_tushar/AcceleratorNoC/benes_merge_test -part xczu3eg-sbva484-1-i
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/tools/Xilinx/Vivado/2020.2/data/ip'.
+INFO: [IP_Flow 19-3899] Cannot get the environment domain name variable for the component vendor name. Setting the vendor name to 'user.org'.
+set_property board_part avnet.com:ultra96v2:part0:1.1 [current_project]
+set_property simulator_language Verilog [current_project]
+add_files -norecurse {/home/jimmy/work/work_tushar/AcceleratorNoC/area_power/src/benes_merge_seq/merge_tree_autopick_multi_output_seq.v /home/jimmy/work/work_tushar/AcceleratorNoC/area_power/src/benes_merge_seq/merge_2x1_autopick_seq.v /home/jimmy/work/work_tushar/AcceleratorNoC/area_power/src/benes_merge_seq/distribute_2x2_simple_seq.v /home/jimmy/work/work_tushar/AcceleratorNoC/area_power/src/benes_merge_seq/benes_merge_simple_seq.v}
+import_files -force -norecurse
+INFO: [filemgmt 20-348] Importing the appropriate files for fileset: 'sources_1'
+update_compile_order -fileset sources_1
+launch_runs synth_1 -jobs 6
+[Tue Feb 23 22:19:10 2021] Launched synth_1...
+Run output will be captured here: /home/jimmy/work/work_tushar/AcceleratorNoC/benes_merge_test/benes_merge_test.runs/synth_1/runme.log
+launch_runs impl_1 -jobs 6
+[Tue Feb 23 22:19:56 2021] Launched impl_1...
+Run output will be captured here: /home/jimmy/work/work_tushar/AcceleratorNoC/benes_merge_test/benes_merge_test.runs/impl_1/runme.log
+exit
+INFO: [Common 17-206] Exiting Vivado at Tue Feb 23 22:21:05 2021...
