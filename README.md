@@ -26,7 +26,9 @@ name template is following:
 ```<type>_<control>_<pipeline>```
 
 ```<type>```: **distribute_1x2** or **distribute_2x2** or **merge_2x1**
+
 ```<control>```: **simple** or **dst_tag** or **dst_tag_multicast** or **autopick** or **autopick_multi_output**
+
 ```<pipeline>```: **comb** or **seq**
 
 Where,
@@ -34,20 +36,27 @@ Where,
 In ```<type>```
 
 **distribute_1x2**: means *1 input & 2 output switch (support unicast & multicast)*.
+
 **distribute_2x2**: means *2 input & 2 output switch (support unicast & multicast)*, Note: three versions are supported in this switch depends on the length of command, and they could be used by setting different ``` `define``` in the verilog file. Check the illustration in verilog file out for functionality description. 
+
 **merge_2x1**: means *2 input & 1 output switch*.
 
 In ```<control>```:
 
 **simple**: means *simple control*; only feed an individual switch with the command belonging to itself. Cannot feed redundent command.
+
 **dst_tag**: means *destination tag control* ; could feed an individual switch with longer command than it needs. It consumes the command it needs and output the remaining command for following switches. Only *unicast* is supported in this switch, including "Branch_high" and "Branch_Low". 
+
 **dst_tag_multicast**: means *destination tag control with multicasting support*; add *multicast* to the **dst_tag**.
+
 **autopick**: means automatically pick and output *1* valid input. So no command for this module. High input has higher priority when multiple inputs are valid.   
+
 **autopick_multi_output**: same meaning as **autopick** but support picking and outputing *multiple* valid input.
 
 In ```<pipeline>```:
 
 **comb**: means "combinational circuit". Output changes immediately when input changes. 
+
 **seq**: means "sequential circuit". Output changes only at the positive edge of clock signal.
 
 
@@ -76,12 +85,17 @@ name template is following:
 ```<type>_<control>_<pipeline>```
 
 ```<type>```: **mux** or **adder** or **adder_var**
+
 ```<control>```: **blank** or **simple**
+
 ```<pipeline>```: **comb** or **seq**
 
 **adder** means the module to sum two input data up. Two input data share the same length and the output data also has the same length with input data.
+
 **adder_var** also refers to the module to add two input data up. The output should be 1 bit longer than input data.
+
 **mux** picks 1 data from 2 input data according to the validity of input data and control command.
+
 **blank** means that the module doesn't need control. And inner functionality is deterministic and independent to the input.
 
 
