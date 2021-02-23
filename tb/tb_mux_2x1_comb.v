@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  mux2_1
+// Top Module:  tb_mux_2x1_simple_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
@@ -21,7 +21,7 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module tb_mux_2x1_comb();
+module tb_mux_2x1_simple_comb();
 
 	parameter DATA_WIDTH  = 32;
 	parameter COMMMAND_WIDTH  = 1;
@@ -87,7 +87,7 @@ end
 
 
     // instantiate DUT (device under test)
-    mux_2x1_comb #(
+    mux_2x1_simple_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMMAND_WIDTH(COMMMAND_WIDTH)
 	) dut(
