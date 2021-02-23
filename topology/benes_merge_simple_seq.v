@@ -22,114 +22,17 @@
 //     i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \---->|¯¯¯|--/ \-->|¯¯¯|--/ \-->|¯¯¯|----/ \->|¯¯¯|   /->|___|
 //     i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|--/
 //
-//        CONNECTION FUNCTION                   INVERSE SHUFFLE      ,,         SHUFFLE       SHUFFLE        Merge
-//       CONNECTION GROUP SIZE                         8             4             4             8
-//        
+//        CONNECTION FUNCTION                   INVERSE SHUFFLE      ,,         SHUFFLE       SHUFFLE   |    Merge
+//       CONNECTION GROUP SIZE                         8             4             4             8      v
+//                                                                       this stage is the first stage of Merge tree. So it's 2x1 instead of 2x2 
 // Control Signal
 //     i_valid[0]-->|¯¯¯|<--i_cmd[2:0] 
 //     i_valid[1]-->|___|
 //     
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
-`define BENES_NO_LAST_STAGE_MERGE
-// `define FULL_BENES_MERGE
-
-`ifdef FULL_BENES_MERGE
-// Note: use the SIMPLE_MODULAR version distribute_2x2_simple_comb.
-// Need to set "`define in distribute_2x2_simple_comb.v"
-module benes_merge_simple_seq#(
-	parameter DATA_WIDTH = 32,     // could be arbitrary number
-	parameter COMMMAND_WIDTH = 2,  // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
-	parameter NUM_INPUT_DATA = 8,  // multiple be 2^n
-	parameter NUM_OUTPUT_DATA = 4  // must be 2^n
-)(
-	// timeing signals
-    clk,
-	rst,
-	
-    // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
-
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // command 
-);
-	//parameter
-	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
-
-	localparam LEVEL = $clog2(NUM_INPUT_DATA);
-	localparam TOTAL_STAGE = 2*LEVEL-1;
-
-	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_OUTPUT_DATA;
-
-	// interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus;
-
-	input                                        i_en;
-	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
-									// For each switch
-									// 11 --> Multicast_HighIn
-									// 00 --> Multicast_LowIn
-									// 10 --> Pass Through
-									// 01 --> Pass Switch
 
 
-	// inner logic
-	wire   [WIDTH_INPUT_DATA-1:0]                connection_data;
-	wire   [NUM_INPUT_DATA-1:0]                  connection_valid;
-	
-
-	// instantiate benes 
-	 benes_simple_seq #(
-		.DATA_WIDTH(DATA_WIDTH),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH),
-        .NUM_INPUT_DATA(NUM_INPUT_DATA)
-	 ) benes_network(
-		.clk(clk),
-		.rst(rst),
-		.i_valid(i_valid),
-		.i_data_bus(i_data_bus),
-		.o_valid(connection_valid),
-		.o_data_bus(connection_data),
-		.i_en(i_en),
-		.i_cmd(i_cmd)
-	);
-
-	// merge tree
- 	merge_tree_autopick_multi_output_seq#(
-        .NUM_INPUT_DATA(NUM_INPUT_DATA), 
-        .DATA_WIDTH(DATA_WIDTH),
-        .NUM_OUTPUT_DATA(NUM_OUTPUT_DATA))
-    merge_network(
-		.clk(clk),
-		.rst(rst),
-		.i_valid(connection_valid),
-		.i_data_bus(connection_data),
-		.o_valid(o_valid),
-		.o_data_bus(o_data_bus),
-		.i_en(i_en)
-	);
-
-endmodule
-
-`endif 
-
-
-`ifdef BENES_NO_LAST_STAGE_MERGE
 // Note: use the SIMPLE_MODULAR version distribute_2x2_simple_seq.
 // Need to set "`define SIMPLE_MODULAR in distribute_2x2_simple_seq.v"
 module benes_merge_simple_seq#(
@@ -159,7 +62,7 @@ module benes_merge_simple_seq#(
 	localparam LEVEL = $clog2(NUM_INPUT_DATA);
 	localparam TOTAL_STAGE = 2*LEVEL-1;
 
-	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	localparam TOTAL_COMMMAND = (TOTAL_STAGE-1)*NUM_SWITCH_IN*COMMMAND_WIDTH;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_OUTPUT_DATA;
@@ -195,13 +98,13 @@ module benes_merge_simple_seq#(
 	generate
 
 		// logic for control pipeline
-		for(i=0; i<TOTAL_STAGE-1;i=i+1)
+		for(i=0; i<TOTAL_STAGE-2;i=i+1)
 		begin:cmd_pipeline_stage
 			localparam NUM_STAGE = TOTAL_STAGE-i-1;
 			reg  [COMMMAND_WIDTH-1:0]                pipeline_i_cmd_reg[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.    
 		end
 		
-		for(i=0;i<TOTAL_STAGE-1;i=i+1)  // from second stage to the end;
+		for(i=0;i<TOTAL_STAGE-2;i=i+1)  // from second stage to the end;
 		begin
 			for(j=0;j<NUM_SWITCH_IN;j=j+1)
 			begin
@@ -212,7 +115,7 @@ module benes_merge_simple_seq#(
 			end
 		end
 		
-		for(p=0; p<TOTAL_STAGE-2;p=p+1)
+		for(p=0; p<TOTAL_STAGE-3;p=p+1)
 		begin
 			localparam NUM_STAGE_IN_PIPELINE = TOTAL_STAGE-p-1;
 			for(i=0;i<NUM_STAGE_IN_PIPELINE;i=i+1)  // from second stage to the end;
@@ -371,5 +274,3 @@ module benes_merge_simple_seq#(
 	endgenerate
 
 endmodule
-
-`endif
