@@ -9,7 +9,7 @@
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // Total two versions are supported here, including complex (9 functions[3 bit control]) and simple (4 functions + No Pass[2 bit control]) version
-// uncomment `define SIMPLE to use SIMPLE VERSION
+// uncomment `define SIMPLE_MODULAR to use SIMPLE_MODULAR VERSION
 // ----------------------------------------------
 // Complex Version3 bit control version:
 // Unicast Function 
@@ -158,9 +158,9 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-// `define COMPLEX         // 3 bit command
-// `define SIMPLE          // 2 bit command
-// `define UNICAST_ONLY    // 1 bit command
+// `define COMPLEX_MODULAR         // 3 bit command
+// `define SIMPLE_MODULAR          // 2 bit command
+// `define UNICAST_ONLY_MODULAR    // 1 bit command
 `define DESTINATION_TAG // 2 bit command -- each input data has its own control. 
                         // When both input choose the same output port then HighIn has higher priority
 
@@ -319,7 +319,7 @@ endmodule
 
 
 
-`ifdef UNICAST_ONLY
+`ifdef UNICAST_ONLY_MODULAR
 module tb_distribute_2x2_simple_seq();
 
 	parameter DATA_WIDTH  = 32;
@@ -471,7 +471,7 @@ endmodule
 `endif
 
 
-`ifdef SIMPLE
+`ifdef SIMPLE_MODULAR
 module tb_distribute_2x2_simple_seq();
 
 	parameter DATA_WIDTH  = 32;
@@ -628,7 +628,7 @@ module tb_distribute_2x2_simple_seq();
 endmodule
 `endif
 
-`ifdef COMPLEX
+`ifdef COMPLEX_MODULAR
 module tb_distribute_2x2_simple_seq();
 
 	parameter DATA_WIDTH  = 32;

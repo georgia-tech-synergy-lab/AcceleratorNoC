@@ -33,8 +33,8 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-// Note: use the UNICAST_ONLY version distribute_2x2_simple_seq.
-// Need to set "`define UNICAST_ONLY in distribute_2x2_simple_seq.v"
+// Note: use the UNICAST_ONLY_MODULAR version distribute_2x2_simple_seq.
+// Need to set "`define UNICAST_ONLY_MODULAR in distribute_2x2_simple_seq.v"
 
 module cube_simple_seq#(
 	parameter DATA_WIDTH = 32,      // could be arbitrary number

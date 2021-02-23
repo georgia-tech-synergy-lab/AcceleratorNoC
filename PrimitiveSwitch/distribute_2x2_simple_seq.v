@@ -9,7 +9,7 @@
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // Total two versions are supported here, including complex (9 functions[3 bit control]) and simple (4 functions + No Pass[2 bit control]) version
-// uncomment `define SIMPLE to use SIMPLE VERSION
+// uncomment `define SIMPLE_MODULAR to use SIMPLE_MODULAR VERSION
 // ----------------------------------------------
 // Complex Version3 bit control version:
 // Unicast Function 
@@ -159,11 +159,170 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-// `define COMPLEX         // 3 bit command
-`define SIMPLE          // 2 bit command
-// `define UNICAST_ONLY    // 1 bit command
+// `define COMPLEX_MODULAR         // 3 bit command
+// `define SIMPLE_MODULAR          // 2 bit command
+// `define UNICAST_ONLY_MODULAR    // 1 bit command
 
-`ifdef UNICAST_ONLY
+`define SIMPLE_FLATTEN     	  // 2 bit command
+
+`ifdef SIMPLE_FLATTEN
+module distribute_2x2_simple_seq#(
+	parameter DATA_WIDTH = 32,
+	parameter COMMMAND_WIDTH  = 1
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // command 
+);
+	// interface
+	input                         clk;
+	input                         rst;
+	
+	input  [1:0]                  i_valid;             
+	input  [2*DATA_WIDTH-1:0]     i_data_bus;
+	
+	output [1:0]                  o_valid;             
+	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
+	    
+	input                         i_en;
+	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+		// 11 --> Multicast_HighIn
+		// 00 --> Multicast_LowIn
+		// 10 --> Pass Through
+		// 01 --> Pass Switch 
+	
+	// inner logic
+    reg    [2*DATA_WIDTH-1:0]      o_data_bus_inner;
+    reg    [1:0]                   o_valid_inner;
+    reg    [1:0]                   i_valid_inner; 
+    reg    [COMMMAND_WIDTH-1:0]    i_cmd_inner; 
+
+	always @(*) begin
+        i_valid_inner = i_valid;
+		i_cmd_inner = i_cmd;
+    end
+
+	// o_data_inner
+    always@(posedge clk)
+    begin
+        if(i_en & (~rst))
+        begin 
+            casex(i_cmd_inner)
+			 	2'b10:
+                begin
+					case(i_valid_inner)
+						2'b11:
+						begin
+                    		o_data_bus_inner = i_data_bus;
+						end
+						2'b10:
+						begin
+							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'bz}}};
+						end
+						2'b01:
+						begin
+							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, i_data_bus[0+:DATA_WIDTH]};
+						end
+						default:
+						begin
+							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+						end
+					endcase
+                end	
+				2'b01:
+                begin
+					case(i_valid_inner)
+						2'b11:
+						begin
+                    		o_data_bus_inner = {i_data_bus[0+:DATA_WIDTH], i_data_bus[DATA_WIDTH+:DATA_WIDTH]};
+						end
+						2'b10:
+						begin
+							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'bz}}};
+						end
+						2'b01:
+						begin
+							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, i_data_bus[DATA_WIDTH+:DATA_WIDTH]};
+						end
+						default:
+						begin
+							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+						end
+					endcase
+                end	
+				2'b11:
+                begin
+					o_data_bus_inner = (i_valid_inner[1])?{i_data_bus[DATA_WIDTH+:DATA_WIDTH],i_data_bus[DATA_WIDTH+:DATA_WIDTH]}: {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+                end	
+				2'b00:
+                begin
+					o_data_bus_inner = (i_valid_inner[0])?{i_data_bus[0+:DATA_WIDTH],i_data_bus[0+:DATA_WIDTH]}: {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+                end
+                default:
+                begin
+                    o_data_bus_inner = {{DATA_WIDTH{1'bz}},{DATA_WIDTH{1'bz}}};
+                end											
+            endcase
+        end
+        else
+        begin
+            o_data_bus_inner = {{DATA_WIDTH{1'bz}},{DATA_WIDTH{1'bz}}};
+        end
+    end
+
+	// o_valid_inner
+    always@(posedge clk)
+    begin
+        if(i_en&(~rst))
+        begin 
+            casex(i_cmd_inner)
+			 	2'b10:
+                begin
+					o_valid_inner = i_valid_inner;
+                end	
+				2'b11:
+                begin
+                    o_valid_inner = i_valid_inner[1]? 2'b11: 2'b00;
+                end	
+				2'b00:
+                begin
+                    o_valid_inner = i_valid_inner[0]? 2'b11: 2'b00;
+                end
+                2'b01:
+                begin
+                    o_valid_inner = {i_valid_inner[0], i_valid_inner[1]};
+                end								
+                default:
+                begin
+                    o_valid_inner = 2'b00;
+                end											
+            endcase
+        end
+        else
+        begin
+            o_valid_inner = 2'b00;
+        end
+    end
+
+    assign o_data_bus = o_data_bus_inner;
+    assign o_valid = o_valid_inner;
+
+
+endmodule
+`endif
+
+`ifdef UNICAST_ONLY_MODULAR
 module distribute_2x2_simple_seq#(
 	parameter DATA_WIDTH = 32,
 	parameter COMMMAND_WIDTH  = 1
@@ -234,7 +393,7 @@ endmodule
 `endif
 
 
-`ifdef SIMPLE
+`ifdef SIMPLE_MODULAR
 module distribute_2x2_simple_seq#(
 	parameter DATA_WIDTH = 32,
 	parameter COMMMAND_WIDTH  = 2
@@ -304,7 +463,7 @@ module distribute_2x2_simple_seq#(
 endmodule
 `endif
 
-`ifdef COMPLEX
+`ifdef COMPLEX_MODULAR
 module distribute_2x2_simple_seq#(
 	parameter DATA_WIDTH = 32,
 	parameter COMMMAND_WIDTH  = 3

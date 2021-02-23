@@ -114,12 +114,12 @@
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
-// `define COMPLEX    // 3 bit command
-// `define SIMPLE     // 2 bit command
-`define UNICAST_ONLY  // 1 bit command
+// `define COMPLEX_MODULAR    // 3 bit command
+`define SIMPLE     // 2 bit command. Uncomment this if set "SIMPLE_FLATTEN" or "SIMPLE_MODULAR" in the file. 
+// `define UNICAST_ONLY_MODULAR  // 1 bit command
 
 
-`ifdef UNICAST_ONLY
+`ifdef UNICAST_ONLY_MODULAR
 module tb_distribute_2x2_simple_comb();
 
 	parameter DATA_WIDTH  = 32;
@@ -374,7 +374,7 @@ module tb_distribute_2x2_simple_comb();
 endmodule
 `endif
 
-`ifdef COMPLEX
+`ifdef COMPLEX_MODULAR
 module tb_distribute_2x2_simple_comb();
 
 	parameter DATA_WIDTH  = 32;

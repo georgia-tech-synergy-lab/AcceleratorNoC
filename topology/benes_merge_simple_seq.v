@@ -35,7 +35,7 @@
 // `define FULL_BENES_MERGE
 
 `ifdef FULL_BENES_MERGE
-// Note: use the SIMPLE version distribute_2x2_simple_comb.
+// Note: use the SIMPLE_MODULAR version distribute_2x2_simple_comb.
 // Need to set "`define in distribute_2x2_simple_comb.v"
 module benes_merge_simple_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
@@ -130,8 +130,8 @@ endmodule
 
 
 `ifdef BENES_NO_LAST_STAGE_MERGE
-// Note: use the SIMPLE version distribute_2x2_simple_seq.
-// Need to set "`define SIMPLE in distribute_2x2_simple_seq.v"
+// Note: use the SIMPLE_MODULAR version distribute_2x2_simple_seq.
+// Need to set "`define SIMPLE_MODULAR in distribute_2x2_simple_seq.v"
 module benes_merge_simple_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter COMMMAND_WIDTH = 2,  // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;

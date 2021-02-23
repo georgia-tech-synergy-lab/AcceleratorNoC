@@ -40,8 +40,8 @@
 
 `ifdef FULL_PIPELINE // full pipeline means every stage is a pipeline stage.
 
-// Note: use the SIMPLE version distribute_2x2_simple_seq.
-// Need to set "`define SIMPLE in distribute_2x2_simple_seq.v"
+// Note: use the SIMPLE_MODULAR version distribute_2x2_simple_seq.
+// Need to set "`define SIMPLE_MODULAR in distribute_2x2_simple_seq.v"
 module benes_simple_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
@@ -296,8 +296,8 @@ endmodule
 				       // first pipeline stage has 0~2 (3 stages in total) 
 				       // second pipeline stage has 3~4 (2 stages in total) 
 
-// Note: use the SIMPLE version distribute_2x2_simple_seq.
-// Need to set "`define SIMPLE in distribute_2x2_simple_seq.v"			   
+// Note: use the SIMPLE_MODULAR version distribute_2x2_simple_seq.
+// Need to set "`define SIMPLE_MODULAR in distribute_2x2_simple_seq.v"			   
 module benes_simple_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
