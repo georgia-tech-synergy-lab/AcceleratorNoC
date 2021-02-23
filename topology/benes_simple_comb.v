@@ -30,7 +30,7 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-// Note: use the SIMPLE version distribute_2x2_simple_comb.
+// Note: use the SIMPLE_MODULAR version distribute_2x2_simple_comb.
 // Need to set "`define in distribute_2x2_simple_comb.v"
 module benes_simple_comb#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number

@@ -23,8 +23,8 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-`define USING_MUX // If define, then use mux to construct the distribute switch
-                  // If not define, use LUT to construct the distribute switch
+`define MODULAR // If define, then use mux to construct the distribute switch
+                // If not define, use LUT to construct the distribute switch
 
 
 module distribute_1x2_simple_comb#(
@@ -57,7 +57,7 @@ module distribute_1x2_simple_comb#(
 		// 10 --> Branch_high
 		// 11 --> Duplicate
 
-`ifdef USING_MUX
+`ifdef MODULAR
 	// inner logic
 	reg                         i_valid_inner;
 	wire   [1:0]                mux_o_valid_inner;               

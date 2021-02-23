@@ -1,0 +1,777 @@
+# //  ModelSim SE 10.2c Jul 18 2013 Linux 5.4.0-58-generic
+# //
+# //  Copyright 1991-2013 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //
+# Loading project sim
+# Compile of distribute_1x2_dst_tag_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_1x2_dst_tag_seq.v was successful.
+# Compile of distribute_1x2_simple_comb.v was successful.
+# Compile of distribute_1x2_simple_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_seq.v was successful.
+# Compile of distribute_2x2_simple_comb.v was successful.
+# Compile of distribute_2x2_simple_seq.v was successful.
+# Compile of merge_2x1_autopick_comb.v was successful.
+# Compile of merge_2x1_autopick_seq.v was successful.
+# Compile of merge_2x1_simple_comb.v was successful.
+# Compile of merge_2x1_simple_seq.v was successful.
+# Compile of adder_tree_comb.v was successful.
+# Compile of adder_tree_seq.v was successful.
+# Compile of adder_var_tree_comb .v was successful.
+# Compile of adder_var_tree_seq.v was successful.
+# Compile of merge_tree_autopick_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of merge_tree_autopick_seq.v was successful.
+# Compile of benes_merge_simple_comb.v was successful.
+# Compile of benes_merge_simple_seq.v was successful.
+# Compile of benes_simple_comb.v was successful.
+# Compile of benes_simple_seq.v was successful.
+# Compile of butterfly_dst_tag_comb.v was successful.
+# Compile of butterfly_dst_tag_seq.v was successful.
+# Compile of cube_simple_comb.v was successful.
+# Compile of cube_simple_seq.v was successful.
+# Compile of unfoldedbutterfly_merge_comb.v was successful.
+# Compile of unfoldedbutterfly_merge_seq.v was successful.
+# Compile of adder_comb.v was successful.
+# Compile of adder_seq.v was successful.
+# Compile of adder_var_comb.v was successful.
+# Compile of adder_var_seq.v was successful.
+# Compile of arbitor_last_served_2req.v was successful.
+# Compile of mux_2x1_simple_comb.v was successful.
+# Compile of mux_2x1_simple_seq.v was successful.
+# Compile of mux_seq2_1_AXILite.v was successful.
+# Compile of tb_adder_tree_comb.v was successful.
+# Compile of tb_adder_tree_seq.v was successful.
+# Compile of tb_adder_var_comb.v was successful.
+# Compile of tb_adder_var_seq.v was successful.
+# Compile of tb_adder_var_tree_comb.v was successful.
+# Compile of tb_adder_var_tree_seq.v was successful.
+# Compile of tb_arbitor_laster_served_2req.v was successful.
+# Compile of tb_benes_merge_simple_comb.v was successful.
+# Compile of tb_benes_merge_simple_seq.v was successful.
+# Compile of tb_benes_simple_comb.v was successful.
+# Compile of tb_benes_simple_seq.v was successful.
+# Compile of tb_butterfly_dst_tag_comb.v was successful.
+# Compile of tb_butterfly_dst_tag_seq.v was successful.
+# Compile of tb_cube_simple_comb.v was successful.
+# Compile of tb_cube_simple_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_1x2_simple_comb.v was successful.
+# Compile of tb_distribute_1x2_simple_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_2x2_simple_comb.v was successful.
+# Compile of tb_distribute_2x2_simple_seq.v was successful.
+# Compile of tb_merge_2x1_autopick_comb.v was successful.
+# Compile of tb_merge_2x1_autopick_seq.v was successful.
+# Compile of tb_merge_2x1_simple_comb.v was successful.
+# Compile of tb_merge_2x1_simple_seq.v was successful.
+# Compile of tb_merge_tree_autopick_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of tb_merge_tree_autopick_seq.v was successful.
+# Compile of tb_mux_2x1_comb.v was successful.
+# Compile of tb_mux_2x1_seq.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_comb.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_seq.v was successful.
+# 81 compiles, 0 failed with no errors. 
+vsim -voptargs=+acc work.distribute_2x2_simple_comb
+# vsim -voptargs=+acc work.distribute_2x2_simple_comb 
+# ** Note: (vsim-3812) Design is being optimized...
+# Loading work.distribute_2x2_simple_comb(fast)
+add wave -position insertpoint  \
+sim:/distribute_2x2_simple_comb/i_valid \
+sim:/distribute_2x2_simple_comb/i_data_bus \
+sim:/distribute_2x2_simple_comb/o_valid \
+sim:/distribute_2x2_simple_comb/o_data_bus \
+sim:/distribute_2x2_simple_comb/i_en \
+sim:/distribute_2x2_simple_comb/i_cmd \
+sim:/distribute_2x2_simple_comb/o_data_bus_inner \
+sim:/distribute_2x2_simple_comb/o_valid_inner \
+sim:/distribute_2x2_simple_comb/i_valid_inner \
+sim:/distribute_2x2_simple_comb/i_cmd_inner
+run -all
+vsim -voptargs=+acc work.tb_distribute_2x2_simple_comb
+# vsim -voptargs=+acc work.tb_distribute_2x2_simple_comb 
+# ** Note: (vsim-3812) Design is being optimized...
+# Loading work.tb_distribute_2x2_simple_comb(fast)
+# Loading work.distribute_2x2_simple_comb(fast)
+add wave -position insertpoint  \
+sim:/tb_distribute_2x2_simple_comb/clk \
+sim:/tb_distribute_2x2_simple_comb/i_valid \
+sim:/tb_distribute_2x2_simple_comb/i_data_bus \
+sim:/tb_distribute_2x2_simple_comb/o_valid \
+sim:/tb_distribute_2x2_simple_comb/o_data_bus \
+sim:/tb_distribute_2x2_simple_comb/i_en \
+sim:/tb_distribute_2x2_simple_comb/i_cmd
+run -all
+# Break in Module tb_distribute_2x2_simple_comb at /home/jimmy/work/work_tushar/AcceleratorNoC/tb/tb_distribute_2x2_simple_comb.v line 228
+# Compile of distribute_1x2_dst_tag_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_1x2_dst_tag_seq.v was successful.
+# Compile of distribute_1x2_simple_comb.v was successful.
+# Compile of distribute_1x2_simple_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_seq.v was successful.
+# Compile of distribute_2x2_simple_comb.v was successful.
+# Compile of distribute_2x2_simple_seq.v was successful.
+# Compile of merge_2x1_autopick_comb.v was successful.
+# Compile of merge_2x1_autopick_seq.v was successful.
+# Compile of merge_2x1_simple_comb.v was successful.
+# Compile of merge_2x1_simple_seq.v was successful.
+# Compile of adder_tree_comb.v was successful.
+# Compile of adder_tree_seq.v was successful.
+# Compile of adder_var_tree_comb .v was successful.
+# Compile of adder_var_tree_seq.v was successful.
+# Compile of merge_tree_autopick_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of merge_tree_autopick_seq.v was successful.
+# Compile of benes_merge_simple_comb.v was successful.
+# Compile of benes_merge_simple_seq.v was successful.
+# Compile of benes_simple_comb.v was successful.
+# Compile of benes_simple_seq.v was successful.
+# Compile of butterfly_dst_tag_comb.v was successful.
+# Compile of butterfly_dst_tag_seq.v was successful.
+# Compile of cube_simple_comb.v was successful.
+# Compile of cube_simple_seq.v was successful.
+# Compile of unfoldedbutterfly_merge_comb.v was successful.
+# Compile of unfoldedbutterfly_merge_seq.v was successful.
+# Compile of adder_comb.v was successful.
+# Compile of adder_seq.v was successful.
+# Compile of adder_var_comb.v was successful.
+# Compile of adder_var_seq.v was successful.
+# Compile of arbitor_last_served_2req.v was successful.
+# Compile of mux_2x1_simple_comb.v was successful.
+# Compile of mux_2x1_simple_seq.v was successful.
+# Compile of mux_seq2_1_AXILite.v was successful.
+# Compile of tb_adder_tree_comb.v was successful.
+# Compile of tb_adder_tree_seq.v was successful.
+# Compile of tb_adder_var_comb.v was successful.
+# Compile of tb_adder_var_seq.v was successful.
+# Compile of tb_adder_var_tree_comb.v was successful.
+# Compile of tb_adder_var_tree_seq.v was successful.
+# Compile of tb_arbitor_laster_served_2req.v was successful.
+# Compile of tb_benes_merge_simple_comb.v was successful.
+# Compile of tb_benes_merge_simple_seq.v was successful.
+# Compile of tb_benes_simple_comb.v was successful.
+# Compile of tb_benes_simple_seq.v was successful.
+# Compile of tb_butterfly_dst_tag_comb.v was successful.
+# Compile of tb_butterfly_dst_tag_seq.v was successful.
+# Compile of tb_cube_simple_comb.v was successful.
+# Compile of tb_cube_simple_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_1x2_simple_comb.v was successful.
+# Compile of tb_distribute_1x2_simple_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_2x2_simple_comb.v was successful with warnings.
+# Compile of tb_distribute_2x2_simple_seq.v was successful.
+# Compile of tb_merge_2x1_autopick_comb.v was successful.
+# Compile of tb_merge_2x1_autopick_seq.v was successful.
+# Compile of tb_merge_2x1_simple_comb.v was successful.
+# Compile of tb_merge_2x1_simple_seq.v was successful.
+# Compile of tb_merge_tree_autopick_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of tb_merge_tree_autopick_seq.v was successful.
+# Compile of tb_mux_2x1_comb.v was successful.
+# Compile of tb_mux_2x1_seq.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_comb.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_seq.v was successful.
+# 81 compiles, 0 failed with no errors. 
+restart -f
+# Loading work.tb_distribute_2x2_simple_comb(fast)
+# Loading work.distribute_2x2_simple_comb(fast)
+run -all
+# Break in Module tb_distribute_2x2_simple_comb at /home/jimmy/work/work_tushar/AcceleratorNoC/tb/tb_distribute_2x2_simple_comb.v line 228
+# Compile of distribute_1x2_dst_tag_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_1x2_dst_tag_seq.v was successful.
+# Compile of distribute_1x2_simple_comb.v was successful.
+# Compile of distribute_1x2_simple_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_seq.v was successful.
+# Compile of distribute_2x2_simple_comb.v was successful.
+# Compile of distribute_2x2_simple_seq.v was successful.
+# Compile of merge_2x1_autopick_comb.v was successful.
+# Compile of merge_2x1_autopick_seq.v was successful.
+# Compile of merge_2x1_simple_comb.v was successful.
+# Compile of merge_2x1_simple_seq.v was successful.
+# Compile of adder_tree_comb.v was successful.
+# Compile of adder_tree_seq.v was successful.
+# Compile of adder_var_tree_comb .v was successful.
+# Compile of adder_var_tree_seq.v was successful.
+# Compile of merge_tree_autopick_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of merge_tree_autopick_seq.v was successful.
+# Compile of benes_merge_simple_comb.v was successful.
+# Compile of benes_merge_simple_seq.v was successful.
+# Compile of benes_simple_comb.v was successful.
+# Compile of benes_simple_seq.v was successful.
+# Compile of butterfly_dst_tag_comb.v was successful.
+# Compile of butterfly_dst_tag_seq.v was successful.
+# Compile of cube_simple_comb.v was successful.
+# Compile of cube_simple_seq.v was successful.
+# Compile of unfoldedbutterfly_merge_comb.v was successful.
+# Compile of unfoldedbutterfly_merge_seq.v was successful.
+# Compile of adder_comb.v was successful.
+# Compile of adder_seq.v was successful.
+# Compile of adder_var_comb.v was successful.
+# Compile of adder_var_seq.v was successful.
+# Compile of arbitor_last_served_2req.v was successful.
+# Compile of mux_2x1_simple_comb.v was successful.
+# Compile of mux_2x1_simple_seq.v was successful.
+# Compile of mux_seq2_1_AXILite.v was successful.
+# Compile of tb_adder_tree_comb.v was successful.
+# Compile of tb_adder_tree_seq.v was successful.
+# Compile of tb_adder_var_comb.v was successful.
+# Compile of tb_adder_var_seq.v was successful.
+# Compile of tb_adder_var_tree_comb.v was successful.
+# Compile of tb_adder_var_tree_seq.v was successful.
+# Compile of tb_arbitor_laster_served_2req.v was successful.
+# Compile of tb_benes_merge_simple_comb.v was successful.
+# Compile of tb_benes_merge_simple_seq.v was successful.
+# Compile of tb_benes_simple_comb.v was successful.
+# Compile of tb_benes_simple_seq.v was successful.
+# Compile of tb_butterfly_dst_tag_comb.v was successful.
+# Compile of tb_butterfly_dst_tag_seq.v was successful.
+# Compile of tb_cube_simple_comb.v was successful.
+# Compile of tb_cube_simple_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_1x2_simple_comb.v was successful.
+# Compile of tb_distribute_1x2_simple_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_2x2_simple_comb.v failed with 1 errors.
+# Compile of tb_distribute_2x2_simple_seq.v was successful.
+# Compile of tb_merge_2x1_autopick_comb.v was successful.
+# Compile of tb_merge_2x1_autopick_seq.v was successful.
+# Compile of tb_merge_2x1_simple_comb.v was successful.
+# Compile of tb_merge_2x1_simple_seq.v was successful.
+# Compile of tb_merge_tree_autopick_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of tb_merge_tree_autopick_seq.v was successful.
+# Compile of tb_mux_2x1_comb.v was successful.
+# Compile of tb_mux_2x1_seq.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_comb.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_seq.v was successful.
+# 81 compiles, 1 failed with 1 error. 
+# Compile of distribute_1x2_dst_tag_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_1x2_dst_tag_seq.v was successful.
+# Compile of distribute_1x2_simple_comb.v was successful.
+# Compile of distribute_1x2_simple_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_seq.v was successful.
+# Compile of distribute_2x2_simple_comb.v was successful.
+# Compile of distribute_2x2_simple_seq.v was successful.
+# Compile of merge_2x1_autopick_comb.v was successful.
+# Compile of merge_2x1_autopick_seq.v was successful.
+# Compile of merge_2x1_simple_comb.v was successful.
+# Compile of merge_2x1_simple_seq.v was successful.
+# Compile of adder_tree_comb.v was successful.
+# Compile of adder_tree_seq.v was successful.
+# Compile of adder_var_tree_comb .v was successful.
+# Compile of adder_var_tree_seq.v was successful.
+# Compile of merge_tree_autopick_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of merge_tree_autopick_seq.v was successful.
+# Compile of benes_merge_simple_comb.v was successful.
+# Compile of benes_merge_simple_seq.v was successful.
+# Compile of benes_simple_comb.v was successful.
+# Compile of benes_simple_seq.v was successful.
+# Compile of butterfly_dst_tag_comb.v was successful.
+# Compile of butterfly_dst_tag_seq.v was successful.
+# Compile of cube_simple_comb.v was successful.
+# Compile of cube_simple_seq.v was successful.
+# Compile of unfoldedbutterfly_merge_comb.v was successful.
+# Compile of unfoldedbutterfly_merge_seq.v was successful.
+# Compile of adder_comb.v was successful.
+# Compile of adder_seq.v was successful.
+# Compile of adder_var_comb.v was successful.
+# Compile of adder_var_seq.v was successful.
+# Compile of arbitor_last_served_2req.v was successful.
+# Compile of mux_2x1_simple_comb.v was successful.
+# Compile of mux_2x1_simple_seq.v was successful.
+# Compile of mux_seq2_1_AXILite.v was successful.
+# Compile of tb_adder_tree_comb.v was successful.
+# Compile of tb_adder_tree_seq.v was successful.
+# Compile of tb_adder_var_comb.v was successful.
+# Compile of tb_adder_var_seq.v was successful.
+# Compile of tb_adder_var_tree_comb.v was successful.
+# Compile of tb_adder_var_tree_seq.v was successful.
+# Compile of tb_arbitor_laster_served_2req.v was successful.
+# Compile of tb_benes_merge_simple_comb.v was successful.
+# Compile of tb_benes_merge_simple_seq.v was successful.
+# Compile of tb_benes_simple_comb.v was successful.
+# Compile of tb_benes_simple_seq.v was successful.
+# Compile of tb_butterfly_dst_tag_comb.v was successful.
+# Compile of tb_butterfly_dst_tag_seq.v was successful.
+# Compile of tb_cube_simple_comb.v was successful.
+# Compile of tb_cube_simple_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_1x2_simple_comb.v was successful.
+# Compile of tb_distribute_1x2_simple_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_2x2_simple_comb.v was successful.
+# Compile of tb_distribute_2x2_simple_seq.v was successful.
+# Compile of tb_merge_2x1_autopick_comb.v was successful.
+# Compile of tb_merge_2x1_autopick_seq.v was successful.
+# Compile of tb_merge_2x1_simple_comb.v was successful.
+# Compile of tb_merge_2x1_simple_seq.v was successful.
+# Compile of tb_merge_tree_autopick_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of tb_merge_tree_autopick_seq.v was successful.
+# Compile of tb_mux_2x1_comb.v was successful.
+# Compile of tb_mux_2x1_seq.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_comb.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_seq.v was successful.
+# 81 compiles, 0 failed with no errors. 
+restart -f
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# Loading work.tb_distribute_2x2_simple_comb(fast)
+# Loading work.distribute_2x2_simple_comb(fast)
+run -all
+# Break in Module tb_distribute_2x2_simple_comb at /home/jimmy/work/work_tushar/AcceleratorNoC/tb/tb_distribute_2x2_simple_comb.v line 356
+# Compile of distribute_1x2_dst_tag_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_1x2_dst_tag_seq.v was successful.
+# Compile of distribute_1x2_simple_comb.v was successful.
+# Compile of distribute_1x2_simple_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_seq.v was successful.
+# Compile of distribute_2x2_simple_comb.v was successful.
+# Compile of distribute_2x2_simple_seq.v was successful.
+# Compile of merge_2x1_autopick_comb.v was successful.
+# Compile of merge_2x1_autopick_seq.v was successful.
+# Compile of merge_2x1_simple_comb.v was successful.
+# Compile of merge_2x1_simple_seq.v was successful.
+# Compile of adder_tree_comb.v was successful.
+# Compile of adder_tree_seq.v was successful.
+# Compile of adder_var_tree_comb .v was successful.
+# Compile of adder_var_tree_seq.v was successful.
+# Compile of merge_tree_autopick_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of merge_tree_autopick_seq.v was successful.
+# Compile of benes_merge_simple_comb.v was successful.
+# Compile of benes_merge_simple_seq.v was successful.
+# Compile of benes_simple_comb.v was successful.
+# Compile of benes_simple_seq.v was successful.
+# Compile of butterfly_dst_tag_comb.v was successful.
+# Compile of butterfly_dst_tag_seq.v was successful.
+# Compile of cube_simple_comb.v was successful.
+# Compile of cube_simple_seq.v was successful.
+# Compile of unfoldedbutterfly_merge_comb.v was successful.
+# Compile of unfoldedbutterfly_merge_seq.v was successful.
+# Compile of adder_comb.v was successful.
+# Compile of adder_seq.v was successful.
+# Compile of adder_var_comb.v was successful.
+# Compile of adder_var_seq.v was successful.
+# Compile of arbitor_last_served_2req.v was successful.
+# Compile of mux_2x1_simple_comb.v was successful.
+# Compile of mux_2x1_simple_seq.v was successful.
+# Compile of mux_seq2_1_AXILite.v was successful.
+# Compile of tb_adder_tree_comb.v was successful.
+# Compile of tb_adder_tree_seq.v was successful.
+# Compile of tb_adder_var_comb.v was successful.
+# Compile of tb_adder_var_seq.v was successful.
+# Compile of tb_adder_var_tree_comb.v was successful.
+# Compile of tb_adder_var_tree_seq.v was successful.
+# Compile of tb_arbitor_laster_served_2req.v was successful.
+# Compile of tb_benes_merge_simple_comb.v was successful.
+# Compile of tb_benes_merge_simple_seq.v was successful.
+# Compile of tb_benes_simple_comb.v was successful.
+# Compile of tb_benes_simple_seq.v was successful.
+# Compile of tb_butterfly_dst_tag_comb.v was successful.
+# Compile of tb_butterfly_dst_tag_seq.v was successful.
+# Compile of tb_cube_simple_comb.v was successful.
+# Compile of tb_cube_simple_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_1x2_simple_comb.v was successful.
+# Compile of tb_distribute_1x2_simple_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_2x2_simple_comb.v was successful.
+# Compile of tb_distribute_2x2_simple_seq.v was successful.
+# Compile of tb_merge_2x1_autopick_comb.v was successful.
+# Compile of tb_merge_2x1_autopick_seq.v was successful.
+# Compile of tb_merge_2x1_simple_comb.v was successful.
+# Compile of tb_merge_2x1_simple_seq.v was successful.
+# Compile of tb_merge_tree_autopick_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of tb_merge_tree_autopick_seq.v was successful.
+# Compile of tb_mux_2x1_comb.v was successful.
+# Compile of tb_mux_2x1_seq.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_comb.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_seq.v was successful.
+# 81 compiles, 0 failed with no errors. 
+restart -f
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# Loading work.tb_distribute_2x2_simple_comb(fast)
+# Loading work.distribute_2x2_simple_comb(fast)
+run -all
+# Break in Module tb_distribute_2x2_simple_comb at /home/jimmy/work/work_tushar/AcceleratorNoC/tb/tb_distribute_2x2_simple_comb.v line 356
+# Compile of distribute_1x2_dst_tag_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_1x2_dst_tag_seq.v was successful.
+# Compile of distribute_1x2_simple_comb.v was successful.
+# Compile of distribute_1x2_simple_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_seq.v was successful.
+# Compile of distribute_2x2_simple_comb.v was successful.
+# Compile of distribute_2x2_simple_seq.v was successful.
+# Compile of merge_2x1_autopick_comb.v was successful.
+# Compile of merge_2x1_autopick_seq.v was successful.
+# Compile of merge_2x1_simple_comb.v was successful.
+# Compile of merge_2x1_simple_seq.v was successful.
+# Compile of adder_tree_comb.v was successful.
+# Compile of adder_tree_seq.v was successful.
+# Compile of adder_var_tree_comb .v was successful.
+# Compile of adder_var_tree_seq.v was successful.
+# Compile of merge_tree_autopick_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of merge_tree_autopick_seq.v was successful.
+# Compile of benes_merge_simple_comb.v was successful.
+# Compile of benes_merge_simple_seq.v was successful.
+# Compile of benes_simple_comb.v was successful.
+# Compile of benes_simple_seq.v was successful.
+# Compile of butterfly_dst_tag_comb.v was successful.
+# Compile of butterfly_dst_tag_seq.v was successful.
+# Compile of cube_simple_comb.v was successful.
+# Compile of cube_simple_seq.v was successful.
+# Compile of unfoldedbutterfly_merge_comb.v was successful.
+# Compile of unfoldedbutterfly_merge_seq.v was successful.
+# Compile of adder_comb.v was successful.
+# Compile of adder_seq.v was successful.
+# Compile of adder_var_comb.v was successful.
+# Compile of adder_var_seq.v was successful.
+# Compile of arbitor_last_served_2req.v was successful.
+# Compile of mux_2x1_simple_comb.v was successful.
+# Compile of mux_2x1_simple_seq.v was successful.
+# Compile of mux_seq2_1_AXILite.v was successful.
+# Compile of tb_adder_tree_comb.v was successful.
+# Compile of tb_adder_tree_seq.v was successful.
+# Compile of tb_adder_var_comb.v was successful.
+# Compile of tb_adder_var_seq.v was successful.
+# Compile of tb_adder_var_tree_comb.v was successful.
+# Compile of tb_adder_var_tree_seq.v was successful.
+# Compile of tb_arbitor_laster_served_2req.v was successful.
+# Compile of tb_benes_merge_simple_comb.v was successful.
+# Compile of tb_benes_merge_simple_seq.v was successful.
+# Compile of tb_benes_simple_comb.v was successful.
+# Compile of tb_benes_simple_seq.v was successful.
+# Compile of tb_butterfly_dst_tag_comb.v was successful.
+# Compile of tb_butterfly_dst_tag_seq.v was successful.
+# Compile of tb_cube_simple_comb.v was successful.
+# Compile of tb_cube_simple_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_1x2_simple_comb.v was successful.
+# Compile of tb_distribute_1x2_simple_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_2x2_simple_comb.v was successful.
+# Compile of tb_distribute_2x2_simple_seq.v was successful.
+# Compile of tb_merge_2x1_autopick_comb.v was successful.
+# Compile of tb_merge_2x1_autopick_seq.v was successful.
+# Compile of tb_merge_2x1_simple_comb.v was successful.
+# Compile of tb_merge_2x1_simple_seq.v was successful.
+# Compile of tb_merge_tree_autopick_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of tb_merge_tree_autopick_seq.v was successful.
+# Compile of tb_mux_2x1_comb.v was successful.
+# Compile of tb_mux_2x1_seq.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_comb.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_seq.v was successful.
+# 81 compiles, 0 failed with no errors. 
+restart -f
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# Loading work.tb_distribute_2x2_simple_comb(fast)
+# Loading work.distribute_2x2_simple_comb(fast)
+# Loading work.merge_2x1_simple_comb(fast)
+# Loading work.mux_2x1_simple_comb(fast)
+run -all
+# Break in Module tb_distribute_2x2_simple_comb at /home/jimmy/work/work_tushar/AcceleratorNoC/tb/tb_distribute_2x2_simple_comb.v line 356
+# Compile of distribute_1x2_dst_tag_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_1x2_dst_tag_seq.v was successful.
+# Compile of distribute_1x2_simple_comb.v was successful.
+# Compile of distribute_1x2_simple_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_seq.v was successful.
+# Compile of distribute_2x2_simple_comb.v was successful.
+# Compile of distribute_2x2_simple_seq.v was successful.
+# Compile of merge_2x1_autopick_comb.v was successful.
+# Compile of merge_2x1_autopick_seq.v was successful.
+# Compile of merge_2x1_simple_comb.v was successful.
+# Compile of merge_2x1_simple_seq.v was successful.
+# Compile of adder_tree_comb.v was successful.
+# Compile of adder_tree_seq.v was successful.
+# Compile of adder_var_tree_comb .v was successful.
+# Compile of adder_var_tree_seq.v was successful.
+# Compile of merge_tree_autopick_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of merge_tree_autopick_seq.v was successful.
+# Compile of benes_merge_simple_comb.v was successful.
+# Compile of benes_merge_simple_seq.v was successful.
+# Compile of benes_simple_comb.v was successful.
+# Compile of benes_simple_seq.v was successful.
+# Compile of butterfly_dst_tag_comb.v was successful.
+# Compile of butterfly_dst_tag_seq.v was successful.
+# Compile of cube_simple_comb.v was successful.
+# Compile of cube_simple_seq.v was successful.
+# Compile of unfoldedbutterfly_merge_comb.v was successful.
+# Compile of unfoldedbutterfly_merge_seq.v was successful.
+# Compile of adder_comb.v was successful.
+# Compile of adder_seq.v was successful.
+# Compile of adder_var_comb.v was successful.
+# Compile of adder_var_seq.v was successful.
+# Compile of arbitor_last_served_2req.v was successful.
+# Compile of mux_2x1_simple_comb.v was successful.
+# Compile of mux_2x1_simple_seq.v was successful.
+# Compile of mux_seq2_1_AXILite.v was successful.
+# Compile of tb_adder_tree_comb.v was successful.
+# Compile of tb_adder_tree_seq.v was successful.
+# Compile of tb_adder_var_comb.v was successful.
+# Compile of tb_adder_var_seq.v was successful.
+# Compile of tb_adder_var_tree_comb.v was successful.
+# Compile of tb_adder_var_tree_seq.v was successful.
+# Compile of tb_arbitor_laster_served_2req.v was successful.
+# Compile of tb_benes_merge_simple_comb.v was successful.
+# Compile of tb_benes_merge_simple_seq.v was successful.
+# Compile of tb_benes_simple_comb.v was successful.
+# Compile of tb_benes_simple_seq.v was successful.
+# Compile of tb_butterfly_dst_tag_comb.v was successful.
+# Compile of tb_butterfly_dst_tag_seq.v was successful.
+# Compile of tb_cube_simple_comb.v was successful.
+# Compile of tb_cube_simple_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_1x2_simple_comb.v was successful.
+# Compile of tb_distribute_1x2_simple_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_2x2_simple_comb.v was successful.
+# Compile of tb_distribute_2x2_simple_seq.v was successful.
+# Compile of tb_merge_2x1_autopick_comb.v was successful.
+# Compile of tb_merge_2x1_autopick_seq.v was successful.
+# Compile of tb_merge_2x1_simple_comb.v was successful.
+# Compile of tb_merge_2x1_simple_seq.v was successful.
+# Compile of tb_merge_tree_autopick_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of tb_merge_tree_autopick_seq.v was successful.
+# Compile of tb_mux_2x1_comb.v was successful.
+# Compile of tb_mux_2x1_seq.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_comb.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_seq.v was successful.
+# 81 compiles, 0 failed with no errors. 
+restart -f
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# Loading work.tb_distribute_2x2_simple_comb(fast)
+# Loading work.distribute_2x2_simple_comb(fast)
+run -all
+# Break in Module tb_distribute_2x2_simple_comb at /home/jimmy/work/work_tushar/AcceleratorNoC/tb/tb_distribute_2x2_simple_comb.v line 356
+vsim -voptargs=+acc work.tb_benes_simple_comb
+# vsim -voptargs=+acc work.tb_benes_simple_comb 
+# ** Note: (vsim-3812) Design is being optimized...
+# Loading work.tb_benes_simple_comb(fast)
+# Loading work.benes_simple_comb(fast)
+# Loading work.distribute_2x2_simple_comb(fast)
+add wave -position insertpoint  \
+sim:/tb_benes_simple_comb/clk \
+sim:/tb_benes_simple_comb/i_valid \
+sim:/tb_benes_simple_comb/i_data_bus \
+sim:/tb_benes_simple_comb/o_valid \
+sim:/tb_benes_simple_comb/o_data_bus \
+sim:/tb_benes_simple_comb/i_en \
+sim:/tb_benes_simple_comb/i_cmd
+run -all
+# Break in Module tb_benes_simple_comb at /home/jimmy/work/work_tushar/AcceleratorNoC/tb/tb_benes_simple_comb.v line 621
+# Compile of distribute_1x2_dst_tag_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_1x2_dst_tag_seq.v was successful.
+# Compile of distribute_1x2_simple_comb.v was successful.
+# Compile of distribute_1x2_simple_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of distribute_2x2_dst_tag_seq.v was successful.
+# Compile of distribute_2x2_simple_comb.v was successful.
+# Compile of distribute_2x2_simple_seq.v was successful.
+# Compile of merge_2x1_autopick_comb.v was successful.
+# Compile of merge_2x1_autopick_seq.v was successful.
+# Compile of merge_2x1_simple_comb.v was successful.
+# Compile of merge_2x1_simple_seq.v was successful.
+# Compile of adder_tree_comb.v was successful.
+# Compile of adder_tree_seq.v was successful.
+# Compile of adder_var_tree_comb .v was successful.
+# Compile of adder_var_tree_seq.v was successful.
+# Compile of merge_tree_autopick_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of merge_tree_autopick_seq.v was successful.
+# Compile of benes_merge_simple_comb.v was successful.
+# Compile of benes_merge_simple_seq.v was successful.
+# Compile of benes_simple_comb.v was successful.
+# Compile of benes_simple_seq.v was successful.
+# Compile of butterfly_dst_tag_comb.v was successful.
+# Compile of butterfly_dst_tag_seq.v was successful.
+# Compile of cube_simple_comb.v was successful.
+# Compile of cube_simple_seq.v was successful.
+# Compile of unfoldedbutterfly_merge_comb.v was successful.
+# Compile of unfoldedbutterfly_merge_seq.v was successful.
+# Compile of adder_comb.v was successful.
+# Compile of adder_seq.v was successful.
+# Compile of adder_var_comb.v was successful.
+# Compile of adder_var_seq.v was successful.
+# Compile of arbitor_last_served_2req.v was successful.
+# Compile of mux_2x1_simple_comb.v was successful.
+# Compile of mux_2x1_simple_seq.v was successful.
+# Compile of mux_seq2_1_AXILite.v was successful.
+# Compile of tb_adder_tree_comb.v was successful.
+# Compile of tb_adder_tree_seq.v was successful.
+# Compile of tb_adder_var_comb.v was successful.
+# Compile of tb_adder_var_seq.v was successful.
+# Compile of tb_adder_var_tree_comb.v was successful.
+# Compile of tb_adder_var_tree_seq.v was successful.
+# Compile of tb_arbitor_laster_served_2req.v was successful.
+# Compile of tb_benes_merge_simple_comb.v was successful.
+# Compile of tb_benes_merge_simple_seq.v was successful.
+# Compile of tb_benes_simple_comb.v was successful.
+# Compile of tb_benes_simple_seq.v was successful.
+# Compile of tb_butterfly_dst_tag_comb.v was successful.
+# Compile of tb_butterfly_dst_tag_seq.v was successful.
+# Compile of tb_cube_simple_comb.v was successful.
+# Compile of tb_cube_simple_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_1x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_1x2_simple_comb.v was successful.
+# Compile of tb_distribute_1x2_simple_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_comb.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_multicast_seq.v was successful.
+# Compile of tb_distribute_2x2_dst_tag_seq.v was successful.
+# Compile of tb_distribute_2x2_simple_comb.v was successful.
+# Compile of tb_distribute_2x2_simple_seq.v was successful.
+# Compile of tb_merge_2x1_autopick_comb.v was successful.
+# Compile of tb_merge_2x1_autopick_seq.v was successful.
+# Compile of tb_merge_2x1_simple_comb.v was successful.
+# Compile of tb_merge_2x1_simple_seq.v was successful.
+# Compile of tb_merge_tree_autopick_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_comb.v was successful.
+# Compile of tb_merge_tree_autopick_multi_output_seq.v was successful.
+# Compile of tb_merge_tree_autopick_seq.v was successful.
+# Compile of tb_mux_2x1_comb.v was successful.
+# Compile of tb_mux_2x1_seq.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_comb.v was successful.
+# Compile of tb_unfoldedbutterfly_merge_seq.v was successful.
+# 81 compiles, 0 failed with no errors. 
+vsim -voptargs=+acc work.tb_distribute_2x2_simple_seq
+# vsim -voptargs=+acc work.tb_distribute_2x2_simple_seq 
+# ** Note: (vsim-3812) Design is being optimized...
+# Loading work.tb_distribute_2x2_simple_seq(fast)
+# Loading work.distribute_2x2_simple_seq(fast)
+add wave -position insertpoint  \
+sim:/tb_distribute_2x2_simple_seq/clk \
+sim:/tb_distribute_2x2_simple_seq/rst \
+sim:/tb_distribute_2x2_simple_seq/i_valid \
+sim:/tb_distribute_2x2_simple_seq/i_data_bus \
+sim:/tb_distribute_2x2_simple_seq/o_valid \
+sim:/tb_distribute_2x2_simple_seq/o_data_bus \
+sim:/tb_distribute_2x2_simple_seq/i_en \
+sim:/tb_distribute_2x2_simple_seq/i_cmd
+run -all
+# Break in Module tb_distribute_2x2_simple_seq at /home/jimmy/work/work_tushar/AcceleratorNoC/tb/tb_distribute_2x2_simple_seq.v line 296
+vsim -voptargs=+acc work.tb_benes_simple_seq
+# vsim -voptargs=+acc work.tb_benes_simple_seq 
+# ** Note: (vsim-3812) Design is being optimized...
+# Loading work.tb_benes_simple_seq(fast)
+# Loading work.benes_simple_seq(fast)
+# Loading work.distribute_2x2_simple_seq(fast)
+add wave -position insertpoint  \
+sim:/tb_benes_simple_seq/clk \
+sim:/tb_benes_simple_seq/rst \
+sim:/tb_benes_simple_seq/i_valid \
+sim:/tb_benes_simple_seq/i_data_bus \
+sim:/tb_benes_simple_seq/o_valid \
+sim:/tb_benes_simple_seq/o_data_bus \
+sim:/tb_benes_simple_seq/i_en \
+sim:/tb_benes_simple_seq/i_cmd
+run -all
+# Break in Module tb_benes_simple_seq at /home/jimmy/work/work_tushar/AcceleratorNoC/tb/tb_benes_simple_seq.v line 184
