@@ -57,15 +57,15 @@ module benes_merge_simple_seq#(
 	i_cmd           // command 
 );
 	//parameter
-	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
+	localparam  NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 
-	localparam LEVEL = $clog2(NUM_INPUT_DATA);
-	localparam TOTAL_STAGE = 2*LEVEL-1;
+	localparam  LEVEL = $clog2(NUM_INPUT_DATA);
+	localparam  TOTAL_STAGE = 2*LEVEL-1;
 
-	localparam TOTAL_COMMMAND = (TOTAL_STAGE-1)*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	localparam  TOTAL_COMMMAND = (TOTAL_STAGE-1)*NUM_SWITCH_IN*COMMMAND_WIDTH;
 	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_OUTPUT_DATA;
+	localparam  WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam  WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_OUTPUT_DATA;
 	
 	// interface
 	input                                        clk;
@@ -96,16 +96,15 @@ module benes_merge_simple_seq#(
 
 	genvar i,j,k,s,p;
 	generate
-
 		// logic for control pipeline
 		for(i=0; i<TOTAL_STAGE-2;i=i+1)
 		begin:cmd_pipeline_stage
-			localparam NUM_STAGE = TOTAL_STAGE-i-1;
-			reg  [COMMMAND_WIDTH-1:0]                pipeline_i_cmd_reg[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.    
+			localparam NUM_STAGE = TOTAL_STAGE-i-2; // remove the first stage(directly take input command) and last stage (doesn't need command becuase they are merge autopick 2x1 switches)
+			reg  [COMMMAND_WIDTH-1:0]            pipeline_i_cmd_reg[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.    
 		end
 		
 		for(i=0;i<TOTAL_STAGE-2;i=i+1)  // from second stage to the end;
-		begin
+		begin:cmd_first_stage_pipeline_assignment
 			for(j=0;j<NUM_SWITCH_IN;j=j+1)
 			begin
 				always@(posedge clk)
@@ -116,8 +115,8 @@ module benes_merge_simple_seq#(
 		end
 		
 		for(p=0; p<TOTAL_STAGE-3;p=p+1)
-		begin
-			localparam NUM_STAGE_IN_PIPELINE = TOTAL_STAGE-p-1;
+		begin:cmd_pipeline_shift
+			localparam NUM_STAGE_IN_PIPELINE = TOTAL_STAGE-p-3; // shift starts from the third stage (remove 2) and last stage (remove extra 1) total 3.
 			for(i=0;i<NUM_STAGE_IN_PIPELINE;i=i+1)  // from second stage to the end;
 			begin
 				for(j=0;j<NUM_SWITCH_IN;j=j+1)
@@ -204,7 +203,7 @@ module benes_merge_simple_seq#(
 		// inverse shuffle function [loop right shift]:  input of (i+1)-th stage -> output of i-th stage 
 		for(s=(LEVEL-1);s<(TOTAL_STAGE-1);s=s+1)
 		begin:second_half_stages
-			localparam [$clog2(NUM_INPUT_DATA):0] num_group = TOTAL_STAGE-2-s;
+			localparam  [$clog2(NUM_INPUT_DATA):0] num_group = TOTAL_STAGE-2-s;
 			for(k=0;k<(1<<num_group);k=k+1)
 			begin:group
 				for(i=0;i<(NUM_SWITCH_IN>>num_group);i=i+1)
