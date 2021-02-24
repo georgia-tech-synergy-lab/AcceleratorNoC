@@ -45,7 +45,7 @@
 /////////////////////////////////////////////////////////////
 
 `define TEST_8_unfoldedbutterfly_merge
-// `define TEST_16_unfoldedbutterfly_merge
+// `define TEST_16_unfoldedbutterfly_merge //TODO, current is old verion does not work for new unfoldedbutterfly
 
 
 `ifdef TEST_16_unfoldedbutterfly_merge
