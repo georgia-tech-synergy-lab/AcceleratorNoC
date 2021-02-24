@@ -52,13 +52,11 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-`define DESTINATION_TAG // 2 bit command -- each input data has its own control. 
-                        // When both input choose the same output port then HighIn has higher priority
-
 
 module distribute_2x2_dst_tag_comb#(
 	parameter DATA_WIDTH = 32,
-	parameter DESTINATION_TAG_WIDTH = 2
+	parameter DESTINATION_TAG_WIDTH = 1,
+	parameter IN_COMMAND_WIDTH = 2
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -75,8 +73,11 @@ module distribute_2x2_dst_tag_comb#(
 );
 	// localparam
 	parameter NUM_DATA_IN = 2;
-	parameter IN_COMMAND_WIDTH = NUM_DATA_IN * DESTINATION_TAG_WIDTH;
-	parameter OUT_COMMAND_WIDTH = (IN_COMMAND_WIDTH>2)?(IN_COMMAND_WIDTH-2):2;
+	parameter CONSUME_COMMAND_WIDTH = NUM_DATA_IN * DESTINATION_TAG_WIDTH;
+	parameter OUT_COMMAND_WIDTH = (IN_COMMAND_WIDTH>CONSUME_COMMAND_WIDTH)?(IN_COMMAND_WIDTH-CONSUME_COMMAND_WIDTH):CONSUME_COMMAND_WIDTH;
+	parameter OUT_COMMAND_WIDTH_PER_DATA = ((IN_COMMAND_WIDTH - CONSUME_COMMAND_WIDTH) >> 1);
+	parameter MSB_COMMAND_HIGHIN_DATA = IN_COMMAND_WIDTH;
+	parameter MSB_COMMAND_LOWIN_DATA = IN_COMMAND_WIDTH>>1;
 
 	// interface
 	input  [1:0]                    i_valid;             
@@ -87,128 +88,242 @@ module distribute_2x2_dst_tag_comb#(
 	    
 	input                           i_en;
 	input  [IN_COMMAND_WIDTH-1:0]   i_cmd;
-		// 1x --> HighIn chooses HighOut
-		// 0x --> HighIn chooses LowOut
-		// x1 --> LowIn chooses HighOut
-		// x0 --> LowIn chooses LowOut
+		// 2'b11 --> HighIn HighOut
+		// 2'b00 --> HighIn LowOut
+		// 2'b10 --> Pass Through
+		// 2'b01 --> Pass Swtich
+		// MSB is command for high Input, 1 choose high out
+		// LSB is command for low Input, 1 choose high out
 		// when both input choose the same output port
 		// HighIn has higher priority.
 	
 	output [OUT_COMMAND_WIDTH-1:0]  o_cmd;   
 
 	// inner logic 
+	reg    [IN_COMMAND_WIDTH-1:0]   i_cmd_inner;
+	reg    [2*DATA_WIDTH-1:0]       i_data_bus_inner;
+	reg    [1:0]                    i_valid_inner;
+
 	reg    [2*DATA_WIDTH-1:0]       o_data_bus_inner;
 	reg    [1:0]                    o_valid_inner;
 	reg    [OUT_COMMAND_WIDTH-1:0]  o_cmd_inner;
 
-
-
-	if(IN_COMMAND_WIDTH==2)
+	always@(*)
 	begin
+		i_cmd_inner = i_cmd;
+		i_data_bus_inner = i_data_bus;
+		i_valid_inner = i_valid;
+	end
+
+	if(IN_COMMAND_WIDTH<=NUM_DATA_IN*DESTINATION_TAG_WIDTH)
+	begin:LAST_STAGE
 		// output data
 		always@(*)
 		begin
 			if(i_en)
 			begin
-				case({i_cmd})
-					2'b11: // Both_Contention_Highout
-					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[1])?2'b00:2'b10;
-					end
-					2'b00: // Both_Contention_Lowout
-					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid[0])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[0])?2'b01:2'b00;
-					end
-					2'b10, 2'b1z, 2'bz0: // Pass Through
-					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[0])? ((i_valid[1])?2'b11:2'b01) : ((i_valid[1])?2'b10:2'b00);
-					end
-					2'b01, 2'b0z, 2'bz1: // Pass Switch
-					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[0])? ((i_valid[1])?2'b11:2'b10) : ((i_valid[1])?2'b01:2'b00);
-					end
-					default:
-					begin
-						o_valid_inner = 2'b00;
-						o_data_bus_inner = {2*DATA_WIDTH{1'bz}};
-					end
+				o_cmd_inner = {(OUT_COMMAND_WIDTH){1'b0}};
+
+				case(i_valid_inner)
+				2'b11:
+				begin
+					case({i_cmd_inner})
+						2'b11: // HighIn HighOut
+						begin
+							o_data_bus_inner = {i_data_bus_inner[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
+							o_valid_inner = 2'b10;
+						end
+						2'b00: // HighIn LowOut
+						begin
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus_inner[DATA_WIDTH+:DATA_WIDTH]};
+							o_valid_inner = 2'b01;
+						end
+						2'b10: // Pass Through
+						begin
+							o_data_bus_inner = i_data_bus_inner;
+							o_valid_inner = 2'b11;
+						end
+						2'b01: // Pass Switch
+						begin
+							o_data_bus_inner = {i_data_bus_inner[0+:DATA_WIDTH], i_data_bus_inner[DATA_WIDTH+:DATA_WIDTH]};
+							o_valid_inner = 2'b11;
+						end
+						default: // No Pass
+						begin
+							o_data_bus_inner = {(2*DATA_WIDTH){1'b0}};
+							o_valid_inner = 2'b00;
+						end
+					endcase
+				end
+				2'b10:
+				begin
+					case({i_cmd_inner})
+						2'b11,2'b10: // HighIn HighOut
+						begin
+							o_data_bus_inner = {i_data_bus_inner[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
+							o_valid_inner = 2'b10;
+						end
+						2'b00,2'b01: // HighIn LowOut
+						begin
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus_inner[DATA_WIDTH+:DATA_WIDTH]};
+							o_valid_inner = 2'b01;
+						end
+						default: // No Pass
+						begin
+							o_data_bus_inner = {(2*DATA_WIDTH){1'b0}};
+							o_valid_inner = 2'b00;
+						end
+					endcase
+				end
+				2'b01:
+				begin
+					case({i_cmd_inner})
+						2'b01,2'b11: // LowIn HighOut
+						begin
+							o_data_bus_inner = {i_data_bus_inner[0+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
+							o_valid_inner = 2'b10;
+						end
+						2'b00,2'b10: // LowIn LowOut
+						begin
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus_inner[0+:DATA_WIDTH]};
+							o_valid_inner = 2'b01;
+						end
+						default: // No Pass
+						begin
+							o_data_bus_inner = {(2*DATA_WIDTH){1'b0}};
+							o_valid_inner = 2'b00;
+						end
+					endcase
+				end
+				default: // No Pass
+				begin
+					o_data_bus_inner = {(2*DATA_WIDTH){1'b0}};
+					o_valid_inner = 2'b00;
+				end
 				endcase
 			end
 			else
 			begin
 				o_valid_inner = 2'b00;
-				o_data_bus_inner = {2*DATA_WIDTH{1'bz}};	
+				o_data_bus_inner = {2*DATA_WIDTH{1'b0}};	
 			end
-		end
-		
-		// output command
-		always@(*)
-		begin
-			o_cmd_inner = {1'bz, 1'bz};
 		end
 	end
 	else
-	begin
+	begin: NOT_LAST_STAGE
 		// output data & command
 		always@(*)
 		begin
 			if(i_en)
 			begin
-				case({i_cmd[IN_COMMAND_WIDTH-1],i_cmd[IN_COMMAND_WIDTH-1-DESTINATION_TAG_WIDTH]})
-					2'b11: // Both_Contention_Highout
-					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[1])?2'b00:2'b10;
+				case(i_valid_inner)
+				2'b11:
+				begin
+					case({i_cmd_inner[MSB_COMMAND_HIGHIN_DATA-1], i_cmd_inner[MSB_COMMAND_LOWIN_DATA-1]})
+						2'b11: // HighIn HighOut
+						begin
+							o_data_bus_inner = {i_data_bus_inner[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
+							o_valid_inner = 2'b10;
+							
+							o_cmd_inner = {i_cmd_inner[MSB_COMMAND_HIGHIN_DATA-DESTINATION_TAG_WIDTH-1:MSB_COMMAND_LOWIN_DATA], {(OUT_COMMAND_WIDTH_PER_DATA){1'b0}}};
+						end
+						2'b00: // HighIn LowOut
+						begin
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus_inner[DATA_WIDTH+:DATA_WIDTH]};
+							o_valid_inner = 2'b01;
 
-						o_cmd_inner = {i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)], {(DESTINATION_TAG_WIDTH-1){1'bz}}};
-					end
-					2'b00: // Both_Contention_Lowout
-					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid[0])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[0])?2'b01:2'b00;
-					
-						o_cmd_inner = { {(DESTINATION_TAG_WIDTH-1){1'bz}}, i_cmd[0+:(DESTINATION_TAG_WIDTH-1)]};
-					end
-					2'b10, 2'b1z, 2'bz0: // Pass Through
-					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[0])? ((i_valid[1])?2'b11:2'b01) : ((i_valid[1])?2'b10:2'b00);
-
-						o_cmd_inner = {i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)], i_cmd[0+:(DESTINATION_TAG_WIDTH-1)]};
-					end
-					2'b01, 2'b0z, 2'bz1: // Pass Switch
-					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] =  (i_valid[0])?i_data_bus[0+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] =  (i_valid[1])?i_data_bus[DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid[0])? ((i_valid[1])?2'b11:2'b10) : ((i_valid[1])?2'b01:2'b00);
-
-						o_cmd_inner = {i_cmd[0+:(DESTINATION_TAG_WIDTH-1)], i_cmd[DESTINATION_TAG_WIDTH+:(DESTINATION_TAG_WIDTH-1)]};
-					end
-					default:
-					begin
-						o_valid_inner = 2'b00;
-						o_data_bus_inner = {2*DATA_WIDTH{1'bz}};
+							o_cmd_inner = {{(OUT_COMMAND_WIDTH_PER_DATA){1'b0}}, i_cmd_inner[MSB_COMMAND_HIGHIN_DATA-DESTINATION_TAG_WIDTH-1:MSB_COMMAND_LOWIN_DATA]};
+						end
+						2'b10: // Pass Through
+						begin
+							o_data_bus_inner = i_data_bus_inner;
+							o_valid_inner = 2'b11;
 						
-						o_cmd_inner = {{(DESTINATION_TAG_WIDTH-1){1'bz}}, {(DESTINATION_TAG_WIDTH-1){1'bz}}};
+							o_cmd_inner = {i_cmd_inner[MSB_COMMAND_HIGHIN_DATA-DESTINATION_TAG_WIDTH-1:MSB_COMMAND_LOWIN_DATA], i_cmd_inner[MSB_COMMAND_LOWIN_DATA-DESTINATION_TAG_WIDTH-1:0]};
+						end
+						2'b01: // Pass Switch
+						begin
+							o_data_bus_inner = {i_data_bus_inner[0+:DATA_WIDTH], i_data_bus_inner[DATA_WIDTH+:DATA_WIDTH]};
+							o_valid_inner = 2'b11;
+						
+							o_cmd_inner = {i_cmd_inner[MSB_COMMAND_LOWIN_DATA-DESTINATION_TAG_WIDTH-1:0], i_cmd_inner[MSB_COMMAND_HIGHIN_DATA-DESTINATION_TAG_WIDTH-1:MSB_COMMAND_LOWIN_DATA]};
+						end
+						default: // No Pass
+						begin
+							o_data_bus_inner = {(2*DATA_WIDTH){1'b0}};
+							o_valid_inner = 2'b00;
+
+							o_cmd_inner = {(OUT_COMMAND_WIDTH){1'b0}};
+						end
+					endcase
+				end
+				2'b10:
+				begin
+					case({i_cmd_inner[MSB_COMMAND_HIGHIN_DATA-1], i_cmd_inner[MSB_COMMAND_LOWIN_DATA-1]})
+						2'b10,2'b11: // HighIn HighOut
+						begin
+							o_data_bus_inner = {i_data_bus_inner[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
+							o_valid_inner = 2'b10;
+						
+							o_cmd_inner = {i_cmd_inner[MSB_COMMAND_HIGHIN_DATA-DESTINATION_TAG_WIDTH-1:MSB_COMMAND_LOWIN_DATA], {(OUT_COMMAND_WIDTH_PER_DATA){1'b0}}};
+						end
+						2'b01,2'b00: // HighIn LowOut
+						begin
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus_inner[DATA_WIDTH+:DATA_WIDTH]};
+							o_valid_inner = 2'b01;
+						
+							o_cmd_inner = {{(OUT_COMMAND_WIDTH_PER_DATA){1'b0}}, i_cmd_inner[MSB_COMMAND_HIGHIN_DATA-DESTINATION_TAG_WIDTH-1:MSB_COMMAND_LOWIN_DATA]};
+						end
+						default: // No Pass
+						begin
+							o_data_bus_inner = {(2*DATA_WIDTH){1'b0}};
+							o_valid_inner = 2'b00;
+						
+							o_cmd_inner = {(OUT_COMMAND_WIDTH){1'b0}};
+						end
+					endcase
+				end
+				2'b01:
+				begin
+					case({i_cmd_inner[MSB_COMMAND_HIGHIN_DATA-1], i_cmd_inner[MSB_COMMAND_LOWIN_DATA-1]})
+						2'b01,2'b11: // LowIn HighOut
+						begin
+							o_data_bus_inner = {i_data_bus_inner[0+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
+							o_valid_inner = 2'b10;
+						
+							o_cmd_inner = {i_cmd_inner[MSB_COMMAND_LOWIN_DATA-DESTINATION_TAG_WIDTH-1:0], {(OUT_COMMAND_WIDTH_PER_DATA){1'b0}}};
+						end
+						2'b00,2'b10: // LowIn LowOut
+						begin
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus_inner[0+:DATA_WIDTH]};
+							o_valid_inner = 2'b01;
+						
+							o_cmd_inner = {{(OUT_COMMAND_WIDTH_PER_DATA){1'b0}}, i_cmd_inner[MSB_COMMAND_LOWIN_DATA-DESTINATION_TAG_WIDTH-1:0]};
+						end
+						default: // No Pass
+						begin
+							o_data_bus_inner = {(2*DATA_WIDTH){1'b0}};
+							o_valid_inner = 2'b00;
+						
+							o_cmd_inner = {(OUT_COMMAND_WIDTH){1'b0}};
+						end
+					endcase
+				end
+				default: // No Pass
+					begin
+						o_data_bus_inner = {(2*DATA_WIDTH){1'b0}};
+						o_valid_inner = 2'b00;
+					
+						o_cmd_inner = {(OUT_COMMAND_WIDTH){1'b0}};
 					end
 				endcase
 			end
 			else
 			begin
 				o_valid_inner = 2'b00;
-				o_data_bus_inner = {2*DATA_WIDTH{1'bz}};
-				o_cmd_inner = {{(DESTINATION_TAG_WIDTH-1){1'bz}},{(DESTINATION_TAG_WIDTH-1){1'bz}}};
+				o_data_bus_inner = {2*DATA_WIDTH{1'b0}};
+				
+				o_cmd_inner = {(OUT_COMMAND_WIDTH){1'b0}};
 			end
 		end
 	end

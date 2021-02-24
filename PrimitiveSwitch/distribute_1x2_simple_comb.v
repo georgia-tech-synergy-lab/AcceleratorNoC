@@ -23,10 +23,11 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-`define MODULAR // If define, then use mux to construct the distribute switch
+// `define MODULAR // If define, then use mux to construct the distribute switch
                 // If not define, use LUT to construct the distribute switch
+`define FLATTEN 
 
-
+`ifdef MODULAR
 module distribute_1x2_simple_comb#(
 	parameter DATA_WIDTH = 32,
 	parameter COMMMAND_WIDTH  = 2
@@ -57,7 +58,6 @@ module distribute_1x2_simple_comb#(
 		// 10 --> Branch_high
 		// 11 --> Duplicate
 
-`ifdef MODULAR
 	// inner logic
 	reg                         i_valid_inner;
 	wire   [1:0]                mux_o_valid_inner;               
@@ -94,46 +94,76 @@ module distribute_1x2_simple_comb#(
 	assign o_valid[0] = i_cmd[0] & mux_o_valid_inner[0];
 	assign o_valid[1] = i_cmd[1] & mux_o_valid_inner[1];
 	
-`else
+
+endmodule
+`endif 
+
+
+
+
+
+`ifdef FLATTEN
+module distribute_1x2_simple_comb#(
+	parameter DATA_WIDTH = 32,
+	parameter COMMMAND_WIDTH  = 2
+)(
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd          // command 
+);
+
+	// interface
+	input                       i_valid;             
+	input  [DATA_WIDTH-1:0]     i_data_bus;
+	
+	output [1:0]                o_valid;             
+	output [2*DATA_WIDTH-1:0]   o_data_bus; //{o_data_a, o_data_b}
+	    
+	input                       i_en;
+	input  [COMMMAND_WIDTH-1:0] i_cmd;
+		// 00 --> NA
+		// 01 --> Branch_low
+		// 10 --> Branch_high
+		// 11 --> Duplicate
+
 	// inner logics
-	reg [DATA_WIDTH-1:0] 	   o_data_bus_inner;
-	reg [1:0]                  o_valid_inner;
+	reg    [2*DATA_WIDTH-1:0]   o_data_bus_inner;
+	reg    [1:0]                o_valid_inner;
 
 
     always@(*)
     begin
-        if(i_en)
+        if(i_en && i_valid)
         begin		
-			if(i_valid)
-			begin
-				case(i_cmd)
-					2'b00:
-					begin
-						o_valid_inner = 2'b00;
-						o_data_bus_inner = {DATA_WIDTH{1'b0}};
-					end						
-					2'b01:
-					begin
-						o_valid_inner = 2'b01;
-						o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus};
-					end						
-					2'b10:
-					begin
-						o_valid_inner = 2'b10;
-						o_data_bus_inner = {i_data_bus, {DATA_WIDTH{1'b0}}};
-					end						
-					2'b11:
-					begin
-						o_valid_inner = 2'b11;
-						o_data_bus_inner = {i_data_bus, i_data_bus};
-					end	
-					default:
-					begin
-						o_valid_inner = 2'b00;
-						o_data_bus_inner = {DATA_WIDTH{1'b0}};
-					end											
-				endcase
-			end
+			case(i_cmd)
+				2'b01:
+				begin
+					o_valid_inner = 2'b01;
+					o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus};
+				end						
+				2'b10:
+				begin
+					o_valid_inner = 2'b10;
+					o_data_bus_inner = {i_data_bus, {DATA_WIDTH{1'b0}}};
+				end						
+				2'b11:
+				begin
+					o_valid_inner = 2'b11;
+					o_data_bus_inner = {i_data_bus, i_data_bus};
+				end	
+				default:
+				begin
+					o_valid_inner = 2'b00;
+					o_data_bus_inner = {DATA_WIDTH{1'b0}};
+				end											
+			endcase
         end
     end
 
@@ -141,7 +171,5 @@ module distribute_1x2_simple_comb#(
 	assign  o_data_bus = o_data_bus_inner;
 	assign  o_valid = o_valid_inner;
 
-`endif 
-
-
 endmodule
+`endif 

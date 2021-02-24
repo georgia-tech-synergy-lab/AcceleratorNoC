@@ -228,15 +228,15 @@ module distribute_2x2_simple_seq#(
 						end
 						2'b10:
 						begin
-							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'bz}}};
+							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
 						end
 						2'b01:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, i_data_bus[0+:DATA_WIDTH]};
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus[0+:DATA_WIDTH]};
 						end
 						default:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
 						end
 					endcase
                 end	
@@ -249,35 +249,35 @@ module distribute_2x2_simple_seq#(
 						end
 						2'b10:
 						begin
-							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'bz}}};
+							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
 						end
 						2'b01:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, i_data_bus[DATA_WIDTH+:DATA_WIDTH]};
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus[DATA_WIDTH+:DATA_WIDTH]};
 						end
 						default:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
 						end
 					endcase
                 end	
 				2'b11:
                 begin
-					o_data_bus_inner = (i_valid_inner[1])?{i_data_bus[DATA_WIDTH+:DATA_WIDTH],i_data_bus[DATA_WIDTH+:DATA_WIDTH]}: {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+					o_data_bus_inner = (i_valid_inner[1])?{i_data_bus[DATA_WIDTH+:DATA_WIDTH],i_data_bus[DATA_WIDTH+:DATA_WIDTH]}: {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
                 end	
 				2'b00:
                 begin
-					o_data_bus_inner = (i_valid_inner[0])?{i_data_bus[0+:DATA_WIDTH],i_data_bus[0+:DATA_WIDTH]}: {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+					o_data_bus_inner = (i_valid_inner[0])?{i_data_bus[0+:DATA_WIDTH],i_data_bus[0+:DATA_WIDTH]}: {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
                 end
                 default:
                 begin
-                    o_data_bus_inner = {{DATA_WIDTH{1'bz}},{DATA_WIDTH{1'bz}}};
+                    o_data_bus_inner = {{DATA_WIDTH{1'b0}},{DATA_WIDTH{1'b0}}};
                 end											
             endcase
         end
         else
         begin
-            o_data_bus_inner = {{DATA_WIDTH{1'bz}},{DATA_WIDTH{1'bz}}};
+            o_data_bus_inner = {{DATA_WIDTH{1'b0}},{DATA_WIDTH{1'b0}}};
         end
     end
 

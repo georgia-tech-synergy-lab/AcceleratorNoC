@@ -6,7 +6,7 @@
 // Timing:      Sequential Logic
 // Reset:       Synchronized Reset [High Reset]
 // Latency:     # of stage    
-// Dummy Data:  {DATA_WIDTH{1'bz}}
+// Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 //   

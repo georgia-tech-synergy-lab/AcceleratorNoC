@@ -4,7 +4,7 @@
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
-// Dummy Data:  {DATA_WIDTH{1'bz}}
+// Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // [SINGLE_BIT_CONTROL Version]
 //  Function:         Branch_high                                      Branch_low
@@ -24,12 +24,10 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-`define SINGLE_BIT_CONTROL  // If define, then use 1 bit control to select function of distribute_1x2 switch
-
-`ifdef SINGLE_BIT_CONTROL
 module distribute_1x2_dst_tag_comb#(
 	parameter DATA_WIDTH = 32,
-	parameter DESTINATION_TAG_WIDTH = 1
+	parameter DESTINATION_TAG_WIDTH = 1,
+	parameter IN_COMMAND_WIDTH = 2
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -46,9 +44,9 @@ module distribute_1x2_dst_tag_comb#(
 );
 	// localparam
 	parameter NUM_DATA_IN = 1;
-	parameter IN_COMMAND_WIDTH = NUM_DATA_IN * DESTINATION_TAG_WIDTH;
 	parameter NUM_DATA_OUT = 2;
-	parameter OUT_COMMAND_WIDTH = (IN_COMMAND_WIDTH>1)?(NUM_DATA_OUT*(IN_COMMAND_WIDTH-1)):2;
+	parameter OUT_COMMAND_WIDTH = (IN_COMMAND_WIDTH>DESTINATION_TAG_WIDTH)?(NUM_DATA_OUT*(IN_COMMAND_WIDTH-DESTINATION_TAG_WIDTH)):DESTINATION_TAG_WIDTH;
+	parameter OUT_COMMAND_WIDTH_PER_DATA = IN_COMMAND_WIDTH - DESTINATION_TAG_WIDTH;
 
 	// interface
 	input                           i_valid;             
@@ -59,8 +57,9 @@ module distribute_1x2_dst_tag_comb#(
 	    
 	input                           i_en;
 	input  [IN_COMMAND_WIDTH-1:0]   i_cmd;
-		// 1 --> In chooses HighOut
-		// 0 --> In chooses LowOut
+		// 10 --> In chooses HighOut
+		// 01 --> In chooses LowOut
+		// 11 --> Multicast
 	
 	output [OUT_COMMAND_WIDTH-1:0]  o_cmd;   
 
@@ -69,84 +68,79 @@ module distribute_1x2_dst_tag_comb#(
 	reg    [1:0]                    o_valid_inner;
 	reg    [OUT_COMMAND_WIDTH-1:0]  o_cmd_inner;
 
-	if(DESTINATION_TAG_WIDTH==1)
-	begin
+	if(IN_COMMAND_WIDTH<2*DESTINATION_TAG_WIDTH)
+	begin: LAST_STAGE
 		// output data
 		always@(*)
 		begin
-			if(i_en)
+			if(i_en && i_valid)
 			begin
-				case({i_cmd[IN_COMMAND_WIDTH-1]})
+				o_cmd_inner = {(OUT_COMMAND_WIDTH){1'b0}};
+
+				case(i_cmd)
 					1'b1: // In chooses HighOut
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid)?2'b10:2'b00;
+						o_data_bus_inner = {i_data_bus, {DATA_WIDTH{1'b0}}};
+						o_valid_inner = 2'b10;
 					end
 					1'b0: // In chooses LowOut
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid)?2'b01:2'b00;
+						o_data_bus_inner= {{DATA_WIDTH{1'b0}}, i_data_bus};
+						o_valid_inner = 2'b01;
 					end
 					default:
 					begin
 						o_valid_inner = 2'b00;
-						o_data_bus_inner = {2*DATA_WIDTH{1'bz}};
+						o_data_bus_inner = {2*DATA_WIDTH{1'b0}};
 					end
 				endcase
 			end
 			else
 			begin
+				o_cmd_inner = {(OUT_COMMAND_WIDTH){1'b0}};
+
 				o_valid_inner = 2'b00;
-				o_data_bus_inner = {2*DATA_WIDTH{1'bz}};	
+				o_data_bus_inner = {2*DATA_WIDTH{1'b0}};	
 			end
 		end
 		
-		// output command
-		always@(*)
-		begin
-			o_cmd_inner = {1'bz, 1'bz};
-		end
 	end
 	else
-	begin
+	begin: NOT_LAST_STAGE
 		// output data & command
 		always@(*)
 		begin
-			if(i_en)
+			if(i_en && i_valid)
 			begin
 				case(i_cmd[IN_COMMAND_WIDTH-1])
 					1'b1: // In chooses HighOut
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid)?2'b10:2'b00;
+						o_data_bus_inner = {i_data_bus, {DATA_WIDTH{1'b0}}};
+						o_valid_inner = 2'b10;
 
-						o_cmd_inner = {i_cmd[DESTINATION_TAG_WIDTH-2:0], {(DESTINATION_TAG_WIDTH-1){1'bz}}};
+						o_cmd_inner = {i_cmd[OUT_COMMAND_WIDTH_PER_DATA-1:0], {(OUT_COMMAND_WIDTH_PER_DATA){1'b0}}};
 					end
 					1'b0: // In chooses LowOut
 					begin
-						o_data_bus_inner[DATA_WIDTH+:DATA_WIDTH] = {DATA_WIDTH{1'bz}};
-						o_data_bus_inner[0+:DATA_WIDTH] = (i_valid)?i_data_bus:{DATA_WIDTH{1'bz}};
-						o_valid_inner = (i_valid)?2'b01:2'b00;
+						o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus};
+						o_valid_inner = 2'b01;
 
-						o_cmd_inner = { {(DESTINATION_TAG_WIDTH-1){1'bz}}, i_cmd[DESTINATION_TAG_WIDTH-2:0]};
+						o_cmd_inner = { {(OUT_COMMAND_WIDTH_PER_DATA){1'b0}}, i_cmd[OUT_COMMAND_WIDTH_PER_DATA-1:0]};
 					end
 					default:
 					begin
 						o_valid_inner = 2'b00;
-						o_data_bus_inner = {2*DATA_WIDTH{1'bz}};
+						o_data_bus_inner = {2*DATA_WIDTH{1'b0}};
 
-						o_cmd_inner = {{(DESTINATION_TAG_WIDTH-1){1'bz}}, {(DESTINATION_TAG_WIDTH-1){1'bz}}};
+						o_cmd_inner = {(OUT_COMMAND_WIDTH){1'b0}};
 					end
 				endcase
 			end
 			else
 			begin
 				o_valid_inner = 2'b00;
-				o_data_bus_inner = {2*DATA_WIDTH{1'bz}};
-				o_cmd_inner = {{(DESTINATION_TAG_WIDTH-1){1'bz}},{(DESTINATION_TAG_WIDTH-1){1'bz}}};
+				o_data_bus_inner = {2*DATA_WIDTH{1'b0}};
+				o_cmd_inner = {(OUT_COMMAND_WIDTH){1'b0}};
 			end
 		end
 	end
@@ -158,5 +152,3 @@ module distribute_1x2_dst_tag_comb#(
 	assign o_cmd = o_cmd_inner;
 
 endmodule
-
-`endif
