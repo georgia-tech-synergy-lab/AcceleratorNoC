@@ -3,6 +3,7 @@
 // Top Module:  merge_2x1_simple_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
+// Dummy Data:  {DATA_WIDTH{1'b0}}
 //
 // Function:                Branch Low                                    Branch High                                    No Branch                      
 // 

@@ -5,7 +5,7 @@
 // Format:      Output has 1 more bit than input
 // Timing:      Sequential Logic
 // Reset:       Synchronized Reset [High Reset]
-// Dummy Data:  {DATA_WIDTH{1'bx}}
+// Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // Function:  
 // 
@@ -72,19 +72,19 @@ module adder_var_seq#(
         begin
             if(rst)
             begin
-                o_data_bus_inner <= {(DATA_WIDTH+1){1'bx}};
+                o_data_bus_inner <= {(DATA_WIDTH+1){1'b0}};
                 o_valid_inner <= 1'b0;    
             end
             else
             begin
-                o_data_bus_inner <= (calcuate_en)? (i_data_bus[0+:DATA_WIDTH] + i_data_bus[DATA_WIDTH+:DATA_WIDTH]):{(DATA_WIDTH+1){1'bx}};
+                o_data_bus_inner <= (calcuate_en)? (i_data_bus[0+:DATA_WIDTH] + i_data_bus[DATA_WIDTH+:DATA_WIDTH]):{(DATA_WIDTH+1){1'b0}};
                 o_valid_inner <= (calcuate_en)? 1'b1:1'b0;
             end
         end
         else
         begin
             o_valid_inner <= 1'b0;
-            o_data_bus_inner <= {(DATA_WIDTH+1){1'bx}};
+            o_data_bus_inner <= {(DATA_WIDTH+1){1'b0}};
         end
     end
     

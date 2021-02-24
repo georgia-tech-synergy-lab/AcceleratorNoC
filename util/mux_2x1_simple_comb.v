@@ -4,9 +4,9 @@
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
-// Dummy Data:  {DATA_WIDTH{1'bz}}
+// Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// Function:   bydefault output  {DATA_WIDTH{1'bz}}
+// Function:   bydefault output  {DATA_WIDTH{1'b0}}
 // 
 //       i_data_bus(high)          i_data_bus(low)
 //    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]  
@@ -75,14 +75,14 @@ module mux_2x1_simple_comb#(
                 default:
                 begin
                     o_valid_inner = 1'b0;
-                    o_data_bus_inner = {DATA_WIDTH{1'bz}};
+                    o_data_bus_inner = {DATA_WIDTH{1'b0}};
                 end											
             endcase
         end
         else
         begin
             o_valid_inner = 1'b0;
-            o_data_bus_inner = {DATA_WIDTH{1'bz}};
+            o_data_bus_inner = {DATA_WIDTH{1'b0}};
         end
     end
 

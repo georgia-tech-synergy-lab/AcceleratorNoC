@@ -4,7 +4,7 @@
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
-// Dummy Data:  {DATA_WIDTH{1'bz}}
+// Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // Total two versions are supported here, including complex (9 functions[3 bit control]) and simple (4 functions + No Pass[2 bit control]) version
 // uncomment `define SIMPLE_MODULAR to use SIMPLE_MODULAR VERSION
@@ -107,7 +107,7 @@
 //                        \     /                                                                  
 //                         v   v                             
 //                         |¯¯¯| <--i_valid=2'b00
-//                         |___| <--i_cmd=1'bz      
+//                         |___| <--i_cmd=1'b0      
 //                        /     \
 //                       v       v
 //                  Invalid  Invalid    
@@ -181,15 +181,15 @@ module distribute_2x2_simple_comb#(
 						end
 						2'b10:
 						begin
-							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'bz}}};
+							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
 						end
 						2'b01:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, i_data_bus[0+:DATA_WIDTH]};
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus[0+:DATA_WIDTH]};
 						end
 						default:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
 						end
 					endcase
                 end	
@@ -202,35 +202,35 @@ module distribute_2x2_simple_comb#(
 						end
 						2'b10:
 						begin
-							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'bz}}};
+							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
 						end
 						2'b01:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, i_data_bus[DATA_WIDTH+:DATA_WIDTH]};
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus[DATA_WIDTH+:DATA_WIDTH]};
 						end
 						default:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
 						end
 					endcase
                 end	
 				2'b11:
                 begin
-					o_data_bus_inner = (i_valid_inner[1])?{i_data_bus[DATA_WIDTH+:DATA_WIDTH],i_data_bus[DATA_WIDTH+:DATA_WIDTH]}: {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+					o_data_bus_inner = (i_valid_inner[1])?{i_data_bus[DATA_WIDTH+:DATA_WIDTH],i_data_bus[DATA_WIDTH+:DATA_WIDTH]}: {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
                 end	
 				2'b00:
                 begin
-					o_data_bus_inner = (i_valid_inner[0])?{i_data_bus[0+:DATA_WIDTH],i_data_bus[0+:DATA_WIDTH]}: {{DATA_WIDTH{1'bz}}, {DATA_WIDTH{1'bz}}};
+					o_data_bus_inner = (i_valid_inner[0])?{i_data_bus[0+:DATA_WIDTH],i_data_bus[0+:DATA_WIDTH]}: {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
                 end
                 default:
                 begin
-                    o_data_bus_inner = {{DATA_WIDTH{1'bz}},{DATA_WIDTH{1'bz}}};
+                    o_data_bus_inner = {{DATA_WIDTH{1'b0}},{DATA_WIDTH{1'b0}}};
                 end											
             endcase
         end
         else
         begin
-            o_data_bus_inner = {{DATA_WIDTH{1'bz}},{DATA_WIDTH{1'bz}}};
+            o_data_bus_inner = {{DATA_WIDTH{1'b0}},{DATA_WIDTH{1'b0}}};
         end
     end
 

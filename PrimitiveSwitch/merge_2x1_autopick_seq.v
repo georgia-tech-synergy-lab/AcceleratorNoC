@@ -8,6 +8,7 @@
 // Note:        Does not feed command, will autopick the valid input
 //              to go to the output.
 //              When both input are valid, choose the highIn to go output
+// Dummy Data:  {DATA_WIDTH{1'b0}}
 //
 // Function:             Auto Pick HighIn                               Auto Pick LowIn                                   No Pick                      
 // 
@@ -72,12 +73,14 @@ module merge_2x1_autopick_seq#(
         if(i_en & (~rst) )
         begin 
             case({i_valid_inner[1],i_valid_inner[0]})
-                2'b01,2'bx1,2'bz1:
+                // 2'b01,2'bx1,2'bz1:
+                2'b01:
                 begin
                     o_valid_inner <= 1'b1;
                     o_data_bus_inner <= i_data_bus[0 +:DATA_WIDTH];
                 end						
-                2'b1x,2'b10,2'b1z,2'b11:
+                // 2'b1x,2'b10,2'b1z,2'b11:
+                2'b10,2'b11:
                 begin
                     o_valid_inner <= 1'b1;
                     o_data_bus_inner <= i_data_bus[DATA_WIDTH +:DATA_WIDTH];
@@ -92,7 +95,7 @@ module merge_2x1_autopick_seq#(
         else
         begin
             o_valid_inner <= 1'b0;
-            o_data_bus_inner <= {DATA_WIDTH{1'bz}};
+            o_data_bus_inner <= {DATA_WIDTH{1'b0}};
         end
     end
 

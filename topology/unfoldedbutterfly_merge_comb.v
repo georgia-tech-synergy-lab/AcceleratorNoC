@@ -6,7 +6,7 @@
 // Timing:      Combinational Logic
 // Pipeline:    every stage is a pipeline stage
 //              Total latency = # stages (cycle)  
-// Dummy Data:  {DATA_WIDTH{1'bz}}
+// Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 //                                              
@@ -49,8 +49,7 @@ module unfoldedbutterfly_merge_comb#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter NUM_INPUT_DATA = 8,  // must be 2^n
 	parameter NUM_OUTPUT_DATA = 4, // must be 2^n
-    parameter COMMMAND_WIDTH = $clog2(NUM_OUTPUT_DATA), // destination tag, each level consumes 1 bit.
-    parameter DESTINATION_TAG_WIDTH = COMMMAND_WIDTH    // destination tag, each level consumes 1 bit.
+	parameter DESTINATION_TAG_WIDTH = 2  // length of the destination tag consumed per data per stage.
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -64,18 +63,23 @@ module unfoldedbutterfly_merge_comb#(
 	i_cmd           // !Note: The control here should be the index of destination in binary.
 	                // Each input data has its own destination tag.
 );
+
 	// parameter
 	// --- Global parameter 
 	localparam  WIDTH_INPUT_DATA = DATA_WIDTH * NUM_INPUT_DATA;
 	localparam  WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_OUTPUT_DATA;
 	
 	// --- parameter for butterfly
-	localparam  NUM_STAGE = $clog2(NUM_OUTPUT_DATA);       // note: # of stage in distribute noc depends on num_output_data instead of input.
+	localparam  NUM_STAGE = $clog2(NUM_OUTPUT_DATA); // note: # of stage in distribute noc depends on num_output_data instead of input.
 	localparam  NUM_INPUT_DATA_BUTTERFLY = NUM_INPUT_DATA << 1;
 	localparam  NUM_SWITCH_IN = NUM_INPUT_DATA_BUTTERFLY >> 1;
 
 	// --- parameter for merge tree
 	localparam  NUM_LEVEL = $clog2(NUM_INPUT_DATA) - $clog2(NUM_OUTPUT_DATA);
+
+	// --- parameter for command
+    localparam  IN_COMMAND_WIDTH = DESTINATION_TAG_WIDTH*NUM_STAGE*NUM_INPUT_DATA; // total width of input command.
+    localparam  IN_COMMAND_WIDTH_PER_DATA = DESTINATION_TAG_WIDTH*NUM_STAGE; // total width of input command.
 
 	// interface
 	input  [NUM_INPUT_DATA-1:0]                                i_valid;             
@@ -85,7 +89,7 @@ module unfoldedbutterfly_merge_comb#(
 	output [WIDTH_OUTPUT_DATA-1:0]                             o_data_bus;
 
 	input                                                      i_en;
-	input  [NUM_INPUT_DATA*DESTINATION_TAG_WIDTH-1:0]          i_cmd;
+	input  [IN_COMMAND_WIDTH-1:0]                              i_cmd;
 									// For each data with COMMAND_WIDTH destination tag. 
 									// e.g. For 8-data input cube
 									// 4-th input data has destination tag = 010 
@@ -107,8 +111,8 @@ module unfoldedbutterfly_merge_comb#(
 	for (s=0; s<NUM_STAGE-1; s=s+1)
 	begin:o_cmd_stage	 
 	    // index 0 is for the output wire of the first stage
-		wire [DESTINATION_TAG_WIDTH-2-s:0]                     o_cmd_data_wire_inner[0:NUM_INPUT_DATA_BUTTERFLY-1];       
-		wire                                                   o_cmd_valid_wire_inner[0:NUM_INPUT_DATA_BUTTERFLY-1];
+		wire [IN_COMMAND_WIDTH_PER_DATA - DESTINATION_TAG_WIDTH*(s+1) -1:0]       o_cmd_data_wire_inner[0:NUM_INPUT_DATA_BUTTERFLY-1];       
+		wire                                                                      o_cmd_valid_wire_inner[0:NUM_INPUT_DATA_BUTTERFLY-1];
 	end
 
 	// first butterfly stage
@@ -116,14 +120,15 @@ module unfoldedbutterfly_merge_comb#(
 	begin:switch_first_stage			
 		distribute_1x2_dst_tag_multicast_comb #(
 			.DATA_WIDTH(DATA_WIDTH),
-			.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH)
+			.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
+			.IN_COMMAND_WIDTH(IN_COMMAND_WIDTH_PER_DATA)
 		) first_stage(
 			.i_valid(i_valid[i+:1]),
 			.i_data_bus(i_data_bus[i*DATA_WIDTH+:DATA_WIDTH]),
 			.o_valid({wire_valid_butterfly_inner[0][2*i+1], wire_valid_butterfly_inner[0][2*i]}),
 			.o_data_bus({wire_data_butterfly_inner[0][2*i+1], wire_data_butterfly_inner[0][2*i]}),
 			.i_en(i_en),
-			.i_cmd(i_cmd[i*DESTINATION_TAG_WIDTH+:DESTINATION_TAG_WIDTH]),
+			.i_cmd(i_cmd[i*IN_COMMAND_WIDTH_PER_DATA+:IN_COMMAND_WIDTH_PER_DATA]),
 			.o_cmd({o_cmd_stage[0].o_cmd_data_wire_inner[2*i+1], o_cmd_stage[0].o_cmd_data_wire_inner[2*i]})
 		);
 	end
@@ -165,7 +170,8 @@ module unfoldedbutterfly_merge_comb#(
 					begin: last_stage_of_butterfly
 						distribute_2x2_dst_tag_multicast_comb #(
 							.DATA_WIDTH(DATA_WIDTH),
-							.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH - s - 1)
+							.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
+							.IN_COMMAND_WIDTH( (IN_COMMAND_WIDTH_PER_DATA - DESTINATION_TAG_WIDTH*(s+1))*2 )
 						) dis_2x2(
 							.i_valid( {wire_valid_butterfly_inner[s][HighDataInIdxMSBInverseOffset], wire_valid_butterfly_inner[s][LowDataInIdxMSBInverseOffset]} ),
 							.i_data_bus({wire_data_butterfly_inner[s][HighDataInIdxMSBInverseOffset], wire_data_butterfly_inner[s][LowDataInIdxMSBInverseOffset]}),
@@ -180,7 +186,8 @@ module unfoldedbutterfly_merge_comb#(
 					begin: stage_of_butterfly
 						distribute_2x2_dst_tag_multicast_comb #(
 							.DATA_WIDTH(DATA_WIDTH),
-							.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH - s - 1)
+							.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
+							.IN_COMMAND_WIDTH((IN_COMMAND_WIDTH_PER_DATA - DESTINATION_TAG_WIDTH*(s+1))*2 )
 						) dis_2x2(
 							.i_valid( {wire_valid_butterfly_inner[s][HighDataInIdxMSBInverseOffset], wire_valid_butterfly_inner[s][LowDataInIdxMSBInverseOffset]} ),
 							.i_data_bus({wire_data_butterfly_inner[s][HighDataInIdxMSBInverseOffset], wire_data_butterfly_inner[s][LowDataInIdxMSBInverseOffset]}),
