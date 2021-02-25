@@ -1,0 +1,867 @@
+# 
+# ******************************************************************************
+# *                                                                            *
+# *                   Copyright (C) 2004-2014, Nangate Inc.                    *
+# *                           All rights reserved.                             *
+# *                                                                            *
+# * Nangate and the Nangate logo are trademarks of Nangate Inc.                *
+# *                                                                            *
+# * All trademarks, logos, software marks, and trade names (collectively the   *
+# * "Marks") in this program are proprietary to Nangate or other respective    *
+# * owners that have granted Nangate the right and license to use such Marks.  *
+# * You are not permitted to use the Marks without the prior written consent   *
+# * of Nangate or such third party that may own the Marks.                     *
+# *                                                                            *
+# * This file has been provided pursuant to a License Agreement containing     *
+# * restrictions on its use. This file contains valuable trade secrets and     *
+# * proprietary information of Nangate Inc., and is protected by U.S. and      *
+# * international laws and/or treaties.                                        *
+# *                                                                            *
+# * The copyright notice(s) in this file does not indicate actual or intended  *
+# * publication of this file.                                                  *
+# *                                                                            *
+# *       NGLibraryCreator, Development_version_64 - build 201405271900        *
+# *                                                                            *
+# ******************************************************************************
+# 
+# 
+# Running on us19.nangate.us for user Lucio Rech (lre).
+# Local time is now Wed, 28 May 2014, 12:08:01.
+# Main process id is 29163.
+
+VERSION 5.6 ;
+BUSBITCHARS "[]" ;
+DIVIDERCHAR "/" ;
+
+UNITS
+  DATABASE MICRONS 2000 ;
+END UNITS
+
+MANUFACTURINGGRID 0.0010 ;
+
+#LAYER GATEAB
+#  TYPE MASTERSLICE ;
+#END GATEAB
+
+#LAYER ACT
+#  TYPE MASTERSLICE ;
+#END ACT
+
+LAYER M1
+  TYPE ROUTING ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  PITCH 0.064 0.064 ;
+  DIRECTION VERTICAL ;
+  OFFSET 0.000 0.032 ;
+  RESISTANCE RPERSQ 0.752 ;
+  THICKNESS 0.06 ;
+  HEIGHT 0.16 ;
+END M1
+
+LAYER V1
+  TYPE CUT ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  RESISTANCE 12 ;
+END V1
+
+LAYER M2
+  TYPE ROUTING ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  PITCH 0.064 0.064 ;
+  DIRECTION HORIZONTAL ;
+  OFFSET 0.000 0.032 ;
+  RESISTANCE RPERSQ 0.752 ;
+  THICKNESS 0.06 ;
+  HEIGHT 0.28 ;
+END M2
+
+LAYER V2
+  TYPE CUT ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  RESISTANCE 12 ;
+END V2
+
+LAYER M3
+  TYPE ROUTING ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  PITCH 0.064 0.064 ;
+  DIRECTION VERTICAL ;
+  OFFSET 0.000 0.032 ;
+  RESISTANCE RPERSQ 0.752 ;
+  THICKNESS 0.06 ;
+  HEIGHT 0.40 ;
+END M3
+
+LAYER V3
+  TYPE CUT ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  RESISTANCE 12 ;
+END V3
+
+LAYER M4
+  TYPE ROUTING ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  PITCH 0.064 0.064 ;
+  DIRECTION HORIZONTAL ;
+  OFFSET 0.000 0.032 ;
+  RESISTANCE RPERSQ 0.752 ;
+  THICKNESS 0.06 ;
+  HEIGHT 0.52 ;
+END M4
+
+LAYER V4
+  TYPE CUT ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  RESISTANCE 12 ;
+END V4
+
+LAYER M5
+  TYPE ROUTING ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  PITCH 0.064 0.064 ;
+  DIRECTION VERTICAL ;
+  OFFSET 0.000 0.032 ;
+  RESISTANCE RPERSQ 0.752 ;
+  THICKNESS 0.06 ;
+  HEIGHT 0.64 ;
+END M5
+
+LAYER V5
+  TYPE CUT ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  RESISTANCE 12 ;
+END V5
+
+LAYER M6
+  TYPE ROUTING ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  PITCH 0.064 0.064 ;
+  DIRECTION HORIZONTAL ;
+  OFFSET 0.000 0.032 ;
+  RESISTANCE RPERSQ 0.752 ;
+  THICKNESS 0.06 ;
+  HEIGHT 0.76 ;
+END M6
+
+LAYER V6
+  TYPE CUT ;
+  SPACING 0.036 ;
+  WIDTH 0.028 ;
+  RESISTANCE 12 ;
+END V6
+
+LAYER M7
+  TYPE ROUTING ;
+  SPACING 0.056 ;
+  WIDTH 0.056 ;
+  PITCH 0.112 0.112 ;
+  DIRECTION VERTICAL ;
+  OFFSET 0.000 0.032 ;
+  RESISTANCE RPERSQ 0.752 ;
+  THICKNESS 0.13 ;
+  HEIGHT 0.88 ;
+END M7
+
+LAYER V7
+  TYPE CUT ;
+  SPACING 0.056 ;
+  WIDTH 0.056 ;
+  RESISTANCE 12 ;
+END V7
+
+LAYER M8
+  TYPE ROUTING ;
+  SPACING 0.056 ;
+  WIDTH 0.056 ;
+  PITCH 0.112 0.112 ;
+  DIRECTION HORIZONTAL ;
+  OFFSET 0.000 0.032 ;
+  RESISTANCE RPERSQ 0.752 ;
+  THICKNESS 0.13 ;
+  HEIGHT 1.14 ;
+END M8
+
+LAYER V8
+  TYPE CUT ;
+  SPACING 0.056 ;
+  WIDTH 0.056 ;
+  RESISTANCE 12 ;
+END V8
+
+LAYER M9
+  TYPE ROUTING ;
+  SPACING 0.056 ;
+  WIDTH 0.056 ;
+  PITCH 0.112 0.112 ;
+  DIRECTION VERTICAL ;
+  OFFSET 0.000 0.032 ;
+  RESISTANCE RPERSQ 0.752 ;
+  THICKNESS 0.13 ;
+  HEIGHT 1.40 ;
+END M9
+
+LAYER V9
+  TYPE CUT ;
+  SPACING 0.056 ;
+  WIDTH 0.056 ;
+  RESISTANCE 12 ;
+END V9
+
+LAYER M10
+  TYPE ROUTING ;
+  SPACING 0.056 ;
+  WIDTH 0.056 ;
+  PITCH 0.112 0.112 ;
+  DIRECTION HORIZONTAL ;
+  OFFSET 0.000 0.032 ;
+  RESISTANCE RPERSQ 0.752 ;
+  THICKNESS 0.13 ;
+  HEIGHT 1.66 ;
+END M10
+
+LAYER OVERLAP
+  TYPE OVERLAP ;
+END OVERLAP
+
+VIA V1_0 DEFAULT
+  LAYER V1 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+  LAYER M1 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+  LAYER M2 ;
+    RECT -0.024 -0.024 0.024 0.024 ;
+END V1_0
+
+VIA V2_0 DEFAULT
+  LAYER V2 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+  LAYER M2 ;
+    RECT -0.024 -0.024 0.024 0.024 ;
+  LAYER M3 ;
+    RECT -0.024 -0.024 0.024 0.024 ;
+END V2_0
+
+VIA V3_0 DEFAULT
+  LAYER V3 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+  LAYER M3 ;
+    RECT -0.024 -0.024 0.024 0.024 ;
+  LAYER M4 ;
+    RECT -0.024 -0.024 0.024 0.024 ;
+END V3_0
+
+VIA V4_0 DEFAULT
+  LAYER V4 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+  LAYER M4 ;
+    RECT -0.024 -0.024 0.024 0.024 ;
+  LAYER M5 ;
+    RECT -0.024 -0.024 0.024 0.024 ;
+END V4_0
+
+VIA V5_0 DEFAULT
+  LAYER V5 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+  LAYER M5 ;
+    RECT -0.024 -0.024 0.024 0.024 ;
+  LAYER M6 ;
+    RECT -0.024 -0.024 0.024 0.024 ;
+END V5_0
+
+VIA V6_0 DEFAULT
+  LAYER V6 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+  LAYER M6 ;
+    RECT -0.024 -0.024 0.024 0.024 ;
+  LAYER M7 ;
+    RECT -0.024 -0.024 0.024 0.024 ;
+END V6_0
+
+VIA V7_0 DEFAULT
+  LAYER V7 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+  LAYER M7 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+  LAYER M8 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+END V7_0
+
+VIA V8_0 DEFAULT
+  LAYER V8 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+  LAYER M8 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+  LAYER M9 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+END V8_0
+
+VIA V9_0 DEFAULT
+  LAYER V9 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+  LAYER M9 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+  LAYER M10 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+END V9_0
+
+VIARULE Via1Array-0 GENERATE
+  LAYER M1 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M2 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V1 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via1Array-0
+
+VIARULE Via1Array-1 GENERATE
+  LAYER M1 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M2 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V1 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via1Array-1
+
+VIARULE Via1Array-2 GENERATE
+  LAYER M1 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M2 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V1 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via1Array-2
+
+VIARULE Via1Array-3 GENERATE
+  LAYER M1 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M2 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V1 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via1Array-3
+
+VIARULE Via1Array-4 GENERATE
+  LAYER M1 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER M2 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V1 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via1Array-4
+
+VIARULE Via1Array-5 GENERATE
+  LAYER M1 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M2 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V1 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via1Array-5
+
+VIARULE Via1Array-6 GENERATE
+  LAYER M1 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M2 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V1 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via1Array-6
+
+VIARULE Via1Array-7 GENERATE
+  LAYER M1 ;
+    ENCLOSURE 0.028 0.002  ;
+  LAYER M2 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V1 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via1Array-7
+
+VIARULE Via2Array-0 GENERATE
+  LAYER M2 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M3 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V2 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via2Array-0
+
+VIARULE Via2Array-1 GENERATE
+  LAYER M2 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M3 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V2 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via2Array-1
+
+VIARULE Via2Array-2 GENERATE
+  LAYER M2 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M3 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V2 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via2Array-2
+
+VIARULE Via2Array-3 GENERATE
+  LAYER M2 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M3 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V2 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via2Array-3
+
+VIARULE Via2Array-4 GENERATE
+  LAYER M2 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER M3 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V2 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via2Array-4
+
+VIARULE Via2Array-5 GENERATE
+  LAYER M2 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M3 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V2 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via2Array-5
+
+VIARULE Via2Array-6 GENERATE
+  LAYER M2 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M3 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V2 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via2Array-6
+
+VIARULE Via2Array-7 GENERATE
+  LAYER M2 ;
+    ENCLOSURE 0.028 0.002  ;
+  LAYER M3 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V2 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via2Array-7
+
+VIARULE Via3Array-0 GENERATE
+  LAYER M3 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M4 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V3 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via3Array-0
+
+VIARULE Via3Array-1 GENERATE
+  LAYER M3 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M4 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V3 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via3Array-1
+
+VIARULE Via3Array-2 GENERATE
+  LAYER M3 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M4 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V3 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via3Array-2
+
+VIARULE Via3Array-3 GENERATE
+  LAYER M3 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M4 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V3 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via3Array-3
+
+VIARULE Via3Array-4 GENERATE
+  LAYER M3 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER M4 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V3 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via3Array-4
+
+VIARULE Via3Array-5 GENERATE
+  LAYER M3 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M4 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V3 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via3Array-5
+
+VIARULE Via3Array-6 GENERATE
+  LAYER M3 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M4 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V3 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via3Array-6
+
+VIARULE Via3Array-7 GENERATE
+  LAYER M3 ;
+    ENCLOSURE 0.028 0.002  ;
+  LAYER M4 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V3 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via3Array-7
+
+VIARULE Via4Array-0 GENERATE
+  LAYER M4 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M5 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V4 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via4Array-0
+
+VIARULE Via4Array-1 GENERATE
+  LAYER M4 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M5 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V4 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via4Array-1
+
+VIARULE Via4Array-2 GENERATE
+  LAYER M4 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M5 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V4 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via4Array-2
+
+VIARULE Via4Array-3 GENERATE
+  LAYER M4 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M5 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V4 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via4Array-3
+
+VIARULE Via4Array-4 GENERATE
+  LAYER M4 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER M5 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V4 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via4Array-4
+
+VIARULE Via4Array-5 GENERATE
+  LAYER M4 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M5 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V4 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via4Array-5
+
+VIARULE Via4Array-6 GENERATE
+  LAYER M4 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M5 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V4 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via4Array-6
+
+VIARULE Via4Array-7 GENERATE
+  LAYER M4 ;
+    ENCLOSURE 0.028 0.002  ;
+  LAYER M5 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V4 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via4Array-7
+
+VIARULE Via5Array-0 GENERATE
+  LAYER M5 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M6 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V5 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via5Array-0
+
+VIARULE Via5Array-1 GENERATE
+  LAYER M5 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M6 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V5 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via5Array-1
+
+VIARULE Via5Array-2 GENERATE
+  LAYER M5 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M6 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V5 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via5Array-2
+
+VIARULE Via5Array-3 GENERATE
+  LAYER M5 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M6 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V5 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via5Array-3
+
+VIARULE Via5Array-4 GENERATE
+  LAYER M5 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER M6 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V5 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via5Array-4
+
+VIARULE Via5Array-5 GENERATE
+  LAYER M5 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M6 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V5 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via5Array-5
+
+VIARULE Via5Array-6 GENERATE
+  LAYER M5 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M6 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V5 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via5Array-6
+
+VIARULE Via5Array-7 GENERATE
+  LAYER M5 ;
+    ENCLOSURE 0.028 0.002  ;
+  LAYER M6 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V5 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via5Array-7
+
+VIARULE Via6Array-0 GENERATE
+  LAYER M6 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M7 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V6 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via6Array-0
+
+VIARULE Via6Array-1 GENERATE
+  LAYER M6 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M7 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V6 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via6Array-1
+
+VIARULE Via6Array-2 GENERATE
+  LAYER M6 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER M7 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER V6 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via6Array-2
+
+VIARULE Via6Array-3 GENERATE
+  LAYER M6 ;
+    ENCLOSURE 0.0 0.032 ;
+  LAYER M7 ;
+    ENCLOSURE 0.032 0.0 ;
+  LAYER V6 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via6Array-3
+
+VIARULE Via6Array-4 GENERATE
+  LAYER M6 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER M7 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V6 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via6Array-4
+
+VIARULE Via6Array-5 GENERATE
+  LAYER M6 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M7 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V6 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via6Array-5
+
+VIARULE Via6Array-6 GENERATE
+  LAYER M6 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER M7 ;
+    ENCLOSURE 0.028 0.002 ;
+  LAYER V6 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via6Array-6
+
+VIARULE Via6Array-7 GENERATE
+  LAYER M6 ;
+    ENCLOSURE 0.028 0.002  ;
+  LAYER M7 ;
+    ENCLOSURE 0.002 0.028 ;
+  LAYER V6 ;
+    RECT -0.014 -0.014 0.014 0.014 ;
+    SPACING 0.036 BY 0.036 ;
+END Via6Array-7
+
+VIARULE Via7Array-0 GENERATE
+  LAYER M7 ;
+    ENCLOSURE 0 0 ;
+  LAYER M8 ;
+    ENCLOSURE 0 0 ;
+  LAYER V7 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+    SPACING 0.056 BY 0.056 ;
+END Via7Array-0
+
+VIARULE Via8Array-0 GENERATE
+  LAYER M8 ;
+    ENCLOSURE 0 0 ;
+  LAYER M9 ;
+    ENCLOSURE 0 0 ;
+  LAYER V8 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+    SPACING 0.056 BY 0.056 ;
+END Via8Array-0
+
+VIARULE Via9Array-0 GENERATE
+  LAYER M9 ;
+    ENCLOSURE 0 0 ;
+  LAYER M10 ;
+    ENCLOSURE 0 0 ;
+  LAYER V9 ;
+    RECT -0.028 -0.028 0.028 0.028 ;
+    SPACING 0.056 BY 0.056 ;
+END Via9Array-0
+
+SPACING
+  SAMENET M1 M1 0.036 ;
+  SAMENET M2 M2 0.036 ;
+  SAMENET M3 M3 0.036 ;
+  SAMENET M4 M4 0.036 ;
+  SAMENET M5 M5 0.036 ;
+  SAMENET M6 M6 0.036 ;
+  SAMENET M7 M7 0.056 ;
+  SAMENET M8 M8 0.056 ;
+  SAMENET M9 M9 0.056 ;
+  SAMENET M10 M10 0.056 ;
+  SAMENET V1 V1 0.036 ;
+  SAMENET V2 V2 0.036 ;
+  SAMENET V3 V3 0.036 ;
+  SAMENET V4 V4 0.036 ;
+  SAMENET V5 V5 0.036 ;
+  SAMENET V6 V6 0.036 ;
+  SAMENET V7 V7 0.056 ;
+  SAMENET V8 V8 0.056 ;
+  SAMENET V9 V9 0.056 ;
+  SAMENET V1 V2 0.0 STACK ;
+  SAMENET V2 V3 0.0 STACK ;
+  SAMENET V3 V4 0.0 STACK ;
+  SAMENET V4 V5 0.0 STACK ;
+  SAMENET V5 V6 0.0 STACK ;
+  SAMENET V6 V7 0.0 STACK ;
+  SAMENET V7 V8 0.0 STACK ;
+  SAMENET V8 V9 0.0 STACK ;
+END SPACING
+
+SITE NanGate_15nm_OCL
+  SYMMETRY y ;
+  CLASS core ;
+  SIZE 0.064 BY 0.768 ;
+END NanGate_15nm_OCL
+
+END LIBRARY
+#
+# End of file
+#
