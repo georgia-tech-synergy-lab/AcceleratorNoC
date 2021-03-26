@@ -49,6 +49,8 @@ In ```<control>```:
 
 **dst_tag_multicast**: means *destination tag control with multicasting support*; add *multicast* to the **dst_tag**.
 
+**one_hot**: means *one-hot encoded destination based control*; for linear network (1-D N node), feed a N-bit one-hot destination signal, the switch only consumes the MSB and pass remaining N-1 bits & input data to the next switch. 
+
 **autopick**: means automatically pick and output *1* valid input. So no command for this module. High input has higher priority when multiple inputs are valid.   
 
 **autopick_multi_output**: same meaning as **autopick** but support picking and outputing *multiple* valid input.
@@ -77,6 +79,8 @@ name template is following:
 **unfoldedbutterfly_merge**: the specifically designed topology for scenarios where # inputs and # outputs are different. The first stage of **butterfly_merge** is changed into *distribute_1x2 switch*.
 
 **cube**: is the typical [cube-connected-cubes network](https://www.sciencedirect.com/science/article/pii/016560749290012V)
+
+**linear_network**: refers to the topology where all N nodes are arranged as a 1-D array. The linear network only has 1 fixed data input port and N-bit destination input port. The i-th bit of the destination indicates whether i-th node is the destination of input data. 
 
 ## Utility Module (Util directory)
 
