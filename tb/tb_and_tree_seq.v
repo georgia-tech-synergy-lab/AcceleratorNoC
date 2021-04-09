@@ -1,17 +1,16 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_adder_tree_comb
+// Top Module:  tb_and_tree_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Combinational Logic
-// Pipeline:    For benes constructed with sequential switches, every stage is a pipeline stage
-//              Total latency = # stages (cycle)  
+// Timing:      Sequential Logic
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 //
-// Parameter:   NUM_INPUT_DATA_INPUT_DATA could be arbitrary integer below 1024.
+// Parameter:   NUM_INPUT_DATA could be arbitrary integer
 //
-// Function:    Unicast  or  Multicast(Not arbitrary Multicast)
-//   \     /     \     / ... \     /     \     /
+// Function:    AND all bit of input together
+//  MSB                                        LSB
+//   \     /     \     / ... \     /     \     / i_data_latch[0]
 //    v   v       v   v  ...  v   v       v   v    
 //    |¯¯¯|       |¯¯¯|  ...  |¯¯¯|       |¯¯¯|
 //    |___|       |___|  ...  |___|       |___|
@@ -32,57 +31,60 @@
 //                     \     /
 //                      v   v
 //                      |¯¯¯|           
-//                      |___|         
+//                      |___| 
+//                        |       
 //                        v
-//                   o_data_bus(summation of all input data
+//           o_data_bus(logic AND of all bits of input data)
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module tb_adder_tree_comb();
+module tb_and_tree_seq();
     
-    parameter NUM_INPUT_DATA = 300;
-    parameter DATA_WIDTH = 4;
+    parameter NUM_INPUT_DATA = 8;
+    parameter DATA_WIDTH = 1;
 
     // timing signals
     reg                                         clk;
+    reg                                         rst;
     
     // interface
-	reg   [NUM_INPUT_DATA-1:0]                  i_valid;             
-	reg   [NUM_INPUT_DATA*DATA_WIDTH-1:0]       i_data_bus;
+	reg                                         i_valid;             
+	reg   [NUM_INPUT_DATA-1:0]                  i_data_bus;
 	
 	wire                                        o_valid;             
-	wire  [DATA_WIDTH-1:0]                      o_data_bus; //{o_data_a, o_data_b}
+	wire                                        o_data_bus; //{o_data_a, o_data_b}
 
 	reg                                         i_en;
     
     // inner logic
-    reg signed [DATA_WIDTH-1:0] i_data_bus_inner[NUM_INPUT_DATA-1:0]; 
+    reg   signed                                i_data_bus_inner[NUM_INPUT_DATA-1:0]; 
 
     integer i;
     initial begin
         i_en = 1'b1;
-        i_valid = {NUM_INPUT_DATA{1'b1}};
+        i_valid = 1'b1;
+        rst= 1'b1;
+        #20
+        rst= 1'b0;
         clk = 0;
-        i_data_bus = 0;
-        for (i=0; i<NUM_INPUT_DATA; i=i+1) 
-        begin
-            i_data_bus_inner[i] = 1;
-        end
-        
-        for (i = 0; i < NUM_INPUT_DATA; i = i + 1) begin
-            i_data_bus = {i_data_bus,i_data_bus_inner[i]}; 
-        end
-        #1000
+        i_data_bus = {8'b10010010};
+        #20
+        i_data_bus = {8'b10001000};
+        #20
+        i_data_bus = {8'b11111111};
+        #20
+       
         $stop;
     end
     
-
     // instantiate DUT (device under test)
-    adder_tree_comb#(
+    and_tree_seq#(
         .NUM_INPUT_DATA(NUM_INPUT_DATA), 
         .DATA_WIDTH(DATA_WIDTH)) 
     dut(
+        .clk(clk),
+        .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),
@@ -92,5 +94,4 @@ module tb_adder_tree_comb();
 
     always #5 clk=~clk;
     
-
 endmodule

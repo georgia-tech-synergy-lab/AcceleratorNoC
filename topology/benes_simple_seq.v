@@ -97,38 +97,6 @@ module benes_simple_seq#(
 	genvar i,j,k,s,p;
 	generate
 
-		// reg    [COMMMAND_WIDTH-1:0]                  pipeline_i_cmd_reg[0:TOTAL_STAGE-2][0:TOTAL_STAGE*NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.
-
-		// for(i=0; i<(TOTAL_STAGE-1); i=i+1) 
-		// begin:initialization_stage
-		// 	for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
-		// 	begin: initialization
-		// 		initial
-		// 		begin
-		// 			pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
-		// 		end
-		// 	end
-		// end
-		
-		// for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
-		// begin:i_cmd_first_stage
-		// 	always@(posedge clk)
-		// 	begin
-		// 		pipeline_i_cmd_reg[0][j] <= i_cmd[j*COMMMAND_WIDTH+:COMMMAND_WIDTH];	
-		// 	end
-		// end
-
-		// for(i=0; i<(TOTAL_STAGE-2); i=i+1) 
-		// begin: i_cmd_pipeline_stage
-		// 	for(j=0; j<(TOTAL_STAGE*NUM_SWITCH_IN); j=j+1) 
-		// 	begin: i_cmd_stage
-		// 		always@(posedge clk)
-		// 		begin
-		// 			pipeline_i_cmd_reg[i+1][j] <= pipeline_i_cmd_reg[i][j];
-		// 		end
-		// 	end
-		// end
-
 		// logic for control pipeline
 		for(i=0; i<TOTAL_STAGE-1;i=i+1)
 		begin:cmd_pipeline_stage
