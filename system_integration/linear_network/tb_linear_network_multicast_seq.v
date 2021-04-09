@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_linear_network_seq
+// Top Module:  tb_linear_network_multicast_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic, each switch takes one clock cycle
@@ -28,7 +28,7 @@
 
 `ifdef MULTIPLE_STAGE_COMMAND_INPUT_TEST
 
-module tb_linear_network_seq();
+module tb_linear_network_multicast_seq();
 
 	parameter DATA_WIDTH  = 32;
 
@@ -126,7 +126,7 @@ module tb_linear_network_seq();
     end
 
     // instantiate DUT (device under test)
-    linear_network_seq #(
+    linear_network_multicast_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_NODE(NUM_NODE)
 	) dut(
@@ -147,7 +147,7 @@ endmodule
 
 
 `ifdef SINGLE_SWTICH
-module tb_linear_network_seq();
+module tb_linear_network_multicast_seq();
 
 	parameter DATA_WIDTH  = 32;
 
@@ -246,7 +246,7 @@ module tb_linear_network_seq();
 
 
     // instantiate DUT (device under test)
-    linear_network_seq #(
+    linear_network_multicast_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_NODE(NUM_NODE)
 	) dut(

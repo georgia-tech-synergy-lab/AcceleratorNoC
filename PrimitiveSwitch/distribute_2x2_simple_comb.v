@@ -202,7 +202,7 @@ module distribute_2x2_simple_comb#(
 						end
 						2'b10:
 						begin
-							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
+							o_data_bus_inner = {i_data_bus[0+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
 						end
 						2'b01:
 						begin

@@ -3,7 +3,6 @@
 // Top Module:  unfoldedbutterfly_merge_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Combinational Logic
 // Timing:      Sequential Logic
 // Reset:       Synchronized Reset [High Reset]
 // Pipeline:    [full pipeline]every stage is a pipeline stage

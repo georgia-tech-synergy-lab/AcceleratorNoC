@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_linear_network_comb
+// Top Module:  tb_linear_network_multicast_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Combinational Logic
+// Timing:      Sequential Logic, each switch takes one clock cycle
 // Dummy Data:  {DATA_WIDTH{1'bz}}
 // 
 // Function:    Unicast  or  Multicast(Not arbitrary Multicast)
@@ -28,7 +28,7 @@
 
 `ifdef MULTIPLE_STAGE_COMMAND_INPUT_TEST
 
-module tb_linear_network_comb();
+module tb_linear_network_multicast_seq();
 
 	parameter DATA_WIDTH  = 32;
 
@@ -43,6 +43,7 @@ module tb_linear_network_comb();
 
     // timing signals
     reg                              clk;
+    reg                              rst;
 
     // data signals
 	reg                              i_valid;        // valid input data signal
@@ -64,13 +65,23 @@ module tb_linear_network_comb();
     begin
         clk = 1'b0;
         // not enable at start
+        rst = 1'b0;
         i_valid = 1'b0;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b0;
         i_cmd ={NUM_NODE{1'b1}};
 
+        // reset --  Pass to the next node
+        #20
+        rst = 1'b1;
+        i_valid = 1'b1;
+        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_en = 1'b1;
+        i_cmd = {{(NUM_NODE-1){1'b0}}, 1'b1};
+
         // input active --  Pass to the next node
         #20
+        rst = 1'b0;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
@@ -115,10 +126,12 @@ module tb_linear_network_comb();
     end
 
     // instantiate DUT (device under test)
-    linear_network_comb #(
+    linear_network_multicast_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_NODE(NUM_NODE)
 	) dut(
+        .clk(clk),
+        .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),
@@ -134,7 +147,7 @@ endmodule
 
 
 `ifdef SINGLE_SWTICH
-module tb_linear_network_comb();
+module tb_linear_network_multicast_seq();
 
 	parameter DATA_WIDTH  = 32;
 
@@ -148,6 +161,7 @@ module tb_linear_network_comb();
 
     // timing signals
     reg                              clk;
+    reg                              rst;
 
     // data signals
 	reg                              i_valid;        // valid input data signal
@@ -168,14 +182,25 @@ module tb_linear_network_comb();
     initial 
     begin
         clk = 1'b0;
+        rst = 1'b0;
         // not enable at start
+        rst = 1'b0;
         i_valid = 1'b0;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b0;
         i_cmd = 1'b1;
 
+        // reset -- Pass to the next node
+        #20
+        rst = 1'b1;
+        i_valid = 1'b1;
+        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_en = 1'b1;
+        i_cmd = 1'b0;
+        
         // input active -- Pass to the next node
         #20
+        rst = 1'b0;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
@@ -221,11 +246,13 @@ module tb_linear_network_comb();
 
 
     // instantiate DUT (device under test)
-    linear_network_comb #(
+    linear_network_multicast_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_NODE(NUM_NODE)
 	) dut(
-		.i_valid(i_valid),
+        .clk(clk),
+        .rst(rst),
+        .i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),
 		.o_data_bus(o_data_bus),

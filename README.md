@@ -80,7 +80,10 @@ name template is following:
 
 **cube**: is the typical [cube-connected-cubes network](https://www.sciencedirect.com/science/article/pii/016560749290012V)
 
-**linear_network**: refers to the topology where all N nodes are arranged as a 1-D array. The linear network only has 1 fixed data input port and N-bit destination input port. The i-th bit of the destination indicates whether i-th node is the destination of input data. 
+**linear_network_multicast**: refers to the topology where all N nodes are arranged as a 1-D array. The linear network only has 1 fixed data input port and N-bit one-hot destination input port. The i-th bit of the one-hot input signals indicates whether i-th node is the destination of input data. 
+
+**corssbar_one_hot**: refers to the crossbar topology with one-hot input command. Currently we only support 16 input -- 8 output crossbar instead of parameterizable. 
+
 
 ## Utility Module (Util directory)
 

@@ -1,14 +1,12 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  linear_network_seq
+// Top Module:  linear_network_multicast_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Sequential Logic, each switch takes one clock cycle
-//              Different nodes have different latency.
-//              i-th Node has i-cycle latency.
-// Dummy Data:  {DATA_WIDTH{1'bz}}
+// Timing:      Combinational Logic
+// Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// Function:    Unicast  or  Multicast(Not arbitrary Multicast)
+// Function:    Unicast  or  Multicast(arbitrary Multicast)
 //                               i_data_bus & i_valid     i_data_bus & i_valid     
 //  i_data_bus & i_valid  -->|¯¯¯|------------------>|¯¯¯|------------------>|¯¯¯|--> i_data_bus & i_valid
 //         i_dest[N-1:0]  -->|___|------------------>|___|------------------>|___|--> i_dest[N-4:0]     
@@ -25,14 +23,11 @@
 /////////////////////////////////////////////////////////////
 
 
-module linear_network_seq#(
+module linear_network_multicast_comb#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter NUM_NODE = 4         // could be arbitrary integer.
 )(
     // data signals
-	clk,
-	rst,
-	
 	i_valid,        // valid input data signal
 	i_data_bus,     // input data bus coming into distribute switch
 	
@@ -49,14 +44,11 @@ module linear_network_seq#(
 	localparam WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_NODE;
 	
 	// interface
-	input                                        clk;
-	input                                        rst;
-
 	input                                        i_valid;             
 	input  [DATA_WIDTH-1:0]                      i_data_bus;
 	
 	output [NUM_NODE-1:0]                        o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // Node 0 output [0+;DATA_WIDTH]; Node max# output [(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH]
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // Node 0 output [0+:DATA_WIDTH]; Node max# output [(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH]
 
 	input                                        i_en;
 	input  [COMMMAND_WIDTH-1:0]                  i_cmd;
@@ -78,12 +70,10 @@ module linear_network_seq#(
 
 
 		// first switch
-		distribute_1x2_one_hot_seq #(
+		distribute_1x2_one_hot_comb #(
 			.DATA_WIDTH(DATA_WIDTH),
 			.IN_COMMAND_WIDTH(COMMMAND_WIDTH)
 		) first_switch(
-			.clk(clk),
-			.rst(rst),
 			.i_valid(i_valid),
 			.i_data_bus(i_data_bus),
 			.o_valid({o_valid[0], connection_valid[0]}),
@@ -96,12 +86,10 @@ module linear_network_seq#(
 		// middle switch
 		for(i=1; i<NUM_NODE-1; i=i+1)
 		begin:middle_1x2_switch
-			distribute_1x2_one_hot_seq #(
+			distribute_1x2_one_hot_comb #(
 				.DATA_WIDTH(DATA_WIDTH),
 				.IN_COMMAND_WIDTH(COMMMAND_WIDTH-i)
 			) network_swtich_per_node(
-				.clk(clk),
-				.rst(rst),
 				.i_valid(connection_valid[i-1]),
 				.i_data_bus(connection_data[i-1]),
 				.o_valid({o_valid[i], connection_valid[i]}),
@@ -113,12 +101,10 @@ module linear_network_seq#(
 		end
 
 		// last switch
-		distribute_1x2_one_hot_seq #(
+		distribute_1x2_one_hot_comb #(
 			.DATA_WIDTH(DATA_WIDTH),
 			.IN_COMMAND_WIDTH(COMMMAND_WIDTH-(NUM_NODE-1))
 		) last_switch(
-			.clk(clk),
-			.rst(rst),
 			.i_valid(connection_valid[NUM_NODE-2]),
 			.i_data_bus(connection_data[NUM_NODE-2]),
 			.o_valid({o_valid[NUM_NODE-1], connection_valid[NUM_NODE-1]}),
@@ -129,8 +115,6 @@ module linear_network_seq#(
 		);
 
 	endgenerate
-
-
 
 endmodule
 

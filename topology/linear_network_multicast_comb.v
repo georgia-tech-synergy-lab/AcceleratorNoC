@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  linear_network_comb
+// Top Module:  linear_network_multicast_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
-// Dummy Data:  {DATA_WIDTH{1'bz}}
+// Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// Function:    Unicast  or  Multicast(Not arbitrary Multicast)
+// Function:    Unicast  or  Multicast(arbitrary Multicast)
 //                               i_data_bus & i_valid     i_data_bus & i_valid     
 //  i_data_bus & i_valid  -->|¯¯¯|------------------>|¯¯¯|------------------>|¯¯¯|--> i_data_bus & i_valid
 //         i_dest[N-1:0]  -->|___|------------------>|___|------------------>|___|--> i_dest[N-4:0]     
@@ -23,7 +23,7 @@
 /////////////////////////////////////////////////////////////
 
 
-module linear_network_comb#(
+module linear_network_multicast_comb#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter NUM_NODE = 4         // could be arbitrary integer.
 )(
@@ -48,7 +48,7 @@ module linear_network_comb#(
 	input  [DATA_WIDTH-1:0]                      i_data_bus;
 	
 	output [NUM_NODE-1:0]                        o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // Node 0 output [0+;DATA_WIDTH]; Node max# output [(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH]
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // Node 0 output [0+:DATA_WIDTH]; Node max# output [(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH]
 
 	input                                        i_en;
 	input  [COMMMAND_WIDTH-1:0]                  i_cmd;
@@ -115,8 +115,6 @@ module linear_network_comb#(
 		);
 
 	endgenerate
-
-
 
 endmodule
 
