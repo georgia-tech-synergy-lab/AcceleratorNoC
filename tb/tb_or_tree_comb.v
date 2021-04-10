@@ -1,14 +1,14 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_and_tree_seq
+// Top Module:  tb_or_tree_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Sequential Logic
+// Timing:      Combinational Logic
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 //
 // Parameter:   NUM_INPUT_DATA could be arbitrary integer
 //
-// Function:    AND all bit of input together
+// Function:    OR all bit of input together
 //  MSB                                        LSB
 //   \     /     \     / ... \     /     \     / i_data_latch[0]
 //    v   v       v   v  ...  v   v       v   v    
@@ -34,20 +34,20 @@
 //                      |___| 
 //                        |       
 //                        v
-//           o_data_bus(logic AND of all bits of input data)
+//                   o_data_bus(logic AND of all bits of input data)
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module tb_and_tree_seq();
+
+module tb_or_tree_comb();
     
     parameter NUM_INPUT_DATA = 8;
     parameter DATA_WIDTH = 1;
 
     // timing signals
     reg                                         clk;
-    reg                                         rst;
-    
+
     // interface
 	reg   [NUM_INPUT_DATA-1:0]                  i_valid;             
 	reg   [NUM_INPUT_DATA-1:0]                  i_data_bus;
@@ -64,9 +64,6 @@ module tb_and_tree_seq();
     initial begin
         i_en = 1'b1;
         i_valid = {NUM_INPUT_DATA{1'b1}};
-        rst= 1'b1;
-        #20
-        rst= 1'b0;
         clk = 0;
         i_data_bus = {8'b10010010};
         #20
@@ -79,12 +76,10 @@ module tb_and_tree_seq();
     end
     
     // instantiate DUT (device under test)
-    and_tree_seq#(
+    or_tree_comb#(
         .NUM_INPUT_DATA(NUM_INPUT_DATA), 
         .DATA_WIDTH(DATA_WIDTH)) 
     dut(
-        .clk(clk),
-        .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),

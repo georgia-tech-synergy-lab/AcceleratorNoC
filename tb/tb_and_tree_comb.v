@@ -49,7 +49,7 @@ module tb_and_tree_comb();
     reg                                         clk;
 
     // interface
-	reg                                         i_valid;             
+	reg   [NUM_INPUT_DATA-1:0]                  i_valid;             
 	reg   [NUM_INPUT_DATA-1:0]                  i_data_bus;
 	
 	wire                                        o_valid;             
@@ -63,8 +63,9 @@ module tb_and_tree_comb();
     integer i;
     initial begin
         i_en = 1'b1;
-        i_valid = 1'b1;
+        i_valid = {NUM_INPUT_DATA{1'b1}};
         clk = 0;
+
         i_data_bus = {8'b10010010};
         #20
         i_data_bus = {8'b10001000};

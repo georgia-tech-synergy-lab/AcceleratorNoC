@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  or_tree_comb
+// Top Module:  and_tree_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
@@ -40,7 +40,7 @@
 /////////////////////////////////////////////////////////////
 
 
-module or_tree_comb#(
+module and_tree_comb#(
     parameter NUM_INPUT_DATA = 16,
     parameter DATA_WIDTH = 1
 )(
@@ -56,7 +56,7 @@ module or_tree_comb#(
 );
 
 	// interface
-	input                                        i_valid;             
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
 	input  [NUM_INPUT_DATA-1:0]                  i_data_bus;
 
 	output                                       o_valid;             
@@ -94,8 +94,8 @@ module or_tree_comb#(
     begin: assign_first_stage_wire
         always@(*)
         begin
-            AND_Tree_level[0].i_data_latch[j] = i_data_bus[j+:1];
-            AND_Tree_level[0].i_valid_latch[j] = i_valid;
+            AND_Tree_level[0].i_data_latch[j] = i_data_bus[j];
+            AND_Tree_level[0].i_valid_latch[j] = i_valid[j];
         end
     end
 

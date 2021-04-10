@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_and_tree_seq
+// Top Module:  tb_or_tree_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
@@ -8,7 +8,7 @@
 //
 // Parameter:   NUM_INPUT_DATA could be arbitrary integer
 //
-// Function:    AND all bit of input together
+// Function:    OR all bit of input together
 //  MSB                                        LSB
 //   \     /     \     / ... \     /     \     / i_data_latch[0]
 //    v   v       v   v  ...  v   v       v   v    
@@ -39,7 +39,7 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module tb_and_tree_seq();
+module tb_or_tree_seq();
     
     parameter NUM_INPUT_DATA = 8;
     parameter DATA_WIDTH = 1;
@@ -79,7 +79,7 @@ module tb_and_tree_seq();
     end
     
     // instantiate DUT (device under test)
-    and_tree_seq#(
+    or_tree_seq#(
         .NUM_INPUT_DATA(NUM_INPUT_DATA), 
         .DATA_WIDTH(DATA_WIDTH)) 
     dut(
