@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  and_tree_seq
+// Top Module:  or_tree_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
@@ -8,7 +8,7 @@
 //
 // Parameter:   NUM_INPUT_DATA could be arbitrary integer
 //
-// Function:    AND all bit of input together
+// Function:    OR all bit of input together
 //  MSB                                        LSB
 //   \     /     \     / ... \     /     \     / i_data_latch[0]
 //    v   v       v   v  ...  v   v       v   v    
@@ -40,7 +40,7 @@
 /////////////////////////////////////////////////////////////
 
 
-module and_tree_seq#(
+module or_tree_seq#(
     parameter NUM_INPUT_DATA = 16,
     parameter DATA_WIDTH = 1
 )(
@@ -63,7 +63,7 @@ module and_tree_seq#(
     input                                        rst;
       
 	// interface
-	input                                        i_valid;             
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
 	input  [NUM_INPUT_DATA-1:0]                  i_data_bus;
 
 	output                                       o_valid;             
@@ -80,7 +80,7 @@ module and_tree_seq#(
     genvar i,j;
     generate
     for (i =0; i< NUM_LEVEL+1; i=i+1)
-    begin: AND_Tree_level
+    begin: OR_Tree_level
         // calculate # of switch in level i
         // non power of 2 version is also taken into consideration
         localparam NUM_SWITCH_SHIFT =  NUM_INPUT_DATA >> i;
@@ -88,58 +88,58 @@ module and_tree_seq#(
         localparam NUM_SWITCH_LEVEL = (NOT_ADD_EXTRA_SWITCH_THIS_LEVEL)? NUM_SWITCH_SHIFT: (NUM_SWITCH_SHIFT + 1); 
         
         // define the output wire for switches of level i
-        reg                                     i_data_latch[0:NUM_SWITCH_LEVEL-1];
-        reg                                     i_valid_latch[0:NUM_SWITCH_LEVEL-1];
+        reg                                      i_data_latch[0:NUM_SWITCH_LEVEL-1];
+        reg                                      i_valid_latch[0:NUM_SWITCH_LEVEL-1];
     end
 
     // output latch
     reg                                          o_data_bus_inner;
     reg                                          o_valid_inner;
 
-    // connect i_data_bus to input of AND_gate tree.
+    // connect i_data_bus to input of OR_gate tree.
     for (j = 0; j< NUM_INPUT_DATA; j=j+1)
-    begin: assign_first_stage_wire
+    begin: assign_or_tree_first_stage_wire
         always@(*)
         begin
-            AND_Tree_level[0].i_data_latch[j] = i_data_bus[j+:1];
-            AND_Tree_level[0].i_valid_latch[j] = i_valid;
+            OR_Tree_level[0].i_data_latch[j] = i_data_bus[j];
+            OR_Tree_level[0].i_valid_latch[j] = i_valid[j];
         end
     end
 
-    //instantiate AND_gate tree
+    //instantiate OR_gate tree
     for (i = 0; i< NUM_LEVEL; i=i+1)
-    begin: AND_tree_level
-        for (j = 0; j< AND_Tree_level[i+1].NUM_SWITCH_LEVEL; j=j+1)
-        begin: AND_gate_in_level
-            if( j==(AND_Tree_level[i+1].NUM_SWITCH_LEVEL -1) && ((AND_Tree_level[i].NUM_SWITCH_LEVEL >> 1) != AND_Tree_level[i+1].NUM_SWITCH_LEVEL) )
+    begin: OR_tree_level
+        for (j = 0; j< OR_Tree_level[i+1].NUM_SWITCH_LEVEL; j=j+1)
+        begin: OR_gate_in_level
+            if( j==(OR_Tree_level[i+1].NUM_SWITCH_LEVEL -1) && ((OR_Tree_level[i].NUM_SWITCH_LEVEL >> 1) != OR_Tree_level[i+1].NUM_SWITCH_LEVEL) )
             begin
                 always@(posedge clk)
-                begin:AND_GATE_edge
-                    if(AND_Tree_level[i].i_valid_latch[2*j] && (~rst))
+                begin:OR_GATE_edge
+                    if(OR_Tree_level[i].i_valid_latch[2*j] && (~rst))
                     begin
-                        AND_Tree_level[i+1].i_valid_latch[j] <= 1'b1;
-                        AND_Tree_level[i+1].i_data_latch[j] <= AND_Tree_level[i].i_data_latch[2*j];
+                        OR_Tree_level[i+1].i_valid_latch[j] <= 1'b1;
+                        OR_Tree_level[i+1].i_data_latch[j] <= OR_Tree_level[i].i_data_latch[2*j];
                     end
                     else
                     begin
-                        AND_Tree_level[i+1].i_valid_latch[j] <= 1'b0;
-                        AND_Tree_level[i+1].i_data_latch[j] <= 1'b0;
+                        OR_Tree_level[i+1].i_valid_latch[j] <= 1'b0;
+                        OR_Tree_level[i+1].i_data_latch[j] <= 1'b0;
                     end
                 end
             end 
             else
             begin
                 always@(posedge clk)
-                begin:AND_GATE
-                    if(AND_Tree_level[i].i_valid_latch[2*j+1] && AND_Tree_level[i].i_valid_latch[2*j] && (~rst))
+                begin:OR_GATE
+                    if(OR_Tree_level[i].i_valid_latch[2*j+1] && OR_Tree_level[i].i_valid_latch[2*j] && (~rst))
                     begin
-                        AND_Tree_level[i+1].i_valid_latch[j] <= 1'b1;
-                        AND_Tree_level[i+1].i_data_latch[j] <= AND_Tree_level[i].i_data_latch[2*j+1] & AND_Tree_level[i].i_data_latch[2*j];
+                        OR_Tree_level[i+1].i_valid_latch[j] <= 1'b1;
+                        OR_Tree_level[i+1].i_data_latch[j] <= OR_Tree_level[i].i_data_latch[2*j+1] | OR_Tree_level[i].i_data_latch[2*j];
                     end
                     else
                     begin
-                        AND_Tree_level[i+1].i_valid_latch[j] <= 1'b0;
-                        AND_Tree_level[i+1].i_data_latch[j] <= 1'b0;
+                        OR_Tree_level[i+1].i_valid_latch[j] <= 1'b0;
+                        OR_Tree_level[i+1].i_data_latch[j] <= 1'b0;
                     end
                 end
             end
@@ -148,6 +148,6 @@ module and_tree_seq#(
     endgenerate
 
     // output logic
-    assign o_data_bus = AND_Tree_level[NUM_LEVEL].i_data_latch[0];
-    assign o_valid =  AND_Tree_level[NUM_LEVEL].i_valid_latch[0];
+    assign o_data_bus = OR_Tree_level[NUM_LEVEL].i_data_latch[0];
+    assign o_valid =  OR_Tree_level[NUM_LEVEL].i_valid_latch[0];
 endmodule

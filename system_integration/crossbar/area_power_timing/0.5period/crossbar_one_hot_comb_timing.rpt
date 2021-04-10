@@ -1,0 +1,42 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : crossbar_one_hot_comb
+Version: Q-2019.12-SP2
+Date   : Sat Apr 10 02:06:47 2021
+****************************************
+
+Operating Conditions: tt0p8v25c   Library: tcbn28hpcplusbwp30p140tt0p8v25c
+Wire Load Model Mode: segmented
+
+  Startpoint: i_en (input port)
+  Endpoint: o_data_bus[114]
+            (output port)
+  Path Group: (none)
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  crossbar_one_hot_comb
+                     ZeroWireload          tcbn28hpcplusbwp30p140tt0p8v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  input external delay                                    0.00       0.00 f
+  i_en (in)                                               0.08       0.08 f
+  U15565/ZN (INVD1BWP30P140)                              0.24       0.32 r
+  U25520/ZN (NR2D1BWP30P140)                              0.13       0.46 f
+  U26291/ZN (AOI22D1BWP30P140)                            0.06       0.52 r
+  U26293/ZN (OAI211D1BWP30P140)                           0.03       0.55 f
+  U26294/ZN (AOI211D1BWP30P140)                           0.04       0.59 r
+  U13170/ZN (OAI211OPTREPBD2BWP30P140)                    0.29       0.88 f
+  o_data_bus[114] (out)                                   0.00       0.88 f
+  data arrival time                                                  0.88
+  --------------------------------------------------------------------------
+  (Path is unconstrained)
+
+
+1
