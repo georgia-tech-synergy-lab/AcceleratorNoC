@@ -29,7 +29,7 @@
 //                       [0*DATA_WIDTH+:DATA_WIDTH]           ...         [3*DATA_WIDTH+:DATA_WIDTH]
 //
 //
-// Example: A 5:4 crossbar. For a hierarchy version [2 pipeline stages: first stage = 8* 8:1 mux -- second stage = 1* 8:1 mux;]
+// Example: A 64:8 hierarchy. For a hierarchy version [2 pipeline stages: first stage = 8* 8:1 mux -- second stage = 1* 8:1 mux;]
 //          The following is the hierarchy crossbar for a single output data. 
 //          And the whole hierarachy crossbar needs to instantiate the following logic multiple times.
 //
@@ -63,6 +63,8 @@
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
+
+
 // `define In16_Out8 
 // `define In64_Out8
 `define In64_Out8_hier_8_8
@@ -607,7 +609,7 @@ endmodule
 `endif
 
 `ifdef In64_Out8_hier_8_8
-module crossbar_one_hot_comb#(
+module crossbar_one_hot_comb#( 
 	parameter DATA_WIDTH = 32,      // could be arbitrary number
 	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
 	parameter NUM_INPUT_DATA = 64   

@@ -1,16 +1,16 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  crossbar_one_hot_comb
+// Top Module:  crossbar_one_hot_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Combinational Logic
+// Timing:      Sequential Logic; 1 cycle latency.
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // Command:     Each data comes with a NUM_OUTPUT_DATA-bit one-hot destination command.
 //              i_data_bus[0*DATA_WIDTH+:DATA_WIDTH] is corresponding to i_cmd
 // Function:    Arbitrary Unicast  or  Arbitrary Multicast
 // Note: this file is not parameterizable.
 // 
-// Example: A 5:4 crossbar. For a single cycle version
+// Example: A 5:4 crossbar. 
 //     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
 //                                            |        |        |        |
 //     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
@@ -28,47 +28,17 @@
 //                                       o_data_bus o_data_bus o_data_bus o_data_bus
 //                       [0*DATA_WIDTH+:DATA_WIDTH]           ...         [3*DATA_WIDTH+:DATA_WIDTH]
 //
-//
-// Example: A 5:4 crossbar. For a hierarchy version [2 pipeline stages: first stage = 8* 8:1 mux -- second stage = 1* 8:1 mux;]
-//          The following is the hierarchy crossbar for a single output data. 
-//          And the whole hierarachy crossbar needs to instantiate the following logic multiple times.
-//
-//     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
-//                                             |                                                           |                    
-//     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
-//                                             ||                                                          ||                       
-//     i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
-//                                             |||                                                         |||                   
-//           ....                              ...                                                         ...                    
-//                                             ||||||||                                                    ||||||||               
-//     i_data_bus[63*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
-//                                             ||||||||                                                    ||||||||               
-//                                             ||||||||     ...   i_data_bus[0*DATA_WIDTH+:DATA_WIDTH] ->  |||||||| <- i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]        
-//                                             ||||||||                                                    ||||||||         
-//     i_data_bus[56*DATA_WIDTH+:DATA_WIDTH]-> |||||||| <- i_data_bus[63*DATA_WIDTH+:DATA_WIDTH]   ...     ||||||||         
-//                                            __________                                                  __________            
-//   5-bit one-hot control to each of mux ->  \________/                                                  \________/             
-//                                                |                                                           |                   
-//                                                v                                                           v                     
-//                                     inner_first_stage_data_reg[7]                            inner_first_stage_data_reg[0]
-//                                                |                                                           |                                       
-//                                                ---------------------------  ... ----------------------------
-//                                                                          ||||||||
-//                                                                         __________ 
-//                                                                         \________/          same logic repeats for 8 times.
-//                                                                             |             
-//                                                                             v              
-//                                                                        o_data_bus[7]    ...  o_data_bus[0]
-//
-//
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
-
-module crossbar_one_hot_comb#(
+module crossbar_one_hot_seq#(
 	parameter DATA_WIDTH = 32,      // could be arbitrary number
 	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
 	parameter NUM_INPUT_DATA = 64   
 )(
+    // timeing signals
+    clk,
+    rst,
+
     // data signals
 	i_valid,        // valid input data signal
 	i_data_bus,     // input data bus coming into distribute switch
@@ -80,6 +50,7 @@ module crossbar_one_hot_comb#(
 	i_en,           // distribute switch enable
 	i_cmd           // the input should be one-hot encoded command 
 );
+
 	//parameter
 	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
@@ -92,7 +63,10 @@ module crossbar_one_hot_comb#(
 	localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
 	localparam NUM_MUX_SECOND_STAGE = 1;
 
-	// interface
+    // interface
+	input                                        clk;
+	input                                        rst;
+
 	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
 	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 	
@@ -105,7 +79,6 @@ module crossbar_one_hot_comb#(
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
     
-
     genvar i,j;
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
@@ -118,9 +91,9 @@ module crossbar_one_hot_comb#(
             begin:first_stage
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
                 assign  inner_cmd_wire = {i_cmd[(7+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(6+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(5+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(4+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(*)
+                always@(posedge clk)
                 begin
-                    if(i_en)
+                    if(i_en && (~rst))
                     begin
                         case(inner_cmd_wire)
                             8'b00000001:
@@ -186,9 +159,9 @@ module crossbar_one_hot_comb#(
             // second stage -- a single 8:1 mux.
             wire  [NUM_IN_MUX_SECOND_STAGE-1:0]  inner_cmd_wire_second_stage;
             assign inner_cmd_wire_second_stage = inner_first_stage_valid_reg;
-            always@(*)
+            always@(posedge clk)
             begin:second_stage
-                if(i_en)
+                if(i_en && (~rst))
                 begin
                     case(inner_cmd_wire_second_stage)
                         8'b00000001:

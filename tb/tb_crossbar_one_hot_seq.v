@@ -28,8 +28,42 @@
 //                                       o_data_bus o_data_bus o_data_bus o_data_bus
 //                       [0*DATA_WIDTH+:DATA_WIDTH]           ...         [3*DATA_WIDTH+:DATA_WIDTH]
 //
+//
+// Example: A 64:8 hierarchy crossbar. For a hierarchy version [2 pipeline stages: first stage = 8* 8:1 mux -- second stage = 1* 8:1 mux;]
+//          The following is the hierarchy crossbar for a single output data. 
+//          And the whole hierarachy crossbar needs to instantiate the following logic multiple times.
+//
+//     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
+//                                             |                                                           |                    
+//     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
+//                                             ||                                                          ||                       
+//     i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
+//                                             |||                                                         |||                   
+//           ....                              ...                                                         ...                    
+//                                             ||||||||                                                    ||||||||               
+//     i_data_bus[63*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
+//                                             ||||||||                                                    ||||||||               
+//                                             ||||||||     ...   i_data_bus[0*DATA_WIDTH+:DATA_WIDTH] ->  |||||||| <- i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]        
+//                                             ||||||||                                                    ||||||||         
+//     i_data_bus[56*DATA_WIDTH+:DATA_WIDTH]-> |||||||| <- i_data_bus[63*DATA_WIDTH+:DATA_WIDTH]   ...     ||||||||         
+//                                            __________                                                  __________            
+//   5-bit one-hot control to each of mux ->  \________/                                                  \________/             
+//                                                |                                                           |                   
+//                                                v                                                           v                     
+//                                     inner_first_stage_data_reg[7]                            inner_first_stage_data_reg[0]
+//                                                |                                                           |                                       
+//                                                ---------------------------  ... ----------------------------
+//                                                                          ||||||||
+//                                                                         __________ 
+//                                                                         \________/          same logic repeats for 8 times.
+//                                                                             |             
+//                                                                             v              
+//                                                                        o_data_bus[7]    ...  o_data_bus[0]
+//
+//
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
+
 // `define In16_Out8 
 `define In64_Out8
 

@@ -6,7 +6,7 @@
 // Timing:      Combinational Logic
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// Function:    Unicast  or  Multicast(arbitrary Multicast)
+// Function:    Unicast 
 //                               i_data_bus & i_valid     i_data_bus & i_valid     
 //  i_data_bus & i_valid  -->|¯¯¯|------------------>|¯¯¯|------------------>|¯¯¯|--> i_data_bus & i_valid
 //         i_dest[N-1:0]  -->|___|------------------>|___|------------------>|___|--> i_dest[N-4:0]     
