@@ -1,0 +1,30 @@
+ 
+****************************************
+Report : area
+Design : crossbar_one_hot_comb_wrapper_seq
+Version: Q-2019.12-SP2
+Date   : Sun Apr 11 10:40:49 2021
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140tt0p8v25c (File: /usr/scratch/will-jianming/TSMC_library/IP/TSMC28_STD_CELLS/custom_utils_ck/tsmc_ip/tcbn28hpcplusbwp30p140/nldm/tcbn28hpcplusbwp30p140tt0p8v25c.db)
+
+Number of ports:                         5779
+Number of nets:                         22416
+Number of cells:                        16902
+Number of combinational cells:          13749
+Number of sequential cells:              3152
+Number of macros/black boxes:               0
+Number of buf/inv:                        940
+Number of references:                       5
+
+Combinational area:               8958.347936
+Buf/Inv area:                      935.423995
+Noncombinational area:            5890.751930
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                 14849.099866
+Total area:                 undefined
+1
