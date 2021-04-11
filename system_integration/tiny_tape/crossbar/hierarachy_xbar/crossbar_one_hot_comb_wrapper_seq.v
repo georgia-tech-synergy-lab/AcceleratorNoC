@@ -127,7 +127,7 @@ module crossbar_one_hot_comb_wrapper_seq#(
         .NUM_INPUT_DATA(NUM_INPUT_DATA), 
         .NUM_OUTPUT_DATA(NUM_OUTPUT_DATA),
         .DATA_WIDTH(DATA_WIDTH)) 
-    crossbar_one_hot_comb(
+    dut(
 		.i_valid(i_valid_reg),
 		.i_data_bus(i_data_bus_reg),
 		.o_valid(o_valid_wire),

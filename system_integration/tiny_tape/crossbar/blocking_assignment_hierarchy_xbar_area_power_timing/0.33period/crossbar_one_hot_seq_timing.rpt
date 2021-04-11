@@ -1,0 +1,61 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : crossbar_one_hot_seq
+Version: Q-2019.12-SP2
+Date   : Sun Apr 11 10:56:05 2021
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: tt0p8v25c   Library: tcbn28hpcplusbwp30p140tt0p8v25c
+Wire Load Model Mode: segmented
+
+  Startpoint: i_cmd[418] (input port clocked by clk)
+  Endpoint: output_mux_2__inner_first_stage_data_reg_reg_213_
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  crossbar_one_hot_seq
+                     ZeroWireload          tcbn28hpcplusbwp30p140tt0p8v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.07       0.07 f
+  i_cmd[418] (in)                                         0.01       0.07 f
+  U16428/ZN (NR2D4BWP30P140)                              0.01       0.09 r
+  U17710/ZN (ND2OPTIBD6BWP30P140)                         0.01       0.10 f
+  U22463/ZN (INR2D4BWP30P140)                             0.01       0.11 r
+  U18795/ZN (CKND2D4BWP30P140)                            0.01       0.12 f
+  U17552/ZN (INVD4BWP30P140)                              0.01       0.13 r
+  U16811/ZN (INVD8BWP30P140)                              0.01       0.14 f
+  U15572/ZN (OAI22D1BWP30P140)                            0.02       0.16 r
+  U18577/ZN (NR2D1P5BWP30P140)                            0.01       0.17 f
+  U18989/ZN (OAI211OPTREPBD2BWP30P140)                    0.01       0.18 r
+  output_mux_2__inner_first_stage_data_reg_reg_213_/D (EDFQD1BWP30P140)
+                                                          0.00       0.18 r
+  data arrival time                                                  0.18
+
+  clock clk (rise edge)                                   0.33       0.33
+  clock network delay (ideal)                             0.00       0.33
+  clock uncertainty                                      -0.15       0.18
+  output_mux_2__inner_first_stage_data_reg_reg_213_/CP (EDFQD1BWP30P140)
+                                                          0.00       0.18 r
+  library setup time                                     -0.04       0.14
+  data required time                                                 0.14
+  --------------------------------------------------------------------------
+  data required time                                                 0.14
+  data arrival time                                                 -0.18
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.04
+
+
+1
