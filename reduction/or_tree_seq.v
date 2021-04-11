@@ -101,8 +101,16 @@ module or_tree_seq#(
     begin: assign_or_tree_first_stage_wire
         always@(*)
         begin
-            OR_Tree_level[0].i_data_latch[j] = i_data_bus[j];
-            OR_Tree_level[0].i_valid_latch[j] = i_valid[j];
+            if(i_en && (~rst))
+            begin
+                OR_Tree_level[0].i_data_latch[j] = i_data_bus[j];
+                OR_Tree_level[0].i_valid_latch[j] = i_valid[j];
+            end
+            else
+            begin
+                OR_Tree_level[0].i_valid_latch[j] = 1'b0;
+                OR_Tree_level[0].i_data_latch[j] = 1'b0;
+            end
         end
     end
 
@@ -115,7 +123,7 @@ module or_tree_seq#(
             begin
                 always@(posedge clk)
                 begin:OR_GATE_edge
-                    if(OR_Tree_level[i].i_valid_latch[2*j] && (~rst))
+                    if(OR_Tree_level[i].i_valid_latch[2*j] && (~rst) && i_en)
                     begin
                         OR_Tree_level[i+1].i_valid_latch[j] <= 1'b1;
                         OR_Tree_level[i+1].i_data_latch[j] <= OR_Tree_level[i].i_data_latch[2*j];
@@ -131,7 +139,7 @@ module or_tree_seq#(
             begin
                 always@(posedge clk)
                 begin:OR_GATE
-                    if(OR_Tree_level[i].i_valid_latch[2*j+1] && OR_Tree_level[i].i_valid_latch[2*j] && (~rst))
+                    if(OR_Tree_level[i].i_valid_latch[2*j+1] && OR_Tree_level[i].i_valid_latch[2*j] && (~rst) && i_en)
                     begin
                         OR_Tree_level[i+1].i_valid_latch[j] <= 1'b1;
                         OR_Tree_level[i+1].i_data_latch[j] <= OR_Tree_level[i].i_data_latch[2*j+1] | OR_Tree_level[i].i_data_latch[2*j];
