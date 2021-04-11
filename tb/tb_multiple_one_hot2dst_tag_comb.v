@@ -108,11 +108,11 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-// `define NUM_OUTPUT_4
-`define NUM_OUTPUT_8
+// `define NUM_OUTPUT_4_NUM_INPUT_4
+`define NUM_OUTPUT_8_NUM_INPUT_4
 
-`ifdef NUM_OUTPUT_4
-module tb_one_hot2dst_tag_comb();
+`ifdef NUM_OUTPUT_4_NUM_INPUT_4
+module tb_multiple_one_hot2dst_tag_comb();
     
     parameter NUM_INPUT_DATA = 1;
     parameter NUM_OUTPUT_DATA = 4;
@@ -121,29 +121,27 @@ module tb_one_hot2dst_tag_comb();
 	localparam CMD_WIDTH_PER_DATA = DST_TAG_WIDTH*$clog2(NUM_OUTPUT_DATA); // Note: inner ceiling: e.g. $clog2(18) = 5, (2^5=32).
 
     // timing signals
-    reg                                         clk;
+    reg                                                clk;
+        
+    // interface       
+	reg   [NUM_INPUT_DATA-1:0]                         i_valid;             
+	reg   [NUM_INPUT_DATA*DATA_WIDTH-1:0]              i_data_bus;
+	    
+	wire  [NUM_INPUT_DATA-1:0]                         o_valid;             
+	wire  [NUM_INPUT_DATA*DATA_WIDTH-1:0]              o_data_bus; //{o_data_a, o_data_b}
     
-    // interface
-	reg   [NUM_INPUT_DATA-1:0]                  i_valid;             
-	reg   [NUM_INPUT_DATA*DATA_WIDTH-1:0]       i_data_bus;
-	
-	wire                                        o_valid;             
-	wire  [DATA_WIDTH-1:0]                      o_data_bus; //{o_data_a, o_data_b}
+	reg                                                i_en;
+	reg   [NUM_INPUT_DATA*NUM_OUTPUT_DATA-1:0]         i_cmd;
 
-	reg                                         i_en;
-	reg   [NUM_OUTPUT_DATA-1:0]                 i_cmd;
-    
-    wire  [CMD_WIDTH_PER_DATA-1:0]              o_cmd;
+    wire  [NUM_INPUT_DATA*CMD_WIDTH_PER_DATA-1:0]      o_cmd;
 
     // inner logic
-    reg signed [DATA_WIDTH-1:0] i_data_bus_inner[NUM_INPUT_DATA-1:0]; 
-
     integer i;
     initial begin
         i_en = 1'b1;
         i_valid = {NUM_INPUT_DATA{1'b1}};
         clk = 0;
-        i_data_bus = 8'b11111111;
+        i_data_bus = {NUM_INPUT_DATA{8'b11111111}};
         // disable
         i_en = 1'b1;
         #20
@@ -163,38 +161,38 @@ module tb_one_hot2dst_tag_comb();
         //
         // Test in the reverse order.
         // case 1 broadcasting to all outputs
-        i_cmd = 4'b1111;
+        i_cmd = {NUM_INPUT_DATA{4'b1111}};
         #20
         
         // case 2
-        i_cmd = 4'b1100;
+        i_cmd = {NUM_INPUT_DATA{4'b1100}};
         #20
 
         // case 3
-        i_cmd = 4'b0011;
+        i_cmd = {NUM_INPUT_DATA{4'b0011}};
         #20
 
         // case 4
-        i_cmd = 4'b1000;
+        i_cmd = {NUM_INPUT_DATA{4'b1000}};
         #20
 
         // case 5
-        i_cmd = 4'b0100;
+        i_cmd = {NUM_INPUT_DATA{4'b0100}};
         #20
 
         // case 6
-        i_cmd = 4'b0010;
+        i_cmd = {NUM_INPUT_DATA{4'b0010}};
         #20
 
         // case 7
-        i_cmd = 4'b0001;
+        i_cmd = {NUM_INPUT_DATA{4'b0001}};
         #20
         $stop;
     end
     
 
     // instantiate DUT (device under test)
-    one_hot2dst_tag_comb#(
+    multiple_one_hot2dst_tag_comb#(
         .NUM_INPUT_DATA(NUM_INPUT_DATA), 
         .DATA_WIDTH(DATA_WIDTH),
         .NUM_OUTPUT_DATA(NUM_OUTPUT_DATA),
@@ -215,29 +213,29 @@ module tb_one_hot2dst_tag_comb();
 endmodule
 `endif 
 
-`ifdef NUM_OUTPUT_8
-module tb_one_hot2dst_tag_comb();
+`ifdef NUM_OUTPUT_8_NUM_INPUT_4
+module tb_multiple_one_hot2dst_tag_comb();
     
-    parameter NUM_INPUT_DATA = 1;
+    parameter NUM_INPUT_DATA = 4;
     parameter NUM_OUTPUT_DATA = 8;
     parameter DATA_WIDTH = 8;
     localparam DST_TAG_WIDTH = 2; // Note: inner ceiling: e.g. $clog2(18) = 5, (2^5=32).
 	localparam CMD_WIDTH_PER_DATA = DST_TAG_WIDTH*$clog2(NUM_OUTPUT_DATA); // Note: inner ceiling: e.g. $clog2(18) = 5, (2^5=32).
 
     // timing signals
-    reg                                         clk;
-    
-    // interface
-	reg   [NUM_INPUT_DATA-1:0]                  i_valid;             
-	reg   [NUM_INPUT_DATA*DATA_WIDTH-1:0]       i_data_bus;
-	
-	wire                                        o_valid;             
-	wire  [DATA_WIDTH-1:0]                      o_data_bus; //{o_data_a, o_data_b}
+    reg                                                clk;
 
-	reg                                         i_en;
-	reg   [NUM_OUTPUT_DATA-1:0]                 i_cmd;
-    
-    wire  [CMD_WIDTH_PER_DATA-1:0]              o_cmd;
+    // interface       
+	reg   [NUM_INPUT_DATA-1:0]                         i_valid;             
+	reg   [NUM_INPUT_DATA*DATA_WIDTH-1:0]              i_data_bus;
+
+	wire  [NUM_INPUT_DATA-1:0]                         o_valid;             
+	wire  [NUM_INPUT_DATA*DATA_WIDTH-1:0]              o_data_bus; //{o_data_a, o_data_b}
+
+	reg                                                i_en;
+	reg   [NUM_INPUT_DATA*NUM_OUTPUT_DATA-1:0]         i_cmd;
+
+    wire  [NUM_INPUT_DATA*CMD_WIDTH_PER_DATA-1:0]      o_cmd;
 
     // inner logic
     reg signed [DATA_WIDTH-1:0] i_data_bus_inner[NUM_INPUT_DATA-1:0]; 
@@ -247,7 +245,7 @@ module tb_one_hot2dst_tag_comb();
         i_en = 1'b1;
         i_valid = {NUM_INPUT_DATA{1'b1}};
         clk = 0;
-        i_data_bus = 8'b11111111;
+        i_data_bus = {NUM_INPUT_DATA{8'b11111111}};
         // disable
         i_en = 1'b0;
         #20
@@ -277,70 +275,70 @@ module tb_one_hot2dst_tag_comb();
         // Test in the reverse order.
         // case 1 broadcasting to all outputs
         i_en = 1'b1;
-        i_cmd = 8'b11111111;
+        i_cmd = {NUM_INPUT_DATA{8'b11111111}};
         #20
         
         // case 2
-        i_cmd = 8'b11110000;
+        i_cmd = {NUM_INPUT_DATA{8'b11110000}};
         #20
 
         // case 3
-        i_cmd = 8'b00001111;
+        i_cmd = {NUM_INPUT_DATA{8'b00001111}};
         #20
 
         // case 4
-        i_cmd = 8'b11000000;
+        i_cmd = {NUM_INPUT_DATA{8'b11000000}};
         #20
 
         // case 5
-        i_cmd = 8'b00110000;
+        i_cmd = {NUM_INPUT_DATA{8'b00110000}};
         #20
 
         // case 6
-        i_cmd = 8'b00001100;
+        i_cmd = {NUM_INPUT_DATA{8'b00001100}};
         #20
 
         // case 7
-        i_cmd = 8'b00000011;
+        i_cmd = {NUM_INPUT_DATA{8'b00000011}};
         #20
         
         // case 8
-        i_cmd = 8'b10000000;
+        i_cmd = {NUM_INPUT_DATA{8'b10000000}};
         #20
         
         // case 9
-        i_cmd = 8'b01000000;
+        i_cmd = {NUM_INPUT_DATA{8'b01000000}};
         #20
         
         // case 10
-        i_cmd = 8'b00100000;
+        i_cmd = {NUM_INPUT_DATA{8'b00100000}};
         #20
         
         // case 11
-        i_cmd = 8'b00010000;
+        i_cmd = {NUM_INPUT_DATA{8'b00010000}};
         #20
         
         // case 12
-        i_cmd = 8'b00001000;
+        i_cmd = {NUM_INPUT_DATA{8'b00001000}};
         #20
         
         // case 13
-        i_cmd = 8'b00000100;
+        i_cmd = {NUM_INPUT_DATA{8'b00000100}};
         #20        
         
         // case 14
-        i_cmd = 8'b00000010;
+        i_cmd = {NUM_INPUT_DATA{8'b00000010}};
         #20        
                 
         // case 15
-        i_cmd = 8'b00000001;
+        i_cmd = {NUM_INPUT_DATA{8'b00000001}};
         #20        
         $stop;
     end
     
 
     // instantiate DUT (device under test)
-    one_hot2dst_tag_comb#(
+    multiple_one_hot2dst_tag_comb#(
         .NUM_INPUT_DATA(NUM_INPUT_DATA), 
         .DATA_WIDTH(DATA_WIDTH),
         .NUM_OUTPUT_DATA(NUM_OUTPUT_DATA),

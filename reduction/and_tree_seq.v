@@ -101,8 +101,16 @@ module and_tree_seq#(
     begin: assign_first_stage_wire
         always@(*)
         begin
-            AND_Tree_level[0].i_data_latch[j] = i_data_bus[j];
-            AND_Tree_level[0].i_valid_latch[j] = i_valid[j];
+            if(i_en)
+            begin
+                AND_Tree_level[0].i_data_latch[j] = i_data_bus[j];
+                AND_Tree_level[0].i_valid_latch[j] = i_valid[j];
+            end
+            else
+            begin
+                AND_Tree_level[0].i_data_latch[j] = 1'b0;
+                AND_Tree_level[0].i_valid_latch[j] = 1'b0;              
+            end
         end
     end
 
@@ -115,7 +123,7 @@ module and_tree_seq#(
             begin
                 always@(posedge clk)
                 begin:AND_GATE_edge
-                    if(AND_Tree_level[i].i_valid_latch[2*j] && (~rst))
+                    if(AND_Tree_level[i].i_valid_latch[2*j] && (~rst) && i_en)
                     begin
                         AND_Tree_level[i+1].i_valid_latch[j] <= 1'b1;
                         AND_Tree_level[i+1].i_data_latch[j] <= AND_Tree_level[i].i_data_latch[2*j];
@@ -131,7 +139,7 @@ module and_tree_seq#(
             begin
                 always@(posedge clk)
                 begin:AND_GATE
-                    if(AND_Tree_level[i].i_valid_latch[2*j+1] && AND_Tree_level[i].i_valid_latch[2*j] && (~rst))
+                    if(AND_Tree_level[i].i_valid_latch[2*j+1] && AND_Tree_level[i].i_valid_latch[2*j] && (~rst)  && i_en)
                     begin
                         AND_Tree_level[i+1].i_valid_latch[j] <= 1'b1;
                         AND_Tree_level[i+1].i_data_latch[j] <= AND_Tree_level[i].i_data_latch[2*j+1] & AND_Tree_level[i].i_data_latch[2*j];

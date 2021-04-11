@@ -111,7 +111,7 @@
 module one_hot2dst_tag_comb#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter NUM_INPUT_DATA = 1,  // must be 2^n
-	parameter NUM_OUTPUT_DATA = 4, // must be 2^n
+	parameter NUM_OUTPUT_DATA = 8, // must be 2^n
 	parameter DST_TAG_WIDTH = 2  // length of the destination tag consumed per data per stage.
 )(
 	// timeing signals
@@ -151,7 +151,7 @@ module one_hot2dst_tag_comb#(
 	output [CMD_WIDTH_PER_DATA-1:0]              o_cmd;
 
     // inner logic
-    reg    [CMD_WIDTH_PER_DATA-1:0]              o_valid_reg;
+    reg    [NUM_INPUT_DATA-1:0]                  o_valid_reg;
     reg    [NUM_INPUT_DATA*DATA_WIDTH-1:0]       o_data_bus_reg;
 
 	// ---- destination tag bit generation.
