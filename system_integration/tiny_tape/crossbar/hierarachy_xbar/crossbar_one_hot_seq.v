@@ -84,8 +84,9 @@ module crossbar_one_hot_seq#(
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin:output_mux
             // first pipeline stage -- buffer definition.
-            reg    [NUM_OUTPUT_DATA*NUM_IN_MUX_FIRST_STAGE*DATA_WIDTH-1:0]      inner_first_stage_data_reg;
-            reg    [NUM_OUTPUT_DATA*NUM_IN_MUX_FIRST_STAGE-1:0]                 inner_first_stage_valid_reg;
+            reg    [NUM_IN_MUX_FIRST_STAGE*DATA_WIDTH-1:0]      inner_first_stage_data_reg;
+            reg    [NUM_IN_MUX_FIRST_STAGE-1:0]                 inner_first_stage_valid_reg;
+            
             // first pipeline stage -- 8 * 8:1 mux logic.
             for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
             begin:first_stage
