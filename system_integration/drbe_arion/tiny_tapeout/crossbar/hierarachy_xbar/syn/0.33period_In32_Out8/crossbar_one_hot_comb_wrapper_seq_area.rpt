@@ -1,0 +1,44 @@
+ 
+****************************************
+Report : area
+Design : crossbar_one_hot_comb_wrapper_seq
+Version: J-2014.09-SP3
+Date   : Mon Apr 12 15:59:30 2021
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140lvttt0p8v25c (File: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/unzipped/tcbn28hpcplusbwp30p140lvt_190a/tcbn28hpcplusbwp30p140lvt_180a_nldm/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp30p140lvt_180a/tcbn28hpcplusbwp30p140lvttt0p8v25c.db)
+
+Number of ports:                         1579
+Number of nets:                          4283
+Number of cells:                         2705
+Number of combinational cells:           1128
+Number of sequential cells:              1576
+Number of macros/black boxes:               0
+Number of buf/inv:                          8
+Number of references:                       9
+
+Combinational area:               4627.097982
+Buf/Inv area:                       97.398001
+Noncombinational area:            3004.217986
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                  7631.315969
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area          Local cell area
+                                  ------------------  ---------------------------- 
+Hierarchical cell                 Absolute   Percent  Combi-     Noncombi-  Black-
+                                  Total      Total    national   national   boxes   Design
+--------------------------------  ---------  -------  ---------  ---------  ------  --------------------------------------------------------------------
+crossbar_one_hot_comb_wrapper_seq 7631.3160    100.0   569.3940  3004.2180  0.0000  crossbar_one_hot_comb_wrapper_seq
+dut                               4057.7040     53.2  4057.7040     0.0000  0.0000  crossbar_one_hot_comb_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA32
+--------------------------------  ---------  -------  ---------  ---------  ------  --------------------------------------------------------------------
+Total                                                 4627.0980  3004.2180  0.0000
+
+1
