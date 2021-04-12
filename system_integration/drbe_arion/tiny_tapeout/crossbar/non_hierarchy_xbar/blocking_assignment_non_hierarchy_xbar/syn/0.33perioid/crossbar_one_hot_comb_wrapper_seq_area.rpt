@@ -1,0 +1,44 @@
+ 
+****************************************
+Report : area
+Design : crossbar_one_hot_comb_wrapper_seq
+Version: Q-2019.12-SP2
+Date   : Mon Apr 12 04:46:01 2021
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140tt0p8v25c (File: /usr/scratch/will-jianming/TSMC_library/IP/TSMC28_STD_CELLS/custom_utils_ck/tsmc_ip/tcbn28hpcplusbwp30p140/nldm/tcbn28hpcplusbwp30p140tt0p8v25c.db)
+
+Number of ports:                         5779
+Number of nets:                         31535
+Number of cells:                        26021
+Number of combinational cells:          23132
+Number of sequential cells:              2888
+Number of macros/black boxes:               0
+Number of buf/inv:                       4602
+Number of references:                      10
+
+Combinational area:              14820.245957
+Buf/Inv area:                     1792.350006
+Noncombinational area:            5666.597905
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                 20486.843862
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area            Local cell area
+                                  -------------------  ----------------------------- 
+Hierarchical cell                 Absolute    Percent  Combi-      Noncombi-  Black-
+                                  Total       Total    national    national   boxes   Design
+--------------------------------  ----------  -------  ----------  ---------  ------  --------------------------------------------------------------------
+crossbar_one_hot_comb_wrapper_seq 20486.8439    100.0      0.5040  5666.5979  0.0000  crossbar_one_hot_comb_wrapper_seq
+dut                               14819.7420     72.3  14819.7420     0.0000  0.0000  crossbar_one_hot_comb_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA64
+--------------------------------  ----------  -------  ----------  ---------  ------  --------------------------------------------------------------------
+Total                                                  14820.2460  5666.5979  0.0000
+
+1

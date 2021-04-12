@@ -22,7 +22,6 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-
 module linear_network_unicast_comb#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter NUM_NODE = 4         // could be arbitrary integer.
