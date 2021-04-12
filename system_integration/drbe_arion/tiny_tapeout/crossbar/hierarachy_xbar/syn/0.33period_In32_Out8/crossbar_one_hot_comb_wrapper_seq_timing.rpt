@@ -1,0 +1,67 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : crossbar_one_hot_comb_wrapper_seq
+Version: J-2014.09-SP3
+Date   : Mon Apr 12 15:59:30 2021
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: tt0p8v25c   Library: tcbn28hpcplusbwp30p140lvttt0p8v25c
+Wire Load Model Mode: segmented
+
+  Startpoint: i_en (input port clocked by clk)
+  Endpoint: o_data_bus_reg_reg_51_
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  crossbar_one_hot_comb_wrapper_seq
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  crossbar_one_hot_comb_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA32
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  i_en (in)                                               0.00       0.10 f
+  dut/i_en (crossbar_one_hot_comb_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA32)
+                                                          0.00       0.10 f
+  dut/U365/ZN (INVD15BWP30P140LVT)                        0.01       0.11 r
+  dut/U78/ZN (NR2OPTIBD6BWP30P140LVT)                     0.01       0.11 f
+  dut/U103/ZN (NR2OPTPAD4BWP30P140LVT)                    0.01       0.12 r
+  dut/U184/ZN (INVD2BWP30P140LVT)                         0.00       0.12 f
+  dut/U63/ZN (NR3OPTPAD2BWP30P140LVT)                     0.01       0.13 r
+  dut/U972/ZN (INR2D4BWP30P140LVT)                        0.02       0.15 r
+  dut/U191/ZN (ND3OPTPAD2BWP30P140LVT)                    0.01       0.16 f
+  dut/U417/ZN (NR3D0P7BWP30P140LVT)                       0.12       0.28 r
+  dut/U1389/ZN (AOI22D1BWP30P140LVT)                      0.02       0.30 f
+  dut/U1393/ZN (ND4D1BWP30P140LVT)                        0.01       0.32 r
+  dut/U1409/Z (OR4D1BWP30P140LVT)                         0.02       0.34 r
+  dut/o_data_bus[51] (crossbar_one_hot_comb_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA32)
+                                                          0.00       0.34 r
+  o_data_bus_reg_reg_51_/D (DFQD2BWP30P140LVT)            0.00       0.34 r
+  data arrival time                                                  0.34
+
+  clock clk (rise edge)                                   0.50       0.50
+  clock network delay (ideal)                             0.00       0.50
+  clock uncertainty                                      -0.15       0.35
+  o_data_bus_reg_reg_51_/CP (DFQD2BWP30P140LVT)           0.00       0.35 r
+  library setup time                                     -0.01       0.34
+  data required time                                                 0.34
+  --------------------------------------------------------------------------
+  data required time                                                 0.34
+  data arrival time                                                 -0.34
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+1
