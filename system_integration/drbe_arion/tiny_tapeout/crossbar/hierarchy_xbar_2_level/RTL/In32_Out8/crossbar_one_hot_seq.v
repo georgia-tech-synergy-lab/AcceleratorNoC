@@ -65,6 +65,8 @@ module crossbar_one_hot_seq#(
 	localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
 	localparam NUM_MUX_SECOND_STAGE = 1;
 
+	localparam DATA_INDEX_BIT_WIDTH = $clog2(WIDTH_INPUT_DATA);
+
     // interface
 	input                                        clk;
 	input                                        rst;
@@ -85,13 +87,13 @@ module crossbar_one_hot_seq#(
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]      inner_first_stage_data_reg;
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE-1:0]                 inner_first_stage_valid_reg;
     
-    genvar i,j;
+    genvar i,j,k;
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin:output_mux
-            // first pipeline stage -- 8 * 4:1 mux logic.
+            // first pipeline stage -- data -- 8 * 4:1 mux logic.
             for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
-            begin:first_stage
+            begin:first_stage_data
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
                 assign  inner_cmd_wire = {i_cmd[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
                 always@(posedge clk)
@@ -102,39 +104,72 @@ module crossbar_one_hot_seq#(
                             4'b0001:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(0+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             4'b0010:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(1+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             4'b0100:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[2+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(2+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[2+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             4'b1000:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[3+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(3+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[3+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             default:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0;
                             end
                         endcase
                     end
                     else
                     begin
                         inner_first_stage_data_reg[(i*NUM_OUTPUT_DATA+j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    end
+                end
+            end
+
+            // first pipeline stage -- valid -- 8 * 4:1 mux logic.
+            for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
+            begin:first_stage_valid
+                wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_valid;
+                assign  inner_cmd_wire_valid = {i_cmd[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin
+                    if(i_en && (~rst))
+                    begin
+                        case(inner_cmd_wire_valid)
+                            4'b0001:
+                            begin
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b0010:
+                            begin
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b0100:
+                            begin
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[2+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b1000:
+                            begin
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[3+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            default:
+                            begin
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0;
+                            end
+                        endcase
+                    end
+                    else
+                    begin
                         inner_first_stage_valid_reg[(i*NUM_OUTPUT_DATA+j)] <= 1'b0; 
                     end
                 end
             end
 
-            // second stage -- a single 8:1 mux.
+            // second stage -- data -- a single 8:1 mux.
             wire  [NUM_IN_MUX_SECOND_STAGE-1:0]  inner_cmd_wire_second_stage;
             assign inner_cmd_wire_second_stage = inner_first_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_FIRST_STAGE];
             always@(posedge clk)
@@ -145,54 +180,81 @@ module crossbar_one_hot_seq#(
                         8'b00000001:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[(i*NUM_OUTPUT_DATA+0)*DATA_WIDTH+:DATA_WIDTH];
-                            o_valid_reg[i] <= 1'b1;
                         end
                         8'b00000010:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[(i*NUM_OUTPUT_DATA+1)*DATA_WIDTH+:DATA_WIDTH];
-                            o_valid_reg[i] <= 1'b1;
                         end
                         8'b00000100:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[(i*NUM_OUTPUT_DATA+2)*DATA_WIDTH+:DATA_WIDTH];
-                            o_valid_reg[i] <= 1'b1;
                         end
                         8'b00001000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[(i*NUM_OUTPUT_DATA+3)*DATA_WIDTH+:DATA_WIDTH];
-                            o_valid_reg[i] <= 1'b1;
                         end
                         8'b00010000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[(i*NUM_OUTPUT_DATA+4)*DATA_WIDTH+:DATA_WIDTH];
-                            o_valid_reg[i] <= 1'b1;
                         end
                         8'b00100000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[(i*NUM_OUTPUT_DATA+5)*DATA_WIDTH+:DATA_WIDTH];
-                            o_valid_reg[i] <= 1'b1;
                         end
                         8'b01000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[(i*NUM_OUTPUT_DATA+6)*DATA_WIDTH+:DATA_WIDTH];
-                            o_valid_reg[i] <= 1'b1;
                         end
                         8'b10000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[(i*NUM_OUTPUT_DATA+7)*DATA_WIDTH+:DATA_WIDTH];
-                            o_valid_reg[i] <= 1'b1;
                         end
                         default:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b0;                
                         end
                     endcase
                 end
                 else
                 begin
                     o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                    o_valid_reg[i] <= 1'b0; 
+                end
+            end
+
+            // second stage -- valid -- a single 8:1 or tree.
+            localparam  LEVEL_OR_TREE = $clog2(NUM_IN_MUX_SECOND_STAGE);
+            
+            wire  [NUM_IN_MUX_SECOND_STAGE-1:0]          inner_cmd_wire_second_stage_valid;
+            assign inner_cmd_wire_second_stage_valid = inner_first_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_FIRST_STAGE];
+
+            for (j=0; j<LEVEL_OR_TREE-1; j=j+1)
+            begin: o_valid_gen_tree_lvl
+                localparam WIDTH_VALID = NUM_IN_MUX_SECOND_STAGE>>(j+1);
+                wire   [WIDTH_VALID-1:0]  inner_o_valid_tree_reg;
+            end
+            
+            for (j=0; j<LEVEL_OR_TREE-1; j=j+1)
+            begin: o_valid_gen_tree_lvl_assignment
+                localparam WIDTH_VALID = (NUM_IN_MUX_SECOND_STAGE>>(j+1));
+                wire   [WIDTH_VALID-1:0]  inner_o_valid_tree_reg;
+                for (k=0; k<(WIDTH_VALID); k=k+1)
+                begin: wire_assignment
+                    if(j==0)
+                    begin
+                        assign o_valid_gen_tree_lvl[j].inner_o_valid_tree_reg[k] = inner_cmd_wire_second_stage_valid[2*k] | inner_cmd_wire_second_stage_valid[2*k+1];
+                    end
+                    else
+                    begin
+                        assign o_valid_gen_tree_lvl[j].inner_o_valid_tree_reg[k] = o_valid_gen_tree_lvl[j-1].inner_o_valid_tree_reg[2*k] | o_valid_gen_tree_lvl[j-1].inner_o_valid_tree_reg[2*k+1];
+                    end
+                end
+            end
+            
+            always@(posedge clk)
+            begin
+                if(i_en && (~rst))
+                begin
+                    o_valid_reg[i] <= o_valid_gen_tree_lvl[LEVEL_OR_TREE-2].inner_o_valid_tree_reg[0] | o_valid_gen_tree_lvl[LEVEL_OR_TREE-2].inner_o_valid_tree_reg[1];
                 end
             end
         end

@@ -68,7 +68,7 @@
 // `define In16_Out8 
 // `define In64_Out8
 // `define In64_Out8_hier_8_8
-`define In32_Out8_hier_8_8
+`define In32_Out8_hier_4_8
 
 `ifdef In16_Out8
 module crossbar_one_hot_comb#(
@@ -802,7 +802,7 @@ endmodule
 
 
 
-`ifdef In32_Out8_hier_8_8
+`ifdef In32_Out8_hier_4_8
 module crossbar_one_hot_comb#( 
 	parameter DATA_WIDTH = 32,      // could be arbitrary number
 	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
