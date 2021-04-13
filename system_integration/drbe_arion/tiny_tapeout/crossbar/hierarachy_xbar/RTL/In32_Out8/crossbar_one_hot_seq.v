@@ -1,3 +1,37 @@
+`timescale 1ns / 1ps
+/////////////////////////////////////////////////////////////
+// Top Module:  crossbar_one_hot_seq
+// Data:        Only data width matters.
+// Format:      keeping the input format unchange
+// Timing:      Sequential Logic; 1 cycle latency.
+// Dummy Data:  {DATA_WIDTH{1'b0}}
+// Command:     Each data comes with a NUM_OUTPUT_DATA-bit one-hot destination command.
+//              i_data_bus[0*DATA_WIDTH+:DATA_WIDTH] is corresponding to i_cmd
+// Function:    Arbitrary Unicast  or  Arbitrary Multicast
+// Note: this file is not parameterizable.
+// 
+// Example: A 5:4 crossbar. 
+//     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
+//                                            |        |        |        |
+//     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
+//                                            ||       ||       ||       ||
+//     i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
+//                                            |||      |||      |||      |||
+//     i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
+//                                            ||||     ||||     ||||     ||||
+//     i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
+//                                            |||||    |||||    |||||    |||||
+//                                            ______   ______   ______   ______
+//   5-bit one-hot control to each of mux ->  \____/   \____/   \____/   \____/
+//                                              |        |        |        |
+//                                              v        v        v        v 
+//                                       o_data_bus o_data_bus o_data_bus o_data_bus
+//                       [0*DATA_WIDTH+:DATA_WIDTH]           ...         [3*DATA_WIDTH+:DATA_WIDTH]
+//
+// Author:      Jianming Tong (jianming.tong@gatech.edu)
+/////////////////////////////////////////////////////////////
+
+
 module crossbar_one_hot_seq#(
 	parameter DATA_WIDTH = 32,      // could be arbitrary number
 	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
@@ -68,22 +102,22 @@ module crossbar_one_hot_seq#(
                             4'b0001:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(0+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b1;
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             4'b0010:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(1+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b1;
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             4'b0100:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[2+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(2+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b1;
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[2+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             4'b1000:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[3+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(3+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b1;
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[3+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             default:
                             begin

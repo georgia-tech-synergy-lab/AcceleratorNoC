@@ -673,42 +673,42 @@ module crossbar_one_hot_comb#(
                             8'b00000001:
                             begin
                                 inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(0+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                inner_first_stage_valid_reg[j] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             8'b00000010:
                             begin
                                 inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(1+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                inner_first_stage_valid_reg[j] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             8'b00000100:
                             begin
                                 inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[2+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(2+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                inner_first_stage_valid_reg[j] <= (i_valid[2+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             8'b00001000:
                             begin
                                 inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[3+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(3+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                inner_first_stage_valid_reg[j] <= (i_valid[3+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             8'b00010000:
                             begin
                                 inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[4+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(4+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                inner_first_stage_valid_reg[j] <= (i_valid[4+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             8'b00100000:
                             begin
                                 inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[5+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(5+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                inner_first_stage_valid_reg[j] <= (i_valid[5+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             8'b01000000:
                             begin
                                 inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[6+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(6+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                inner_first_stage_valid_reg[j] <= (i_valid[6+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             8'b10000000:
                             begin
                                 inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[7+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(7+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                inner_first_stage_valid_reg[j] <= (i_valid[7+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             8'b00000000:
                             begin
@@ -865,22 +865,22 @@ module crossbar_one_hot_comb#(
                             4'b0001:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(0+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b1;
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             4'b0010:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(1+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b1;
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             4'b0100:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[2+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(2+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b1;
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[2+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             4'b1000:
                             begin
                                 inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[3+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(3+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b1;
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[3+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
                             end
                             default:
                             begin

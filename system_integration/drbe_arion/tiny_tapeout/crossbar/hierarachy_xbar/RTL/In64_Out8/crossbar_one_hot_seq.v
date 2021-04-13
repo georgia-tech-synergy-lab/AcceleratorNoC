@@ -99,53 +99,48 @@ module crossbar_one_hot_seq#(
                         case(inner_cmd_wire)
                             8'b00000001:
                             begin
-                                inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(0+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[0*DATA_WIDTH+:DATA_WIDTH];
+                                o_valid_reg[i] <= 1'b1;
                             end
                             8'b00000010:
                             begin
-                                inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(1+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[1*DATA_WIDTH+:DATA_WIDTH];
+                                o_valid_reg[i] <= 1'b1;
                             end
                             8'b00000100:
                             begin
-                                inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[2+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(2+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[2*DATA_WIDTH+:DATA_WIDTH];
+                                o_valid_reg[i] <= 1'b1;
                             end
                             8'b00001000:
                             begin
-                                inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[3+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(3+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[3*DATA_WIDTH+:DATA_WIDTH];
+                                o_valid_reg[i] <= 1'b1;
                             end
                             8'b00010000:
                             begin
-                                inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[4+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(4+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[4*DATA_WIDTH+:DATA_WIDTH];
+                                o_valid_reg[i] <= 1'b1;
                             end
                             8'b00100000:
                             begin
-                                inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[5+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(5+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[5*DATA_WIDTH+:DATA_WIDTH];
+                                o_valid_reg[i] <= 1'b1;
                             end
                             8'b01000000:
                             begin
-                                inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[6+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(6+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
+                                o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[6*DATA_WIDTH+:DATA_WIDTH];
+                                o_valid_reg[i] <= 1'b1;
                             end
                             8'b10000000:
                             begin
-                                inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[7+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(7+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b1;
-                            end
-                            8'b00000000:
-                            begin
-                                inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b0;
+                                o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[7*DATA_WIDTH+:DATA_WIDTH];
+                                o_valid_reg[i] <= 1'b1;
                             end
                             default:
                             begin
-                                inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                                inner_first_stage_valid_reg[j] <= 1'b0;
+                                o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                                o_valid_reg[i] <= 1'b0;                
                             end
                         endcase
                     end

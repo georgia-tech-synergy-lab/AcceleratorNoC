@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  crossbar_one_hot_comb_wrapper_seq
+// Top Module:  crossbar_one_hot_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
@@ -71,7 +71,6 @@ module crossbar_one_hot_comb_wrapper_seq#(
 )(
     // timing signals
     clk,
-    rst,
 
     // data signals
 	i_valid,        // valid input data signal
@@ -97,7 +96,6 @@ module crossbar_one_hot_comb_wrapper_seq#(
 	localparam NUM_MUX_SECOND_STAGE = 1;
 
 	input                                        clk;             
-	input                                        rst;             
 
 	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
 	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
@@ -120,19 +118,10 @@ module crossbar_one_hot_comb_wrapper_seq#(
 
     always@(posedge clk)
     begin
-		if(i_en && (~rst))
-		begin
-			i_valid_reg <= i_valid;
-			i_data_bus_reg <= i_data_bus;
-			i_cmd_reg <= i_cmd;
-		end
-		else
-		begin
-			i_valid_reg <= {NUM_INPUT_DATA{1'b0}};
-			i_data_bus_reg <= {WIDTH_INPUT_DATA{1'b0}};
-			i_cmd_reg <= {TOTAL_COMMMAND{1'b0}};
-		end
-	end
+        i_valid_reg <= i_valid;
+        i_data_bus_reg <= i_data_bus;
+        i_cmd_reg <= i_cmd;
+    end
 
     crossbar_one_hot_comb#(
         .NUM_INPUT_DATA(NUM_INPUT_DATA), 

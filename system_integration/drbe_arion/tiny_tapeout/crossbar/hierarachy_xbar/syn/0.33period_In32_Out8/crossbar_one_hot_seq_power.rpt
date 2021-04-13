@@ -8,7 +8,7 @@ Report : power
         -analysis_effort low
 Design : crossbar_one_hot_seq
 Version: J-2014.09-SP3
-Date   : Mon Apr 12 15:56:15 2021
+Date   : Mon Apr 12 23:15:10 2021
 ****************************************
 
 
@@ -38,5 +38,5 @@ Power-specific unit information :
                                        Switch   Int      Leak     Total
 Hierarchy                              Power    Power    Power    Power    %
 --------------------------------------------------------------------------------
-crossbar_one_hot_seq                      0.537   12.534 2.71e+05   13.341 100.0
+crossbar_one_hot_seq                      1.034   12.572 2.75e+05   13.881 100.0
 1

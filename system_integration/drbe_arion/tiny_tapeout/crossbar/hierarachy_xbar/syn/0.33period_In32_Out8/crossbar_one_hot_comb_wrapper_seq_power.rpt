@@ -7,8 +7,8 @@ Report : power
         -hier
         -analysis_effort low
 Design : crossbar_one_hot_comb_wrapper_seq
-Version: J-2014.09-SP3
-Date   : Mon Apr 12 15:59:32 2021
+Version: Q-2019.12-SP2
+Date   : Mon Apr 12 23:25:47 2021
 ****************************************
 
 
@@ -41,7 +41,7 @@ Power-specific unit information :
                                        Switch   Int      Leak     Total
 Hierarchy                              Power    Power    Power    Power    %
 --------------------------------------------------------------------------------
-crossbar_one_hot_comb_wrapper_seq         0.705    8.658 2.35e+05    9.599 100.0
+crossbar_one_hot_comb_wrapper_seq         1.302    8.456 2.27e+05    9.984 100.0
   dut (crossbar_one_hot_comb_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA32)
-                                       5.12e-02    0.103 8.84e+04    0.242   2.5
+                                       7.51e-02    0.138 9.52e+04    0.308   3.1
 1
