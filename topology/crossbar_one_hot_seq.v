@@ -67,11 +67,12 @@
 /////////////////////////////////////////////////////////////
 
 // `define In16_Out8 
+// `define In16_Out8_pipeline_wire
 // `define In64_Out8
 // `define In64_Out8_hier_8_8
 // `define In32_Out8_hier_4_8
 // `define In32_Out8_hier_4_8_separate
-`define In32_Out8_hier_3_lvl_2_2_8_separate
+// `define In32_Out8_hier_3_lvl_2_2_8_separate
 // `define In32_Out8_hier_3_lvl_2_2_8
 
 `ifdef In16_Out8
@@ -131,82 +132,82 @@ module crossbar_one_hot_seq#(
                         16'b0000000000000001:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0])?i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[0])?1'b1:1'b0;
                         end
                         16'b0000000000000010:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1])?i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[1])?1'b1:1'b0;
                         end
                         16'b0000000000000100:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[2])?i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[2])?1'b1:1'b0;
                         end
                         16'b0000000000001000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[3])?i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[3])?1'b1:1'b0;
                         end
                         16'b0000000000010000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[4])?i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[4])?1'b1:1'b0;
                         end
                         16'b0000000000100000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[5])?i_data_bus[5*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[5])?1'b1:1'b0;
                         end
                         16'b0000000001000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[6])?i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[6])?1'b1:1'b0;
                         end
                         16'b0000000010000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[7])?i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[7])?1'b1:1'b0;
                         end
                         16'b0000000100000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[8])?i_data_bus[8*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[8])?1'b1:1'b0;
                         end
                         16'b0000001000000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[9])?i_data_bus[9*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[9])?1'b1:1'b0;
                         end
                         16'b0000010000000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[10])?i_data_bus[10*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[10])?1'b1:1'b0;
                         end
                         16'b0000100000000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[11])?i_data_bus[11*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[11])?1'b1:1'b0;
                         end
                         16'b0001000000000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[12])?i_data_bus[12*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[12])?1'b1:1'b0;
                         end
                         16'b0010000000000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[13])?i_data_bus[13*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[13])?1'b1:1'b0;
                         end
                         16'b0100000000000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[14])?i_data_bus[14*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[14])?1'b1:1'b0;
                         end
                         16'b1000000000000000:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[15])?i_data_bus[15*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b1;
+                            o_valid_reg[i] <= (i_valid[15])?1'b1:1'b0;
                         end
                         default:
                         begin
@@ -230,6 +231,257 @@ module crossbar_one_hot_seq#(
 endmodule
 `endif
 
+
+
+`ifdef In16_Out8_pipeline_wire
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 16   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+	localparam NUM_WIRE_PIPELINE = 5;
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+
+    genvar i,j;
+    generate
+        for(i=0; i< NUM_WIRE_PIPELINE; i=i+1)
+        begin:input_shift_def
+            reg  [NUM_INPUT_DATA-1:0]            i_valid_shift;
+            reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
+            reg  [TOTAL_COMMMAND-1:0]            i_cmd_shift;
+        end 
+
+
+        always @(posedge clk) 
+        begin:shift_first
+            input_shift_def[0].i_valid_shift <= i_valid;
+            input_shift_def[0].i_data_shift <= i_data_bus;
+            input_shift_def[0].i_cmd_shift <= i_cmd;
+        end
+
+        for(i=1; i< NUM_WIRE_PIPELINE; i=i+1)
+        begin:input_shift
+            always @(posedge clk) 
+            begin
+                input_shift_def[i].i_valid_shift <= input_shift_def[i-1].i_valid_shift;
+                input_shift_def[i].i_data_shift <= input_shift_def[i-1].i_data_shift;
+                input_shift_def[i].i_cmd_shift <= input_shift_def[i-1].i_cmd_shift;
+            end
+        end 
+        
+
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin: o_data_output_mux
+            wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
+            assign inner_cmd_wire = {input_shift_def[4].i_cmd_shift[15*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[14*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[13*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[12*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[11*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[10*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[9*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[8*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[7*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[6*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[5*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[4*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[3*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[2*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[1*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[0*NUM_OUTPUT_DATA+i]};
+            
+            //data_mux
+            always@(posedge clk)
+            begin
+               if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire)
+                        16'b0000000000000001:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[0])?input_shift_def[4].i_data_shift[0*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0000000000000010:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[1])?input_shift_def[4].i_data_shift[1*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0000000000000100:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[2])?input_shift_def[4].i_data_shift[2*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0000000000001000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[3])?input_shift_def[4].i_data_shift[3*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0000000000010000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[4])?input_shift_def[4].i_data_shift[4*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0000000000100000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[5])?input_shift_def[4].i_data_shift[5*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0000000001000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[6])?input_shift_def[4].i_data_shift[6*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0000000010000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[7])?input_shift_def[4].i_data_shift[7*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0000000100000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[8])?input_shift_def[4].i_data_shift[8*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0000001000000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[9])?input_shift_def[4].i_data_shift[9*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0000010000000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[10])?input_shift_def[4].i_data_shift[10*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0000100000000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[11])?input_shift_def[4].i_data_shift[11*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0001000000000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[12])?input_shift_def[4].i_data_shift[12*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0010000000000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[13])?input_shift_def[4].i_data_shift[13*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b0100000000000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[14])?input_shift_def[4].i_data_shift[14*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        16'b1000000000000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[15])?input_shift_def[4].i_data_shift[15*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        default:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                end
+            end
+
+            //valid_mux
+            always@(posedge clk)
+            begin
+                if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire)
+                        16'b0000000000000001:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[0])?1'b1:1'b0;
+                        end
+                        16'b0000000000000010:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[1])?1'b1:1'b0;
+                        end
+                        16'b0000000000000100:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[2])?1'b1:1'b0;
+                        end
+                        16'b0000000000001000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[3])?1'b1:1'b0;
+                        end
+                        16'b0000000000010000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[4])?1'b1:1'b0;
+                        end
+                        16'b0000000000100000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[5])?1'b1:1'b0;
+                        end
+                        16'b0000000001000000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[6])?1'b1:1'b0;
+                        end
+                        16'b0000000010000000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[7])?1'b1:1'b0;
+                        end
+                        16'b0000000100000000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[8])?1'b1:1'b0;
+                        end
+                        16'b0000001000000000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[9])?1'b1:1'b0;
+                        end
+                        16'b0000010000000000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[10])?1'b1:1'b0;
+                        end
+                        16'b0000100000000000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[11])?1'b1:1'b0;
+                        end
+                        16'b0001000000000000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[12])?1'b1:1'b0;
+                        end
+                        16'b0010000000000000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[13])?1'b1:1'b0;
+                        end
+                        16'b0100000000000000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[14])?1'b1:1'b0;
+                        end
+                        16'b1000000000000000:
+                        begin
+                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[15])?1'b1:1'b0;
+                        end
+                        default:
+                        begin
+                            o_valid_reg[i] <= 1'b0;
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_valid_reg[i] <= 1'b0;
+                end
+            end
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif
 
 `ifdef In64_Out8
 module crossbar_one_hot_seq#(
@@ -1276,7 +1528,6 @@ module crossbar_one_hot_seq#(
 
 	localparam NUM_IN_MUX_THIRD_STAGE = NUM_MUX_SECOND_STAGE;
 	localparam NUM_MUX_THIRD_STAGE = 1;
-
     // interface
 	input                                        clk;
 	input                                        rst;
@@ -1303,6 +1554,7 @@ module crossbar_one_hot_seq#(
     
     genvar i,j,k;
     generate
+        
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin:output_mux
             // first pipeline stage -- 16 * 2:1 mux logic.
@@ -1737,45 +1989,6 @@ module crossbar_one_hot_seq#(
                     o_valid_reg[i] <= 1'b0; 
                 end
             end
-
-            // // third stage -- valid -- a single 8:1 or tree.
-            // localparam  LEVEL_OR_TREE = $clog2(NUM_IN_MUX_THIRD_STAGE);
-            
-            // wire  [NUM_IN_MUX_THIRD_STAGE-1:0]          inner_cmd_wire_third_stage_valid;
-            // assign inner_cmd_wire_third_stage_valid = inner_second_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_SECOND_STAGE];
-
-            // for (j=0; j<LEVEL_OR_TREE-1; j=j+1)
-            // begin: o_valid_gen_tree_lvl
-            //     localparam WIDTH_VALID = NUM_IN_MUX_THIRD_STAGE>>(j+1);
-            //     wire   [WIDTH_VALID-1:0]  inner_o_valid_tree_reg;
-            // end
-            
-            // for (j=0; j<LEVEL_OR_TREE-1; j=j+1)
-            // begin: o_valid_gen_tree_lvl_assignment
-            //     localparam WIDTH_VALID = (NUM_IN_MUX_THIRD_STAGE>>(j+1));
-            //     wire   [WIDTH_VALID-1:0]  inner_o_valid_tree_reg;
-            //     for (k=0; k<(WIDTH_VALID); k=k+1)
-            //     begin: wire_assignment
-            //         if(j==0)
-            //         begin
-            //             assign o_valid_gen_tree_lvl[j].inner_o_valid_tree_reg[k] = inner_cmd_wire_third_stage_valid[2*k] | inner_cmd_wire_third_stage_valid[2*k+1];
-            //         end
-            //         else
-            //         begin
-            //             assign o_valid_gen_tree_lvl[j].inner_o_valid_tree_reg[k] = o_valid_gen_tree_lvl[j-1].inner_o_valid_tree_reg[2*k] | o_valid_gen_tree_lvl[j-1].inner_o_valid_tree_reg[2*k+1];
-            //         end
-            //     end
-            // end
-            
-            // always@(posedge clk)
-            // begin
-            //     if(i_en && (~rst))
-            //     begin
-            //         o_valid_reg[i] <= o_valid_gen_tree_lvl[LEVEL_OR_TREE-2].inner_o_valid_tree_reg[0] | o_valid_gen_tree_lvl[LEVEL_OR_TREE-2].inner_o_valid_tree_reg[1];
-            //     end
-            // end
-
-
         end
     endgenerate
 
@@ -1784,3 +1997,308 @@ module crossbar_one_hot_seq#(
 
 endmodule
 `endif
+
+
+
+
+`ifdef In32_Out8_hier_3_lvl_2_2_8_separate
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 32   
+)(
+    // timeing signals
+    clk,
+    rst,
+
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+	localparam NUM_IN_MUX_FIRST_STAGE = 2;
+	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+
+	localparam NUM_IN_MUX_SECOND_STAGE = 2;
+	localparam NUM_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE >> $clog2(NUM_IN_MUX_SECOND_STAGE);
+
+	localparam NUM_IN_MUX_THIRD_STAGE = NUM_MUX_SECOND_STAGE;
+	localparam NUM_MUX_THIRD_STAGE = 1;
+
+    // interface
+	input                                        clk;
+	input                                        rst;
+
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+    
+    // first pipeline stage -- buffer definition.
+    reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]       inner_first_stage_data_reg;
+    reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE-1:0]                  inner_first_stage_valid_reg;
+
+    // second pipeline stage -- buffer definition.
+    reg    [NUM_OUTPUT_DATA*NUM_MUX_SECOND_STAGE*DATA_WIDTH-1:0]      inner_second_stage_data_reg;
+    reg    [NUM_OUTPUT_DATA*NUM_MUX_SECOND_STAGE-1:0]                 inner_second_stage_valid_reg;
+    
+    genvar i,j,k;
+    generate
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin:output_mux
+            // first pipeline stage -- 16 * 2:1 mux logic.
+            for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
+            begin:first_stage
+                wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_data;
+                assign  inner_cmd_wire_data = {i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin
+                    if(i_en && (~rst))
+                    begin
+                        case(inner_cmd_wire_data)
+                            2'b01:
+                            begin
+                                inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(0+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            2'b10:
+                            begin
+                                inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?i_data_bus[(1+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            default:
+                            begin
+                                inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    end
+                end
+            end
+
+            for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
+            begin:first_stage_valid
+                wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_valid;
+                assign  inner_cmd_wire_valid = {i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin
+                    if(i_en && (~rst))
+                    begin
+                        case(inner_cmd_wire_valid)
+                            2'b01:
+                            begin
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            2'b10:
+                            begin
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            default:
+                            begin
+                                inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0;
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0; 
+                    end
+                end
+            end
+
+            // second pipeline stage -- 8 * 2:1 mux logic.
+            for(j=0; j< NUM_MUX_SECOND_STAGE; j=j+1)
+            begin:second_stage
+                wire  [NUM_IN_MUX_SECOND_STAGE-1:0]       inner_cmd_wire_second_stage_data;
+                assign  inner_cmd_wire_second_stage_data = inner_first_stage_valid_reg[(i*NUM_OUTPUT_DATA + j)*NUM_IN_MUX_FIRST_STAGE+:NUM_IN_MUX_FIRST_STAGE];
+                always@(posedge clk)
+                begin
+                    if(i_en && (~rst))
+                    begin
+                        case(inner_cmd_wire_second_stage_data)
+                            2'b01:
+                            begin
+                                inner_second_stage_data_reg[(i*NUM_MUX_SECOND_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[((i*NUM_OUTPUT_DATA + j)*NUM_IN_MUX_FIRST_STAGE+0)*DATA_WIDTH+:DATA_WIDTH];
+                            end
+                            2'b10:
+                            begin
+                                inner_second_stage_data_reg[(i*NUM_MUX_SECOND_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= inner_first_stage_data_reg[((i*NUM_OUTPUT_DATA + j)*NUM_IN_MUX_FIRST_STAGE+1)*DATA_WIDTH+:DATA_WIDTH];
+                            end
+                            default:
+                            begin
+                                inner_second_stage_data_reg[(i*NUM_MUX_SECOND_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        inner_second_stage_data_reg[(i*NUM_MUX_SECOND_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    end
+                end
+            end
+
+            // second pipeline stage -- 8 * 2:1 mux logic.
+            for(j=0; j< NUM_MUX_SECOND_STAGE; j=j+1)
+            begin:second_stage_valid
+                wire  [NUM_IN_MUX_SECOND_STAGE-1:0]       inner_cmd_wire_second_stage_valid;
+                assign  inner_cmd_wire_second_stage_valid = inner_first_stage_valid_reg[(i*NUM_OUTPUT_DATA + j)*NUM_IN_MUX_FIRST_STAGE+:NUM_IN_MUX_FIRST_STAGE];
+                always@(posedge clk)
+                begin
+                    if(i_en && (~rst))
+                    begin
+                        case(inner_cmd_wire_second_stage_valid)
+                            2'b01:
+                            begin
+                                inner_second_stage_valid_reg[(i*NUM_MUX_SECOND_STAGE+j)] <= 1'b1;
+                            end
+                            2'b10:
+                            begin
+                                inner_second_stage_valid_reg[(i*NUM_MUX_SECOND_STAGE+j)] <= 1'b1;
+                            end
+                            default:
+                            begin
+                                inner_second_stage_valid_reg[(i*NUM_MUX_SECOND_STAGE+j)] <= 1'b0;
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        inner_second_stage_valid_reg[(i*NUM_MUX_SECOND_STAGE+j)] <= 1'b0; 
+                    end
+                end
+            end
+
+            // third stage -- a single 8:1 mux.
+            wire  [NUM_IN_MUX_THIRD_STAGE-1:0]  inner_cmd_wire_third_stage;
+            assign inner_cmd_wire_third_stage = inner_second_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_SECOND_STAGE];
+            always@(posedge clk)
+            begin:third_stage
+                if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_third_stage)
+                        8'b00000001:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_second_stage_data_reg[(i*NUM_OUTPUT_DATA+0)*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        8'b00000010:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_second_stage_data_reg[(i*NUM_OUTPUT_DATA+1)*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        8'b00000100:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_second_stage_data_reg[(i*NUM_OUTPUT_DATA+2)*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        8'b00001000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_second_stage_data_reg[(i*NUM_OUTPUT_DATA+3)*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        8'b00010000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_second_stage_data_reg[(i*NUM_OUTPUT_DATA+4)*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        8'b00100000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_second_stage_data_reg[(i*NUM_OUTPUT_DATA+5)*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        8'b01000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_second_stage_data_reg[(i*NUM_OUTPUT_DATA+6)*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        8'b10000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= inner_second_stage_data_reg[(i*NUM_OUTPUT_DATA+7)*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        default:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                end
+            end
+
+            // third stage -- valid --  a single 8:1 mux.
+            wire  [NUM_IN_MUX_THIRD_STAGE-1:0]  inner_cmd_wire_third_stage_valid;
+            assign inner_cmd_wire_third_stage_valid = inner_second_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_SECOND_STAGE];
+            always@(posedge clk)
+            begin:third_stage_valid
+                if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_third_stage_valid)
+                        8'b00000001:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        8'b00000010:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        8'b00000100:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        8'b00001000:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        8'b00010000:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        8'b00100000:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        8'b01000000:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        8'b10000000:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        default:
+                        begin
+                            o_valid_reg[i] <= 1'b0;                
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_valid_reg[i] <= 1'b0; 
+                end
+            end
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif
+
+
