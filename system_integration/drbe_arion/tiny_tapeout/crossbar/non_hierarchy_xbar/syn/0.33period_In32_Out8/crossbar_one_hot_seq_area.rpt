@@ -1,0 +1,43 @@
+ 
+****************************************
+Report : area
+Design : crossbar_one_hot_seq
+Version: Q-2019.12-SP2
+Date   : Wed Apr 14 00:47:18 2021
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140lvttt0p8v25c (File: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/unzipped/tcbn28hpcplusbwp30p140lvt_190a/tcbn28hpcplusbwp30p140lvt_180a_nldm/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp30p140lvt_180a/tcbn28hpcplusbwp30p140lvttt0p8v25c.db)
+
+Number of ports:                          923
+Number of nets:                         10079
+Number of cells:                         9419
+Number of combinational cells:           5875
+Number of sequential cells:              3544
+Number of macros/black boxes:               0
+Number of buf/inv:                       1165
+Number of references:                     160
+
+Combinational area:               4230.323981
+Buf/Inv area:                      547.596000
+Noncombinational area:            6855.911912
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                 11086.235893
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area           Local cell area
+                                  -------------------  ---------------------------- 
+Hierarchical cell                 Absolute    Percent  Combi-     Noncombi-  Black-
+                                  Total       Total    national   national   boxes   Design
+--------------------------------  ----------  -------  ---------  ---------  ------  ---------
+crossbar_one_hot_seq              11086.2359    100.0  4230.3240  6855.9119  0.0000  crossbar_one_hot_seq
+--------------------------------  ----------  -------  ---------  ---------  ------  ---------
+Total                                                  4230.3240  6855.9119  0.0000
+
+1
