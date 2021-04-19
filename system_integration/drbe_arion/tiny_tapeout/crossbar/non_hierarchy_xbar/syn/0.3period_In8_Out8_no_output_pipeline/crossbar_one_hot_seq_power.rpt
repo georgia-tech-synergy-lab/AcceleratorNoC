@@ -1,0 +1,138 @@
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+Warning: Design has unannotated primary inputs. (PWR-414)
+Warning: Design has unannotated sequential cell outputs. (PWR-415)
+ 
+****************************************
+Report : power
+        -hier
+        -analysis_effort low
+Design : crossbar_one_hot_seq
+Version: J-2014.09-SP3
+Date   : Mon Apr 19 10:38:06 2021
+****************************************
+
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140lvttt0p8v25c (File: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/unzipped/tcbn28hpcplusbwp30p140lvt_190a/tcbn28hpcplusbwp30p140lvt_180a_nldm/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp30p140lvt_180a/tcbn28hpcplusbwp30p140lvttt0p8v25c.db)
+
+
+Operating Conditions: tt0p8v25c   Library: tcbn28hpcplusbwp30p140lvttt0p8v25c
+Wire Load Model Mode: segmented
+
+Design        Wire Load Model            Library
+------------------------------------------------
+crossbar_one_hot_seq   ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_0
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_1
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_2
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_3
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_4
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_5
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_6
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_7
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_1
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_2
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_3
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_4
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_5
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_6
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_7
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_1
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_2
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_3
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_4
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_5
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_6
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_7
+                       ZeroWireload      tcbn28hpcplusbwp30p140lvttt0p8v25c
+
+
+Global Operating Voltage = 0.8  
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1nW
+
+
+--------------------------------------------------------------------------------
+                                       Switch   Int      Leak     Total
+Hierarchy                              Power    Power    Power    Power    %
+--------------------------------------------------------------------------------
+crossbar_one_hot_seq                      0.358   39.833 4.22e+05   40.613 100.0
+  bottom_half_7__mux_tree (mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_1)
+                                       1.81e-03    0.284 5.44e+03    0.291   0.7
+  bottom_half_6__mux_tree (mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_2)
+                                       2.10e-03    0.285 5.69e+03    0.292   0.7
+  bottom_half_5__mux_tree (mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_3)
+                                       2.79e-03    0.286 5.74e+03    0.294   0.7
+  bottom_half_4__mux_tree (mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_4)
+                                       2.41e-03    0.285 5.78e+03    0.293   0.7
+  bottom_half_3__mux_tree (mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_5)
+                                       2.60e-03    0.286 5.85e+03    0.294   0.7
+  bottom_half_2__mux_tree (mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_6)
+                                       2.84e-03    0.285 5.75e+03    0.294   0.7
+  bottom_half_1__mux_tree (mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_7)
+                                       3.33e-03    0.286 5.79e+03    0.295   0.7
+  bottom_half_0__mux_tree (mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_0)
+                                       2.24e-03    0.284 5.53e+03    0.292   0.7
+  i_cmd_id_7__cmd_pipeline (cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_1)
+                                       3.35e-03    0.298 2.91e+03    0.305   0.8
+  i_cmd_id_6__cmd_pipeline (cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_2)
+                                       3.30e-03    0.300 2.95e+03    0.306   0.8
+  i_cmd_id_5__cmd_pipeline (cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_3)
+                                       2.97e-03    0.298 2.91e+03    0.304   0.7
+  i_cmd_id_4__cmd_pipeline (cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_4)
+                                       2.81e-03    0.301 2.97e+03    0.307   0.8
+  i_cmd_id_3__cmd_pipeline (cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_5)
+                                       2.77e-03    0.301 2.97e+03    0.307   0.8
+  i_cmd_id_2__cmd_pipeline (cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_6)
+                                       2.41e-03    0.300 2.93e+03    0.305   0.8
+  i_cmd_id_1__cmd_pipeline (cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_7)
+                                       2.55e-03    0.301 2.97e+03    0.307   0.8
+  i_cmd_id_0__cmd_pipeline (cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0)
+                                       3.00e-03    0.302 2.97e+03    0.307   0.8
+  top_half_7__wire_pipeline (wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_1)
+                                       3.41e-02    4.393 4.18e+04    4.469  11.0
+  top_half_6__wire_pipeline (wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_2)
+                                       3.49e-02    4.392 4.18e+04    4.469  11.0
+  top_half_5__wire_pipeline (wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_3)
+                                       3.53e-02    4.395 4.18e+04    4.472  11.0
+  top_half_4__wire_pipeline (wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_4)
+                                       3.53e-02    4.394 4.18e+04    4.471  11.0
+  top_half_3__wire_pipeline (wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_5)
+                                       3.51e-02    4.395 4.18e+04    4.472  11.0
+  top_half_2__wire_pipeline (wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_6)
+                                       3.49e-02    4.393 4.18e+04    4.469  11.0
+  top_half_1__wire_pipeline (wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_7)
+                                       3.53e-02    4.393 4.18e+04    4.471  11.0
+  top_half_0__wire_pipeline (wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0)
+                                       3.50e-02    4.393 4.18e+04    4.470  11.0
+1

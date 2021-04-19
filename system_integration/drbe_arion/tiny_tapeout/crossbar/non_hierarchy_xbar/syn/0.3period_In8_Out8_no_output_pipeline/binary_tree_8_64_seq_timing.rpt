@@ -1,0 +1,86 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : binary_tree_8_64_seq
+Version: J-2014.09-SP3
+Date   : Mon Apr 19 12:19:56 2021
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: tt0p8v25c   Library: tcbn28hpcplusbwp30p140lvttt0p8v25c
+Wire Load Model Mode: segmented
+
+  Startpoint: i_cmd_id_0__cmd_pipeline/o_cmd_reg_reg_0_
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: o_cmd[0] (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_7
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_6
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_5
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_4
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_3
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_2
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_1
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_7
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_6
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_5
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_4
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_3
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_2
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_1
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  binary_tree_8_64_seq
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  i_cmd_id_0__cmd_pipeline/o_cmd_reg_reg_0_/CP (DFQD1BWP30P140LVT)
+                                                          0.00 #     0.00 r
+  i_cmd_id_0__cmd_pipeline/o_cmd_reg_reg_0_/Q (DFQD1BWP30P140LVT)
+                                                          0.04       0.04 f
+  i_cmd_id_0__cmd_pipeline/o_cmd_0 (cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0)
+                                                          0.00       0.04 f
+  U1676/Z (BUFFD6BWP30P140LVT)                            0.05       0.09 f
+  o_cmd[0] (out)                                          0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.30       0.30
+  clock network delay (ideal)                             0.00       0.30
+  clock uncertainty                                      -0.15       0.15
+  output external delay                                  -0.06       0.09
+  data required time                                                 0.09
+  --------------------------------------------------------------------------
+  data required time                                                 0.09
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+1
