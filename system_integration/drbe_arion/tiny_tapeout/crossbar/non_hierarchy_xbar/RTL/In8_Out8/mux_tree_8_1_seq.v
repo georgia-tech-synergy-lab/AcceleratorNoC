@@ -23,7 +23,6 @@ module mux_tree_8_1_seq #(
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-
 	
     // interface
 	input                                        clk;
