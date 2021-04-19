@@ -67,13 +67,1132 @@
 /////////////////////////////////////////////////////////////
 
 // `define In16_Out8 
+// `define In8_Out8 
+`define In8_Out8_input_tree_wire_pipeline_hierarchy_RTL // -> lastest 8:8 version
+// `define In8_Out1
+// `define In8_Out8_input_pipeline_output_pipeline
+// `define In16_Out8_separate_8_8
+// `define In16_Out8_separate_8_8_wire_pipeline
+// `define In16_Out8_8_8_wire_tree_pipeline   // -> lastest 16:8 version 
 // `define In16_Out8_pipeline_wire
+// `define In16_Out8_pipeline_wire_pipeline_i_en_pipeline_mux
+// `define In16_Out8_pipeline_wire_pipeline_i_en_pipeline_mux_output_pipeline
 // `define In64_Out8
 // `define In64_Out8_hier_8_8
 // `define In32_Out8_hier_4_8
 // `define In32_Out8_hier_4_8_separate
 // `define In32_Out8_hier_3_lvl_2_2_8_separate
 // `define In32_Out8_hier_3_lvl_2_2_8
+
+`ifdef In8_Out1
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
+	parameter NUM_INPUT_DATA = 8   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+	
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+    genvar i,j;
+    generate
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin: o_data_output_mux
+            
+            // data mux
+            wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
+            assign inner_cmd_wire = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
+            always@(posedge clk)
+            begin
+               if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire)
+                        8'b00000001:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0])?i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00000010:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1])?i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00000100:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[2])?i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00001000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[3])?i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00010000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[4])?i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00100000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[5])?i_data_bus[5*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b01000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[6])?i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b10000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[7])?i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        default:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                end
+            end
+
+            // valid mux
+            wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
+            assign inner_cmd_wire_valid = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
+            always@(posedge clk)
+            begin
+               if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_valid)
+                        8'b00000001:
+                        begin
+                            o_valid_reg[i] <= (i_valid[0])?1'b1:1'b0;
+                        end
+                        8'b00000010:
+                        begin
+                            o_valid_reg[i] <= (i_valid[1])?1'b1:1'b0;
+                        end
+                        8'b00000100:
+                        begin
+                            o_valid_reg[i] <= (i_valid[2])?1'b1:1'b0;
+                        end
+                        8'b00001000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[3])?1'b1:1'b0;
+                        end
+                        8'b00010000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[4])?1'b1:1'b0;
+                        end
+                        8'b00100000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[5])?1'b1:1'b0;
+                        end
+                        8'b01000000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[6])?1'b1:1'b0;
+                        end
+                        8'b10000000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[7])?1'b1:1'b0;
+                        end
+                        default:
+                        begin
+                            o_valid_reg[i] <= 1'b0;
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_valid_reg[i] <= 1'b0;
+                end
+            end
+
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif
+
+
+`ifdef In8_Out8
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 8   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+	
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+    genvar i,j;
+    generate
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin: o_data_output_mux
+            
+            // data mux
+            wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
+            assign inner_cmd_wire = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
+            always@(posedge clk)
+            begin
+               if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire)
+                        8'b00000001:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0])?i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00000010:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1])?i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00000100:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[2])?i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00001000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[3])?i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00010000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[4])?i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00100000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[5])?i_data_bus[5*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b01000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[6])?i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b10000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[7])?i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        default:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                end
+            end
+
+            // valid mux
+            wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
+            assign inner_cmd_wire_valid = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
+            always@(posedge clk)
+            begin
+               if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_valid)
+                        8'b00000001:
+                        begin
+                            o_valid_reg[i] <= (i_valid[0])?1'b1:1'b0;
+                        end
+                        8'b00000010:
+                        begin
+                            o_valid_reg[i] <= (i_valid[1])?1'b1:1'b0;
+                        end
+                        8'b00000100:
+                        begin
+                            o_valid_reg[i] <= (i_valid[2])?1'b1:1'b0;
+                        end
+                        8'b00001000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[3])?1'b1:1'b0;
+                        end
+                        8'b00010000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[4])?1'b1:1'b0;
+                        end
+                        8'b00100000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[5])?1'b1:1'b0;
+                        end
+                        8'b01000000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[6])?1'b1:1'b0;
+                        end
+                        8'b10000000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[7])?1'b1:1'b0;
+                        end
+                        default:
+                        begin
+                            o_valid_reg[i] <= 1'b0;
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_valid_reg[i] <= 1'b0;
+                end
+            end
+
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif
+
+`ifdef In8_Out8_input_tree_wire_pipeline_hierarchy_RTL
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 8   
+)(
+
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+	
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+	reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;             
+	reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg; // {o_data_a, o_data_b}
+
+    wire   [NUM_OUTPUT_DATA-1:0]                 o_valid_wire;             
+	wire   [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_wire; // {o_data_a, o_data_b}
+
+    localparam  NUM_OUT_WIRE_PIPELINE = 2;
+
+    // inner logic
+    genvar i,j,k;
+    generate
+        // wire definition -- for input data & valid
+        wire [NUM_OUTPUT_DATA*NUM_INPUT_DATA*DATA_WIDTH-1:0]  inner_data_wire;
+        wire [NUM_OUTPUT_DATA*NUM_INPUT_DATA-1:0]             inner_valid_wire;
+
+        // wire_tree_pipeline -- for input data & valid
+        for(i=0; i<NUM_INPUT_DATA; i=i+1)
+        begin: top_half
+            wire_binary_tree_1_8_seq#(
+                .DATA_WIDTH(DATA_WIDTH), 
+                .NUM_OUTPUT_DATA(8),
+                .NUM_INPUT_DATA(1)) 
+            wire_pipeline(
+                .clk(clk),
+                .rst(rst),
+                .i_valid(i_valid[i]),
+                .i_data_bus(i_data_bus[i*DATA_WIDTH+:DATA_WIDTH]),
+                .o_valid(inner_valid_wire[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]),
+                .o_data_bus(inner_data_wire[i*NUM_OUTPUT_DATA*DATA_WIDTH+:NUM_OUTPUT_DATA*DATA_WIDTH]),
+                .i_en(i_en)
+            );
+        end
+
+        // input command
+        for(i=0; i<NUM_INPUT_DATA; i=i+1)
+        begin:i_cmd_id  
+            wire                                             inner_cmd_wire[0:NUM_INPUT_DATA-1];
+            
+            cmd_wire_binary_tree_1_8_seq #(
+                .DATA_WIDTH(DATA_WIDTH), 
+                .NUM_OUTPUT_DATA(8),
+                .NUM_INPUT_DATA(1)) 
+            cmd_pipeline(
+                .clk(clk),
+                .rst(rst),
+                .i_cmd(i_cmd[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]),
+                .o_cmd_0(inner_cmd_wire[0]),
+                .o_cmd_1(inner_cmd_wire[1]),
+                .o_cmd_2(inner_cmd_wire[2]),
+                .o_cmd_3(inner_cmd_wire[3]),
+                .o_cmd_4(inner_cmd_wire[4]),
+                .o_cmd_5(inner_cmd_wire[5]),
+                .o_cmd_6(inner_cmd_wire[6]),
+                .o_cmd_7(inner_cmd_wire[7]),
+                .i_en(i_en)
+            );
+        end
+        
+        // eight 8:1 mux tree
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin: bottom_half
+            wire [NUM_INPUT_DATA*DATA_WIDTH-1:0]  inner_data_i_mux_tree_wire;
+            wire [NUM_INPUT_DATA-1:0]             inner_valid_i_mux_tree_wire;
+            wire [NUM_OUTPUT_DATA-1:0]            inner_cmd_i_mux_tree_wire;
+
+            assign inner_data_i_mux_tree_wire = {inner_data_wire[(7*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(6*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(5*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(4*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(3*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(2*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(1*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(0*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH]};
+            assign inner_valid_i_mux_tree_wire = {inner_valid_wire[7*NUM_OUTPUT_DATA+i], inner_valid_wire[6*NUM_OUTPUT_DATA+i], inner_valid_wire[5*NUM_OUTPUT_DATA+i], inner_valid_wire[4*NUM_OUTPUT_DATA+i], inner_valid_wire[3*NUM_OUTPUT_DATA+i], inner_valid_wire[2*NUM_OUTPUT_DATA+i], inner_valid_wire[1*NUM_OUTPUT_DATA+i], inner_valid_wire[0*NUM_OUTPUT_DATA+i]};
+            assign inner_cmd_i_mux_tree_wire = {i_cmd_id[7].inner_cmd_wire[i], i_cmd_id[6].inner_cmd_wire[i], i_cmd_id[5].inner_cmd_wire[i], i_cmd_id[4].inner_cmd_wire[i], i_cmd_id[3].inner_cmd_wire[i], i_cmd_id[2].inner_cmd_wire[i], i_cmd_id[1].inner_cmd_wire[i], i_cmd_id[0].inner_cmd_wire[i]};
+
+            mux_tree_8_1_seq #(
+                .NUM_INPUT_DATA(8), 
+                .NUM_OUTPUT_DATA(1),
+                .DATA_WIDTH(DATA_WIDTH)) 
+            mux_tree(
+                .clk(clk),
+                .rst(rst),
+                .i_valid(inner_valid_i_mux_tree_wire),
+                .i_data_bus(inner_data_i_mux_tree_wire),
+                .o_valid(o_valid_wire[i]),
+                .o_data_bus(o_data_bus_wire[i*DATA_WIDTH+:DATA_WIDTH]),
+                .i_en(i_en),
+                .i_cmd(inner_cmd_i_mux_tree_wire)
+            );
+        end
+
+
+        // output pipeline  
+        for(j=0; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
+        begin:output_shift_def
+            reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg_shift;
+            reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg_shift;
+        end 
+
+        always @(posedge clk) 
+        begin
+            output_shift_def[0].o_valid_reg_shift <= o_valid_wire;
+            output_shift_def[0].o_data_bus_reg_shift <=  o_data_bus_wire;
+        end
+
+        // output pipeline
+        for(j=1; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
+        begin:shift_output
+            always @(posedge clk) 
+            begin
+                output_shift_def[j].o_valid_reg_shift <= output_shift_def[j-1].o_valid_reg_shift;
+                output_shift_def[j].o_data_bus_reg_shift <=  output_shift_def[j-1].o_data_bus_reg_shift;
+            end
+        end 
+
+        always @(posedge clk) 
+        begin:shift_output_last
+            o_valid_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_valid_reg_shift;
+            o_data_bus_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_data_bus_reg_shift;
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+
+
+module wire_binary_tree_1_8_seq #(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 1   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+	
+    // control signals
+	i_en            // distribute switch enable
+);
+
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+
+    // interface
+	input                                        clk;
+	input                                        rst;
+
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+
+    genvar i,j;
+    generate 
+        for (i = 0; i< NUM_LEVEL; i=i+1)
+        begin: wire_tree_level
+            localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
+            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH;
+
+            // define the output wire for switches of level i
+            reg      [WIDTH_DATA_LEVEL-1:0]         i_data_latch;
+            reg      [NUM_SWITCH_SHIFT-1:0]         i_valid_latch;
+        end
+
+        always@(posedge clk)
+        begin: first_level_assignment
+            if(i_en && (~rst))
+            begin
+                wire_tree_level[0].i_data_latch <= i_data_bus;
+                wire_tree_level[0].i_valid_latch <= i_valid;
+            end
+            else
+            begin
+                wire_tree_level[0].i_data_latch <= {DATA_WIDTH{1'b0}};
+                wire_tree_level[0].i_valid_latch <= 1'b0;
+            end
+        end
+        
+        for (i = 0; i< NUM_LEVEL-1; i=i+1)
+        begin: wire_tree_assignment
+            localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
+            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH; 
+            
+            for( j=0; j<NUM_SWITCH_SHIFT; j=j+1)
+            begin: level_assignment
+                always@(posedge clk)
+                begin
+                    if(i_en && (~rst))
+                    begin
+                        wire_tree_level[i+1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[i].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
+                        wire_tree_level[i+1].i_valid_latch[2*j] <= wire_tree_level[i].i_valid_latch[j];
+
+                        wire_tree_level[i+1].i_data_latch[(2*j+1)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[i].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
+                        wire_tree_level[i+1].i_valid_latch[2*j+1] <= wire_tree_level[i].i_valid_latch[j];
+                    end
+                    else
+                    begin
+                        wire_tree_level[i+1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                        wire_tree_level[i+1].i_valid_latch[2*j] <= 1'b0;
+
+                        wire_tree_level[i+1].i_data_latch[(2*j+1)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                        wire_tree_level[i+1].i_valid_latch[2*j+1] <= 1'b0;
+                    end
+                end
+            end
+        end
+
+        for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
+        begin: assign_output_latch
+            always @(posedge clk) begin
+                if(i_en && (~rst))
+                begin
+                    o_data_bus_reg[2*i*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
+                    o_valid_reg[2*i] <= wire_tree_level[NUM_LEVEL-1].i_valid_latch[i];
+
+                    o_data_bus_reg[(2*i+1)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
+                    o_valid_reg[2*i+1] <= wire_tree_level[NUM_LEVEL-1].i_valid_latch[i];
+                end
+                else
+                begin
+                    o_data_bus_reg[2*i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    o_valid_reg[2*i] <= 1'b0;
+
+                    o_data_bus_reg[(2*i+1)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    o_valid_reg[2*i+1] <= 1'b0;
+                end
+            end
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+
+
+module cmd_wire_binary_tree_1_8_seq #(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 1   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	// i_valid,        // valid input data signal
+	// i_data_bus,     // input data bus coming into distribute switch
+	
+	// o_valid,        // output valid
+    // o_data_bus,     // output data 
+    o_cmd_0,
+    o_cmd_1,
+    o_cmd_2,
+    o_cmd_3,
+    o_cmd_4,
+    o_cmd_5,
+    o_cmd_6,
+    o_cmd_7,
+	
+    // control signals
+	i_en,           // distribute switch enable
+	i_cmd           // input command
+);
+
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+
+    // interface
+	input                                        clk;
+	input                                        rst;
+
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;  
+
+	output                                       o_cmd_0;             
+	output                                       o_cmd_1;             
+	output                                       o_cmd_2;             
+	output                                       o_cmd_3;             
+	output                                       o_cmd_4;             
+	output                                       o_cmd_5;             
+	output                                       o_cmd_6;             
+	output                                       o_cmd_7;             
+
+	input                                        i_en;
+
+    reg                                          o_cmd_reg[0:NUM_OUTPUT_DATA-1] ;
+    
+    // 
+    genvar i,j;
+    generate
+        for(i=0; i<NUM_LEVEL; i=i+1)
+        begin:cmd_wire
+            localparam WIDTH_PER_CMD_REG = NUM_OUTPUT_DATA>>i;
+            localparam NUM_CMD_REG = 4'b0001<<i;
+
+            reg  [WIDTH_PER_CMD_REG-1:0]         inner_cmd_reg[0:NUM_CMD_REG-1];
+        end
+
+        always@(posedge clk)
+        begin
+            if(i_en && (~rst))
+            begin
+                cmd_wire[0].inner_cmd_reg[0] <= i_cmd;
+            end
+            else
+            begin
+                cmd_wire[0].inner_cmd_reg[0] <= {NUM_OUTPUT_DATA{1'b0}};
+            end
+            // cmd_wire[0].inner_cmd_reg[1] <= i_cmd[1*cmd_wire[0].WIDTH_PER_CMD_REG+:cmd_wire[0].WIDTH_PER_CMD_REG];
+        end
+
+        // input command pipeline
+        for(i=1; i<NUM_LEVEL; i=i+1)
+        begin:command_pipeline_top_half
+            localparam WIDTH_PER_CMD_REG = NUM_OUTPUT_DATA>>i;
+            localparam NUM_CMD_REG = 4'b0001<<i;
+            localparam NUM_CMD_REG_LAST_LEVEL = NUM_CMD_REG>>1;
+
+            for(j=0; j<NUM_CMD_REG_LAST_LEVEL; j=j+1)
+            begin: cmd_level_assignment
+                always@(posedge clk)
+                begin
+                    cmd_wire[i].inner_cmd_reg[2*j] <= cmd_wire[i-1].inner_cmd_reg[j][0*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
+                    cmd_wire[i].inner_cmd_reg[2*j+1] <= cmd_wire[i-1].inner_cmd_reg[j][1*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
+                end
+            end
+        end
+
+        for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
+        begin:o_latch_assignment
+            always @(posedge clk) 
+            begin
+                o_cmd_reg[2*i] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][0]; 
+                o_cmd_reg[2*i+1] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][1]; 
+            end
+        end
+    endgenerate
+
+    assign o_cmd_0  = o_cmd_reg[0];
+    assign o_cmd_1  = o_cmd_reg[1];
+    assign o_cmd_2  = o_cmd_reg[2];
+    assign o_cmd_3  = o_cmd_reg[3];
+    assign o_cmd_4  = o_cmd_reg[4];
+    assign o_cmd_5  = o_cmd_reg[5];
+    assign o_cmd_6  = o_cmd_reg[6];
+    assign o_cmd_7  = o_cmd_reg[7];
+
+endmodule
+
+
+module mux_tree_8_1_seq #(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
+	parameter NUM_INPUT_DATA = 8   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+	
+    // interface
+	input                                        clk;
+	input                                        rst;
+
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+    genvar i,j;
+    generate
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin: o_data_output_mux
+            
+            // data mux
+            wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
+            assign inner_cmd_wire = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
+            always@(posedge clk)
+            begin
+               if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire)
+                        8'b00000001:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0])?i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00000010:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1])?i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00000100:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[2])?i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00001000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[3])?i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00010000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[4])?i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00100000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[5])?i_data_bus[5*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b01000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[6])?i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b10000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[7])?i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        default:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                end
+            end
+
+            // valid mux
+            wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
+            assign inner_cmd_wire_valid = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
+            always@(posedge clk)
+            begin
+               if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_valid)
+                        8'b00000001:
+                        begin
+                            o_valid_reg[i] <= (i_valid[0])?1'b1:1'b0;
+                        end
+                        8'b00000010:
+                        begin
+                            o_valid_reg[i] <= (i_valid[1])?1'b1:1'b0;
+                        end
+                        8'b00000100:
+                        begin
+                            o_valid_reg[i] <= (i_valid[2])?1'b1:1'b0;
+                        end
+                        8'b00001000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[3])?1'b1:1'b0;
+                        end
+                        8'b00010000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[4])?1'b1:1'b0;
+                        end
+                        8'b00100000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[5])?1'b1:1'b0;
+                        end
+                        8'b01000000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[6])?1'b1:1'b0;
+                        end
+                        8'b10000000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[7])?1'b1:1'b0;
+                        end
+                        default:
+                        begin
+                            o_valid_reg[i] <= 1'b0;
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_valid_reg[i] <= 1'b0;
+                end
+            end
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif
+
+`ifdef In8_Out8_input_pipeline_output_pipeline
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 8   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+	localparam NUM_IN_WIRE_PIPELINE = 5;
+    localparam NUM_OUT_WIRE_PIPELINE = 3;
+	
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+    genvar i,j;
+    generate
+        // input pipeline
+        for(i=0; i< NUM_IN_WIRE_PIPELINE; i=i+1)
+        begin:input_shift_def
+            reg  [NUM_INPUT_DATA-1:0]            i_valid_shift;
+            reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
+            reg  [TOTAL_COMMMAND-1:0]            i_cmd_shift;
+            reg                                  i_en_shift;
+            reg                                  rst_shift;
+        end 
+
+        always @(posedge clk) 
+        begin:shift_first
+            input_shift_def[0].i_valid_shift <= i_valid;
+            input_shift_def[0].i_data_shift <= i_data_bus;
+            input_shift_def[0].i_cmd_shift <= i_cmd;
+            input_shift_def[0].i_en_shift <= i_en;
+            input_shift_def[0].rst_shift <= rst;
+        end
+
+        for(i=1; i< NUM_IN_WIRE_PIPELINE; i=i+1)
+        begin:input_shift
+            always @(posedge clk) 
+            begin
+                input_shift_def[i].i_valid_shift <= input_shift_def[i-1].i_valid_shift;
+                input_shift_def[i].i_data_shift <= input_shift_def[i-1].i_data_shift;
+                input_shift_def[i].i_cmd_shift <= input_shift_def[i-1].i_cmd_shift;
+                input_shift_def[i].i_en_shift <= input_shift_def[i-1].i_en_shift;
+                input_shift_def[i].rst_shift <= input_shift_def[i-1].rst_shift;
+            end
+        end
+
+        // output pipeline  
+        for(j=0; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
+        begin:output_shift_def
+            reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+            reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+        end
+
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin: o_data_output_mux
+            // data mux
+            wire   [NUM_INPUT_DATA-1:0]           inner_cmd_wire;
+            assign inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[7*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[6*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[5*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[4*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[3*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[2*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[1*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[0*NUM_OUTPUT_DATA+i]};
+            always@(posedge clk)
+            begin:two_8_8_xbar_o_data
+                if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire)
+                        8'b00000001:
+                        begin
+                            output_shift_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[0])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[0*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00000010:
+                        begin
+                            output_shift_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[1])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[1*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00000100:
+                        begin
+                            output_shift_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[2])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[2*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00001000:
+                        begin
+                            output_shift_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[3])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[3*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00010000:
+                        begin
+                            output_shift_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[4])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[4*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00100000:
+                        begin
+                            output_shift_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[5])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[5*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b01000000:
+                        begin
+                            output_shift_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[6])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[6*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b10000000:
+                        begin
+                            output_shift_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[7])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[7*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        default:
+                        begin
+                            output_shift_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                        end
+                    endcase
+                end
+                else
+                begin
+                    output_shift_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                end
+            end
+
+            // valid mux
+            wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
+            assign inner_cmd_wire_valid = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[7*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[6*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[5*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[4*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[3*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[2*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[1*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[0*NUM_OUTPUT_DATA+i]};
+            always@(posedge clk)
+            begin:two_8_8_xbar_o_valid
+                if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_valid)
+                        8'b00000001:
+                        begin
+                            output_shift_def[0].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[0])?1'b1:1'b0;
+                        end
+                        8'b00000010:
+                        begin
+                            output_shift_def[0].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[1])?1'b1:1'b0;
+                        end
+                        8'b00000100:
+                        begin
+                            output_shift_def[0].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[2])?1'b1:1'b0;
+                        end
+                        8'b00001000:
+                        begin
+                            output_shift_def[0].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[3])?1'b1:1'b0;
+                        end
+                        8'b00010000:
+                        begin
+                            output_shift_def[0].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[4])?1'b1:1'b0;
+                        end
+                        8'b00100000:
+                        begin
+                            output_shift_def[0].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[5])?1'b1:1'b0;
+                        end
+                        8'b01000000:
+                        begin
+                            output_shift_def[0].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[6])?1'b1:1'b0;
+                        end
+                        8'b10000000:
+                        begin
+                            output_shift_def[0].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[7])?1'b1:1'b0;
+                        end
+                        default:
+                        begin
+                            output_shift_def[0].o_valid_reg[i] <= 1'b0;
+                        end
+                    endcase
+                end
+                else
+                begin
+                    output_shift_def[0].o_valid_reg[i] <= 1'b0;
+                end
+            end
+        end
+
+        for(j=1; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
+        begin:shift_output
+            always @(posedge clk) 
+            begin
+                output_shift_def[j].o_valid_reg <= output_shift_def[j-1].o_valid_reg;
+                output_shift_def[j].o_data_bus_reg <=  output_shift_def[j-1].o_data_bus_reg;
+            end
+        end 
+
+        always @(posedge clk) 
+        begin:shift_output_last
+            o_valid_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_valid_reg;
+            o_data_bus_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_data_bus_reg;
+        end
+
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif
+
+
 
 `ifdef In16_Out8
 module crossbar_one_hot_seq#(
@@ -232,8 +1351,7 @@ endmodule
 `endif
 
 
-
-`ifdef In16_Out8_pipeline_wire
+`ifdef In16_Out8_separate_8_8
 module crossbar_one_hot_seq#(
 	parameter DATA_WIDTH = 32,      // could be arbitrary number
 	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
@@ -259,8 +1377,1203 @@ module crossbar_one_hot_seq#(
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+	
+    
+    localparam NUM_SEPARATE_FIRST_STAGE = 2;
+	
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
-	localparam NUM_WIRE_PIPELINE = 5;
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+    genvar i,j,k;
+    generate
+        // define output reg of the two 8:8 mux.
+        for(k=0; k<NUM_SEPARATE_FIRST_STAGE; k=k+1)
+        begin:first_stage_output_def
+            reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+            reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+        end
+
+        // two 8-to-8 xbar
+        for(k=0; k<2;k=k+1)
+        begin
+            for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+            begin: o_data_output_mux
+                
+                // data mux
+                wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
+                assign inner_cmd_wire = {i_cmd[(7+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(6+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(5+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(4+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(3+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(2+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(1+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(0+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin
+                if(i_en && (~rst))
+                    begin
+                        case(inner_cmd_wire)
+                            8'b00000001:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0])?i_data_bus[(0+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b00000010:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1])?i_data_bus[(1+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b00000100:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[2])?i_data_bus[(2+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b00001000:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[3])?i_data_bus[(3+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b00010000:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[4])?i_data_bus[(4+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b00100000:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[5])?i_data_bus[(5+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b01000000:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[6])?i_data_bus[(6+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b10000000:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[7])?i_data_bus[(7+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            default:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                    end
+                end
+
+                // valid mux
+                wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
+                assign inner_cmd_wire_valid = {i_cmd[(7+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(6+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(5+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(4+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(3+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(2+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(1+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(0+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin
+                    if(i_en && (~rst))
+                    begin
+                        case(inner_cmd_wire_valid)
+                            8'b00000001:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (i_valid[0+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b00000010:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (i_valid[1+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b00000100:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (i_valid[2+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b00001000:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (i_valid[3+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b00010000:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (i_valid[4+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b00100000:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (i_valid[5+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b01000000:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (i_valid[6+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b10000000:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (i_valid[7+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            default:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= 1'b0;
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        first_stage_output_def[k].o_valid_reg[i] <= 1'b0;
+                    end
+                end
+
+            end
+        end
+
+        // second stage -- eight 2:1 mux.
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin
+            wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_data;
+            assign  inner_cmd_wire_second_stage_data = {first_stage_output_def[1].o_valid_reg[i], first_stage_output_def[0].o_valid_reg[i]};
+
+            always @(posedge clk) 
+            begin
+                if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_second_stage_data)
+                        2'b01:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];                 
+                        end                        
+                        2'b10:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[1].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];                 
+                        end
+                        default:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};                 
+                        end
+                    endcase
+                end
+            end
+        end
+        
+        // second stage -- eight 2:1 mux -- valid
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin
+            wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_valid;
+            assign  inner_cmd_wire_second_stage_valid = {first_stage_output_def[1].o_valid_reg[i], first_stage_output_def[0].o_valid_reg[i]};
+
+            always @(posedge clk) 
+            begin
+                if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_second_stage_valid)
+                        2'b01:
+                        begin
+                            o_valid_reg[i] <= first_stage_output_def[0].o_valid_reg[i];                 
+                        end                        
+                        2'b10:
+                        begin
+                            o_valid_reg[i] <= first_stage_output_def[1].o_valid_reg[i];                 
+                        end
+                        default:
+                        begin
+                            o_valid_reg[i] <= {DATA_WIDTH{1'b0}};                 
+                        end
+                    endcase
+                end
+            end
+        end
+
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif 
+
+
+`ifdef In16_Out8_8_8_wire_tree_pipeline
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 16   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+	
+    
+    localparam NUM_SEPARATE_FIRST_STAGE = 2;
+	
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+    genvar i,j,k;
+    generate
+        // define output reg of the two 8:8 mux.
+        for(k=0; k<NUM_SEPARATE_FIRST_STAGE; k=k+1)
+        begin:first_stage_output_def
+            // reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+            wire   [NUM_OUTPUT_DATA-1:0]                 o_valid_wire;
+            // reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+            wire   [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_wire;
+        end
+
+        // two 8-to-8 xbar
+        for(k=0; k<2;k=k+1)
+        begin:xbar_8_8
+            localparam  NUM_HALF_INPUT_DATA = NUM_INPUT_DATA>>1;
+            localparam  NUM_HALF_COMMAND = TOTAL_COMMMAND>>1;
+
+            crossbar_8_8_seq#(
+                .DATA_WIDTH(DATA_WIDTH),      // could be arbitrary number
+                .NUM_OUTPUT_DATA(NUM_OUTPUT_DATA), // must be power of 2.
+                .NUM_INPUT_DATA(NUM_INPUT_DATA)   
+            ) xba8_8(
+                .clk(clk),
+                .rst(rst),
+                .i_valid(i_valid[k*NUM_HALF_INPUT_DATA+:NUM_HALF_INPUT_DATA]),            // valid input data signal
+                .i_data_bus(i_data_bus[k*NUM_HALF_INPUT_DATA*DATA_WIDTH+:NUM_HALF_INPUT_DATA*DATA_WIDTH]),     // input data bus coming into distribute switch
+                .o_valid(first_stage_output_def[k].o_valid_wire),                         // output valid
+                .o_data_bus(first_stage_output_def[k].o_data_bus_wire),                   // output data 
+                .i_en(i_en),                                                              // distribute switch enable
+                .i_cmd(i_cmd[k*NUM_HALF_COMMAND+:NUM_HALF_COMMAND])                       // the input should be one-hot encoded command 
+            );
+        end
+
+        // second stage -- eight 2:1 mux.
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin:arbiter_2_1_mux_data
+            wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_data;
+            assign  inner_cmd_wire_second_stage_data = {first_stage_output_def[1].o_valid_wire[i], first_stage_output_def[0].o_valid_wire[i]};
+
+            always @(posedge clk) 
+            begin
+                if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_second_stage_data)
+                        2'b01:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[0].o_data_bus_wire[i*DATA_WIDTH+:DATA_WIDTH];                 
+                        end                        
+                        2'b10:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[1].o_data_bus_wire[i*DATA_WIDTH+:DATA_WIDTH];                 
+                        end
+                        default:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};                 
+                        end
+                    endcase
+                end
+            end
+        end
+        
+        // second stage -- eight 2:1 mux -- valid
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin:arbiter_2_1_mux_valid
+            wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_valid;
+            assign  inner_cmd_wire_second_stage_valid = {first_stage_output_def[1].o_valid_wire[i], first_stage_output_def[0].o_valid_wire[i]};
+
+            always @(posedge clk) 
+            begin
+                if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_second_stage_valid)
+                        2'b01:
+                        begin
+                            o_valid_reg[i] <= first_stage_output_def[0].o_valid_wire[i];                 
+                        end                        
+                        2'b10:
+                        begin
+                            o_valid_reg[i] <= first_stage_output_def[1].o_valid_wire[i];                 
+                        end
+                        default:
+                        begin
+                            o_valid_reg[i] <= {DATA_WIDTH{1'b0}};                 
+                        end
+                    endcase
+                end
+            end
+        end
+
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+
+module crossbar_8_8_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 8   
+)(
+
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+	
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+	reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;             
+	reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg; // {o_data_a, o_data_b}
+
+    wire   [NUM_OUTPUT_DATA-1:0]                 o_valid_wire;             
+	wire   [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_wire; // {o_data_a, o_data_b}
+
+
+    // inner logic
+    genvar i,j,k;
+    generate
+        // wire definition -- for input data & valid
+        wire [NUM_OUTPUT_DATA*NUM_INPUT_DATA*DATA_WIDTH-1:0]  inner_data_wire;
+        wire [NUM_OUTPUT_DATA*NUM_INPUT_DATA-1:0]             inner_valid_wire;
+
+        // wire_tree_pipeline -- for input data & valid
+        for(i=0; i<NUM_INPUT_DATA; i=i+1)
+        begin: top_half
+            wire_binary_tree_1_8_seq#(
+                .DATA_WIDTH(DATA_WIDTH), 
+                .NUM_OUTPUT_DATA(8),
+                .NUM_INPUT_DATA(1)) 
+            wire_pipeline(
+                .clk(clk),
+                .rst(rst),
+                .i_valid(i_valid[i]),
+                .i_data_bus(i_data_bus[i*DATA_WIDTH+:DATA_WIDTH]),
+                .o_valid(inner_valid_wire[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]),
+                .o_data_bus(inner_data_wire[i*NUM_OUTPUT_DATA*DATA_WIDTH+:NUM_OUTPUT_DATA*DATA_WIDTH]),
+                .i_en(i_en)
+            );
+        end
+
+        // input command
+        for(i=0; i<NUM_INPUT_DATA; i=i+1)
+        begin:i_cmd_id  
+            wire                                             inner_cmd_wire[0:NUM_INPUT_DATA-1];
+            
+            cmd_wire_binary_tree_1_8_seq #(
+                .DATA_WIDTH(DATA_WIDTH), 
+                .NUM_OUTPUT_DATA(8),
+                .NUM_INPUT_DATA(1)) 
+            cmd_pipeline(
+                .clk(clk),
+                .rst(rst),
+                .i_cmd(i_cmd[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]),
+                .o_cmd_0(inner_cmd_wire[0]),
+                .o_cmd_1(inner_cmd_wire[1]),
+                .o_cmd_2(inner_cmd_wire[2]),
+                .o_cmd_3(inner_cmd_wire[3]),
+                .o_cmd_4(inner_cmd_wire[4]),
+                .o_cmd_5(inner_cmd_wire[5]),
+                .o_cmd_6(inner_cmd_wire[6]),
+                .o_cmd_7(inner_cmd_wire[7]),
+                .i_en(i_en)
+            );
+        end
+        
+        // eight 8:1 mux tree
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin: bottom_half
+            wire [NUM_INPUT_DATA*DATA_WIDTH-1:0]  inner_data_i_mux_tree_wire;
+            wire [NUM_INPUT_DATA-1:0]             inner_valid_i_mux_tree_wire;
+            wire [NUM_OUTPUT_DATA-1:0]            inner_cmd_i_mux_tree_wire;
+
+            assign inner_data_i_mux_tree_wire = {inner_data_wire[(7*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(6*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(5*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(4*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(3*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(2*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(1*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH], inner_data_wire[(0*NUM_OUTPUT_DATA+i)*DATA_WIDTH+:DATA_WIDTH]};
+            assign inner_valid_i_mux_tree_wire = {inner_valid_wire[7*NUM_OUTPUT_DATA+i], inner_valid_wire[6*NUM_OUTPUT_DATA+i], inner_valid_wire[5*NUM_OUTPUT_DATA+i], inner_valid_wire[4*NUM_OUTPUT_DATA+i], inner_valid_wire[3*NUM_OUTPUT_DATA+i], inner_valid_wire[2*NUM_OUTPUT_DATA+i], inner_valid_wire[1*NUM_OUTPUT_DATA+i], inner_valid_wire[0*NUM_OUTPUT_DATA+i]};
+            assign inner_cmd_i_mux_tree_wire = {i_cmd_id[7].inner_cmd_wire[i], i_cmd_id[6].inner_cmd_wire[i], i_cmd_id[5].inner_cmd_wire[i], i_cmd_id[4].inner_cmd_wire[i], i_cmd_id[3].inner_cmd_wire[i], i_cmd_id[2].inner_cmd_wire[i], i_cmd_id[1].inner_cmd_wire[i], i_cmd_id[0].inner_cmd_wire[i]};
+
+            mux_tree_8_1_seq #(
+                .NUM_INPUT_DATA(8), 
+                .NUM_OUTPUT_DATA(1),
+                .DATA_WIDTH(DATA_WIDTH)) 
+            mux_tree(
+                .clk(clk),
+                .rst(rst),
+                .i_valid(inner_valid_i_mux_tree_wire),
+                .i_data_bus(inner_data_i_mux_tree_wire),
+                .o_valid(o_valid_wire[i]),
+                .o_data_bus(o_data_bus_wire[i*DATA_WIDTH+:DATA_WIDTH]),
+                .i_en(i_en),
+                .i_cmd(inner_cmd_i_mux_tree_wire)
+            );
+        end
+
+    endgenerate
+
+    always @(posedge clk) 
+    begin
+        o_data_bus_reg <= o_data_bus_wire;
+        o_valid_reg <= o_valid_wire;
+    end
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+
+
+module wire_binary_tree_1_8_seq #(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 1   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+	
+    // control signals
+	i_en            // distribute switch enable
+);
+
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+
+    // interface
+	input                                        clk;
+	input                                        rst;
+
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+
+    genvar i,j;
+    generate 
+        for (i = 0; i< NUM_LEVEL; i=i+1)
+        begin: wire_tree_level
+            localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
+            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH;
+
+            // define the output wire for switches of level i
+            reg      [WIDTH_DATA_LEVEL-1:0]         i_data_latch;
+            reg      [NUM_SWITCH_SHIFT-1:0]         i_valid_latch;
+        end
+
+        always@(posedge clk)
+        begin: first_level_assignment
+            if(i_en && (~rst))
+            begin
+                wire_tree_level[0].i_data_latch <= i_data_bus;
+                wire_tree_level[0].i_valid_latch <= i_valid;
+            end
+            else
+            begin
+                wire_tree_level[0].i_data_latch <= {DATA_WIDTH{1'b0}};
+                wire_tree_level[0].i_valid_latch <= 1'b0;
+            end
+        end
+        
+        for (i = 0; i< NUM_LEVEL-1; i=i+1)
+        begin: wire_tree_assignment
+            localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
+            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH; 
+            
+            for( j=0; j<NUM_SWITCH_SHIFT; j=j+1)
+            begin: level_assignment
+                always@(posedge clk)
+                begin
+                    if(i_en && (~rst))
+                    begin
+                        wire_tree_level[i+1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[i].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
+                        wire_tree_level[i+1].i_valid_latch[2*j] <= wire_tree_level[i].i_valid_latch[j];
+
+                        wire_tree_level[i+1].i_data_latch[(2*j+1)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[i].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
+                        wire_tree_level[i+1].i_valid_latch[2*j+1] <= wire_tree_level[i].i_valid_latch[j];
+                    end
+                    else
+                    begin
+                        wire_tree_level[i+1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                        wire_tree_level[i+1].i_valid_latch[2*j] <= 1'b0;
+
+                        wire_tree_level[i+1].i_data_latch[(2*j+1)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                        wire_tree_level[i+1].i_valid_latch[2*j+1] <= 1'b0;
+                    end
+                end
+            end
+        end
+
+        for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
+        begin: assign_output_latch
+            always @(posedge clk) begin
+                if(i_en && (~rst))
+                begin
+                    o_data_bus_reg[2*i*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
+                    o_valid_reg[2*i] <= wire_tree_level[NUM_LEVEL-1].i_valid_latch[i];
+
+                    o_data_bus_reg[(2*i+1)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
+                    o_valid_reg[2*i+1] <= wire_tree_level[NUM_LEVEL-1].i_valid_latch[i];
+                end
+                else
+                begin
+                    o_data_bus_reg[2*i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    o_valid_reg[2*i] <= 1'b0;
+
+                    o_data_bus_reg[(2*i+1)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    o_valid_reg[2*i+1] <= 1'b0;
+                end
+            end
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+
+
+module cmd_wire_binary_tree_1_8_seq #(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 1   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	// i_valid,        // valid input data signal
+	// i_data_bus,     // input data bus coming into distribute switch
+	
+	// o_valid,        // output valid
+    // o_data_bus,     // output data 
+    o_cmd_0,
+    o_cmd_1,
+    o_cmd_2,
+    o_cmd_3,
+    o_cmd_4,
+    o_cmd_5,
+    o_cmd_6,
+    o_cmd_7,
+	
+    // control signals
+	i_en,           // distribute switch enable
+	i_cmd           // input command
+);
+
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+
+    // interface
+	input                                        clk;
+	input                                        rst;
+
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;  
+
+	output                                       o_cmd_0;             
+	output                                       o_cmd_1;             
+	output                                       o_cmd_2;             
+	output                                       o_cmd_3;             
+	output                                       o_cmd_4;             
+	output                                       o_cmd_5;             
+	output                                       o_cmd_6;             
+	output                                       o_cmd_7;             
+
+	input                                        i_en;
+
+    reg                                          o_cmd_reg[0:NUM_OUTPUT_DATA-1] ;
+    
+    // 
+    genvar i,j;
+    generate
+        for(i=0; i<NUM_LEVEL; i=i+1)
+        begin:cmd_wire
+            localparam WIDTH_PER_CMD_REG = NUM_OUTPUT_DATA>>i;
+            localparam NUM_CMD_REG = 4'b0001<<i;
+
+            reg  [WIDTH_PER_CMD_REG-1:0]         inner_cmd_reg[0:NUM_CMD_REG-1];
+        end
+
+        always@(posedge clk)
+        begin
+            if(i_en && (~rst))
+            begin
+                cmd_wire[0].inner_cmd_reg[0] <= i_cmd;
+            end
+            else
+            begin
+                cmd_wire[0].inner_cmd_reg[0] <= {NUM_OUTPUT_DATA{1'b0}};
+            end
+            // cmd_wire[0].inner_cmd_reg[1] <= i_cmd[1*cmd_wire[0].WIDTH_PER_CMD_REG+:cmd_wire[0].WIDTH_PER_CMD_REG];
+        end
+
+        // input command pipeline
+        for(i=1; i<NUM_LEVEL; i=i+1)
+        begin:command_pipeline_top_half
+            localparam WIDTH_PER_CMD_REG = NUM_OUTPUT_DATA>>i;
+            localparam NUM_CMD_REG = 4'b0001<<i;
+            localparam NUM_CMD_REG_LAST_LEVEL = NUM_CMD_REG>>1;
+
+            for(j=0; j<NUM_CMD_REG_LAST_LEVEL; j=j+1)
+            begin: cmd_level_assignment
+                always@(posedge clk)
+                begin
+                    cmd_wire[i].inner_cmd_reg[2*j] <= cmd_wire[i-1].inner_cmd_reg[j][0*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
+                    cmd_wire[i].inner_cmd_reg[2*j+1] <= cmd_wire[i-1].inner_cmd_reg[j][1*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
+                end
+            end
+        end
+
+        for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
+        begin:o_latch_assignment
+            always @(posedge clk) 
+            begin
+                o_cmd_reg[2*i] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][0]; 
+                o_cmd_reg[2*i+1] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][1]; 
+            end
+        end
+    endgenerate
+
+    assign o_cmd_0  = o_cmd_reg[0];
+    assign o_cmd_1  = o_cmd_reg[1];
+    assign o_cmd_2  = o_cmd_reg[2];
+    assign o_cmd_3  = o_cmd_reg[3];
+    assign o_cmd_4  = o_cmd_reg[4];
+    assign o_cmd_5  = o_cmd_reg[5];
+    assign o_cmd_6  = o_cmd_reg[6];
+    assign o_cmd_7  = o_cmd_reg[7];
+
+endmodule
+
+
+module mux_tree_8_1_seq #(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
+	parameter NUM_INPUT_DATA = 8   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+	
+    // interface
+	input                                        clk;
+	input                                        rst;
+
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+    genvar i,j;
+    generate
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin: o_data_output_mux
+            
+            // data mux
+            wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
+            assign inner_cmd_wire = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
+            always@(posedge clk)
+            begin
+               if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire)
+                        8'b00000001:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[0])?i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00000010:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[1])?i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00000100:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[2])?i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00001000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[3])?i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00010000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[4])?i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b00100000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[5])?i_data_bus[5*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b01000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[6])?i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        8'b10000000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (i_valid[7])?i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                        end
+                        default:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                end
+            end
+
+            // valid mux
+            wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
+            assign inner_cmd_wire_valid = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
+            always@(posedge clk)
+            begin
+               if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_valid)
+                        8'b00000001:
+                        begin
+                            o_valid_reg[i] <= (i_valid[0])?1'b1:1'b0;
+                        end
+                        8'b00000010:
+                        begin
+                            o_valid_reg[i] <= (i_valid[1])?1'b1:1'b0;
+                        end
+                        8'b00000100:
+                        begin
+                            o_valid_reg[i] <= (i_valid[2])?1'b1:1'b0;
+                        end
+                        8'b00001000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[3])?1'b1:1'b0;
+                        end
+                        8'b00010000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[4])?1'b1:1'b0;
+                        end
+                        8'b00100000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[5])?1'b1:1'b0;
+                        end
+                        8'b01000000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[6])?1'b1:1'b0;
+                        end
+                        8'b10000000:
+                        begin
+                            o_valid_reg[i] <= (i_valid[7])?1'b1:1'b0;
+                        end
+                        default:
+                        begin
+                            o_valid_reg[i] <= 1'b0;
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_valid_reg[i] <= 1'b0;
+                end
+            end
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif
+
+
+`ifdef In16_Out8_separate_8_8_wire_pipeline
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 16   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+	
+    localparam NUM_IN_WIRE_PIPELINE = 5;
+    
+    localparam NUM_SEPARATE_FIRST_STAGE = 2;
+	
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+    genvar i,j,k;
+    generate
+        // input wire pipeline -- divide wire into multiple pipeline stage to shorten the length of wire. 
+        for(j=0; j< NUM_IN_WIRE_PIPELINE; j=j+1)
+        begin:input_shift_def
+            reg  [NUM_INPUT_DATA-1:0]            i_valid_shift;
+            reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
+            reg  [TOTAL_COMMMAND-1:0]            i_cmd_shift;
+            reg                                  i_en_shift;
+            reg                                  rst_shift;
+        end 
+
+        always @(posedge clk) 
+        begin:shift_input_initial
+            input_shift_def[0].i_valid_shift <= i_valid;
+            input_shift_def[0].i_data_shift <= i_data_bus;
+            input_shift_def[0].i_cmd_shift <= i_cmd;
+            input_shift_def[0].i_en_shift <= i_en;
+            input_shift_def[0].rst_shift <= rst;
+        end
+
+        for(j=1; j< NUM_IN_WIRE_PIPELINE; j=j+1)
+        begin:shift_input
+            always @(posedge clk) 
+            begin
+                input_shift_def[j].i_valid_shift <= input_shift_def[j-1].i_valid_shift;
+                input_shift_def[j].i_data_shift <= input_shift_def[j-1].i_data_shift;
+                input_shift_def[j].i_cmd_shift <= input_shift_def[j-1].i_cmd_shift;
+                input_shift_def[j].i_en_shift <= input_shift_def[j-1].i_en_shift;
+                input_shift_def[j].rst_shift <= input_shift_def[j-1].rst_shift;
+            end
+        end 
+
+        // define output reg of the two 8:8 mux.
+        for(k=0; k<NUM_SEPARATE_FIRST_STAGE; k=k+1)
+        begin:first_stage_output_def
+            reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+            reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+        end
+
+        // two 8-to-8 xbar
+        for(k=0; k<2;k=k+1)
+        begin:xbar_id
+            for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+            begin: o_data_output_mux
+                
+                // data mux
+                wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
+                assign inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(7+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(6+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(5+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(4+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(0+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin:two_8_8_xbar_o_data
+                if(i_en && (~rst))
+                    begin
+                        case(inner_cmd_wire)
+                            8'b00000001:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[0+k*NUM_OUTPUT_DATA])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(0+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b00000010:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[1+k*NUM_OUTPUT_DATA])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(1+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b00000100:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[2+k*NUM_OUTPUT_DATA])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(2+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b00001000:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[3+k*NUM_OUTPUT_DATA])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(3+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b00010000:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[4+k*NUM_OUTPUT_DATA])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(4+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b00100000:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[5+k*NUM_OUTPUT_DATA])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(5+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b01000000:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[6+k*NUM_OUTPUT_DATA])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(6+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            8'b10000000:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[7+k*NUM_OUTPUT_DATA])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(7+k*NUM_OUTPUT_DATA)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            default:
+                            begin
+                                first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        first_stage_output_def[k].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                    end
+                end
+
+                // valid mux
+                wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
+                assign inner_cmd_wire_valid = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(7+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(6+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(5+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(4+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(0+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin:two_8_8_xbar_o_valid
+                    if(i_en && (~rst))
+                    begin
+                        case(inner_cmd_wire_valid)
+                            8'b00000001:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[0+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b00000010:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[1+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b00000100:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[2+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b00001000:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[3+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b00010000:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[4+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b00100000:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[5+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b01000000:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[6+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            8'b10000000:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[7+k*NUM_OUTPUT_DATA])?1'b1:1'b0;
+                            end
+                            default:
+                            begin
+                                first_stage_output_def[k].o_valid_reg[i] <= 1'b0;
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        first_stage_output_def[k].o_valid_reg[i] <= 1'b0;
+                    end
+                end
+
+            end
+        end
+
+        // second stage -- eight 2:1 mux.
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin:eight_2_1_mux_o_data
+            wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_data;
+            assign  inner_cmd_wire_second_stage_data = {first_stage_output_def[1].o_valid_reg[i], first_stage_output_def[0].o_valid_reg[i]};
+
+            always @(posedge clk) 
+            begin
+                if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_second_stage_data)
+                        2'b01:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];                 
+                        end                        
+                        2'b10:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[1].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];                 
+                        end
+                        default:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};                 
+                        end
+                    endcase
+                end
+            end
+        end
+        
+        // second stage -- eight 2:1 mux -- valid
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin:eight_2_1_mux_o_valid
+            wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_valid;
+            assign  inner_cmd_wire_second_stage_valid = {first_stage_output_def[1].o_valid_reg[i], first_stage_output_def[0].o_valid_reg[i]};
+
+            always @(posedge clk) 
+            begin
+                if(i_en && (~rst))
+                begin
+                    case(inner_cmd_wire_second_stage_valid)
+                        2'b01:
+                        begin
+                            o_valid_reg[i] <= first_stage_output_def[0].o_valid_reg[i];                 
+                        end                        
+                        2'b10:
+                        begin
+                            o_valid_reg[i] <= first_stage_output_def[1].o_valid_reg[i];                 
+                        end
+                        default:
+                        begin
+                            o_valid_reg[i] <= {DATA_WIDTH{1'b0}};                 
+                        end
+                    endcase
+                end
+            end
+        end
+
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif 
+
+`ifdef In16_Out8_pipeline_wire_pipeline_i_en_pipeline_mux
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 16   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+	localparam NUM_IN_WIRE_PIPELINE = 6;
+
+	localparam NUM_IN_MUX_FIRST_STAGE = 4;
+	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+
+	localparam NUM_WIRE_PIPELINE_FIRST_STAGE = 2;
+
+	localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
+	localparam NUM_MUX_SECOND_STAGE = 1;
+
+
     // interface
 	input                                        clk;
 	input                                        rst;
@@ -280,106 +2593,971 @@ module crossbar_one_hot_seq#(
 
     genvar i,j;
     generate
-        for(i=0; i< NUM_WIRE_PIPELINE; i=i+1)
+        // input pipeline -- divide wire into multiple pipeline stage to shorten the length of wire. 
+        for(j=0; j< NUM_IN_WIRE_PIPELINE; j=j+1)
         begin:input_shift_def
             reg  [NUM_INPUT_DATA-1:0]            i_valid_shift;
             reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
             reg  [TOTAL_COMMMAND-1:0]            i_cmd_shift;
+            reg                                  i_en_shift;
+            reg                                  rst_shift;
         end 
 
+        always @(posedge clk) 
+        begin:shift_input_initial
+            input_shift_def[0].i_valid_shift <= i_valid;
+            input_shift_def[0].i_data_shift <= i_data_bus;
+            input_shift_def[0].i_cmd_shift <= i_cmd;
+            input_shift_def[0].i_en_shift <= i_en;
+            input_shift_def[0].rst_shift <= rst;
+        end
+
+        for(j=1; j< NUM_IN_WIRE_PIPELINE; j=j+1)
+        begin:shift_input
+            always @(posedge clk) 
+            begin
+                input_shift_def[j].i_valid_shift <= input_shift_def[j-1].i_valid_shift;
+                input_shift_def[j].i_data_shift <= input_shift_def[j-1].i_data_shift;
+                input_shift_def[j].i_cmd_shift <= input_shift_def[j-1].i_cmd_shift;
+                input_shift_def[j].i_en_shift <= input_shift_def[j-1].i_en_shift;
+                input_shift_def[j].rst_shift <= input_shift_def[j-1].rst_shift;
+            end
+        end 
+
+        // instantiate output data mux
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin: o_data_output_mux
+            for(j=0; j< NUM_WIRE_PIPELINE_FIRST_STAGE; j=j+1)
+            begin:first_stage_def
+                reg   [NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]        inner_data_shift;
+                reg   [NUM_MUX_FIRST_STAGE-1:0]                   inner_valid_shift;
+                reg                                               inner_en_shift;
+                reg                                               inner_rst_shift;
+            end
+
+            always @(posedge clk) 
+            begin
+                first_stage_def[0].inner_en_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift;
+                first_stage_def[0].inner_rst_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift;
+            end
+
+            for(j=1; j< NUM_WIRE_PIPELINE_FIRST_STAGE; j=j+1)
+            begin:shift_input_first_stage
+                always @(posedge clk)
+                begin
+                    first_stage_def[j].inner_valid_shift <= first_stage_def[j-1].inner_valid_shift;
+                    first_stage_def[j].inner_data_shift <= first_stage_def[j-1].inner_data_shift;
+                    first_stage_def[j].inner_en_shift <= first_stage_def[j-1].inner_en_shift;
+                    first_stage_def[j].inner_rst_shift <= first_stage_def[j-1].inner_rst_shift;
+                end
+            end
+            
+            // first pipeline stage -- data -- 4 * 4:1 mux logic.
+            for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
+            begin:first_stage_data
+                wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
+                assign  inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    begin
+                        case(inner_cmd_wire)
+                            4'b0001:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            4'b0010:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            4'b0100:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            4'b1000:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            default:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    end
+                end
+            end
+
+            // first pipeline stage -- valid -- 4 * 4:1 mux logic.
+            for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
+            begin:first_stage_valid
+                wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_valid;
+                assign  inner_cmd_wire_valid = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    begin
+                        case(inner_cmd_wire_valid)
+                            4'b0001:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (i_valid[0+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b0010:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (i_valid[1+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b0100:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (i_valid[2+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b1000:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (i_valid[3+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            default:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= 1'b0;
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        first_stage_def[0].inner_valid_shift[j] <= 1'b0; 
+                    end
+                end
+            end
+
+            wire  [NUM_IN_MUX_SECOND_STAGE-1:0]  inner_cmd_wire_second_stage;
+            assign inner_cmd_wire_second_stage = {first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_valid_shift};
+
+            //data_mux
+            always@(posedge clk)
+            begin:second_stage_data
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                begin
+                    case(inner_cmd_wire_second_stage)
+                        4'b0001:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[0*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        4'b0010:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[1*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        4'b0100:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[2*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        4'b1000:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[3*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        default:
+                        begin
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                end
+            end
+
+            //valid_mux
+            always@(posedge clk)
+            begin:second_stage_valid
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                begin
+                    case(inner_cmd_wire_second_stage)
+                        4'b0001:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        4'b0010:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        4'b0100:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        4'b1000:
+                        begin
+                            o_valid_reg[i] <= 1'b1;
+                        end
+                        default:
+                        begin
+                            o_valid_reg[i] <= 1'b0;
+                        end
+                    endcase
+                end
+                else
+                begin
+                    o_valid_reg[i] <= 1'b0;
+                end
+            end
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif
+
+
+`ifdef In16_Out8_pipeline_wire_pipeline_i_en_pipeline_mux_output_pipeline
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 16   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+	localparam NUM_IN_WIRE_PIPELINE = 8;
+
+	localparam NUM_IN_MUX_FIRST_STAGE = 4;
+	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+
+	localparam NUM_WIRE_PIPELINE_FIRST_STAGE = 2;
+
+	localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
+	localparam NUM_MUX_SECOND_STAGE = 1;
+
+    localparam NUM_OUT_WIRE_PIPELINE = 2;
+
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+    genvar i,j;
+    generate
+        // input pipeline -- divide wire into multiple pipeline stage to shorten the length of wire. 
+        for(j=0; j< NUM_IN_WIRE_PIPELINE; j=j+1)
+        begin:input_shift_def
+            reg  [NUM_INPUT_DATA-1:0]            i_valid_shift;
+            reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
+            reg  [TOTAL_COMMMAND-1:0]            i_cmd_shift;
+            reg                                  i_en_shift;
+            reg                                  rst_shift;
+        end 
+
+        always @(posedge clk) 
+        begin:shift_input_initial
+            input_shift_def[0].i_valid_shift <= i_valid;
+            input_shift_def[0].i_data_shift <= i_data_bus;
+            input_shift_def[0].i_cmd_shift <= i_cmd;
+            input_shift_def[0].i_en_shift <= i_en;
+            input_shift_def[0].rst_shift <= rst;
+        end
+
+        for(j=1; j< NUM_IN_WIRE_PIPELINE; j=j+1)
+        begin:shift_input
+            always @(posedge clk) 
+            begin
+                input_shift_def[j].i_valid_shift <= input_shift_def[j-1].i_valid_shift;
+                input_shift_def[j].i_data_shift <= input_shift_def[j-1].i_data_shift;
+                input_shift_def[j].i_cmd_shift <= input_shift_def[j-1].i_cmd_shift;
+                input_shift_def[j].i_en_shift <= input_shift_def[j-1].i_en_shift;
+                input_shift_def[j].rst_shift <= input_shift_def[j-1].rst_shift;
+            end
+        end 
+
+        // output pipeline  
+        for(j=0; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
+        begin:output_shift_def
+            reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg_shift;
+            reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg_shift;
+        end 
+
+        // instantiate output data mux
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin: o_data_output_mux
+
+            for(j=0; j< NUM_WIRE_PIPELINE_FIRST_STAGE; j=j+1)
+            begin:first_stage_def
+                reg   [NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]        inner_data_shift;
+                reg   [NUM_MUX_FIRST_STAGE-1:0]                   inner_valid_shift;
+                reg                                               inner_en_shift;
+                reg                                               inner_rst_shift;
+            end
+            
+            always @(posedge clk) 
+            begin
+                first_stage_def[0].inner_en_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift;
+                first_stage_def[0].inner_rst_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift;
+            end
+
+            for(j=1; j< NUM_WIRE_PIPELINE_FIRST_STAGE; j=j+1)
+            begin:shift_input_first_stage
+                always @(posedge clk)
+                begin
+                    first_stage_def[j].inner_valid_shift <= first_stage_def[j-1].inner_valid_shift;
+                    first_stage_def[j].inner_data_shift <= first_stage_def[j-1].inner_data_shift;
+                    first_stage_def[j].inner_en_shift <= first_stage_def[j-1].inner_en_shift;
+                    first_stage_def[j].inner_rst_shift <= first_stage_def[j-1].inner_rst_shift;
+                end
+            end
+            
+            // first pipeline stage -- data -- 4 * 4:1 mux logic.
+            for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
+            begin:first_stage_data
+                wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
+                assign  inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    begin
+                        case(inner_cmd_wire)
+                            4'b0001:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            4'b0010:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            4'b0100:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            4'b1000:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            default:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    end
+                end
+            end
+
+            // first pipeline stage -- valid -- 4 * 4:1 mux logic.
+            for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
+            begin:first_stage_valid
+                wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_valid;
+                assign  inner_cmd_wire_valid = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    begin
+                        case(inner_cmd_wire_valid)
+                            4'b0001:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[0+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b0010:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[1+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b0100:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[2+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b1000:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[3+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            default:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= 1'b0;
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        first_stage_def[0].inner_valid_shift[j] <= 1'b0; 
+                    end
+                end
+            end
+
+            wire  [NUM_IN_MUX_SECOND_STAGE-1:0]  inner_cmd_wire_second_stage;
+            assign inner_cmd_wire_second_stage = {first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_valid_shift};
+
+            //data_mux
+            always@(posedge clk)
+            begin:second_stage_data
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                begin
+                    case(inner_cmd_wire_second_stage)
+                        4'b0001:
+                        begin
+                            output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[0*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        4'b0010:
+                        begin
+                            output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[1*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        4'b0100:
+                        begin
+                            output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[2*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        4'b1000:
+                        begin
+                            output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[3*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        default:
+                        begin
+                            output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                        end
+                    endcase
+                end
+                else
+                begin
+                    output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                end
+            end
+
+            //valid_mux
+            always@(posedge clk)
+            begin:second_stage_valid
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                begin
+                    case(inner_cmd_wire_second_stage)
+                        4'b0001:
+                        begin
+                            output_shift_def[0].o_valid_reg_shift[i] <= 1'b1;
+                        end
+                        4'b0010:
+                        begin
+                            output_shift_def[0].o_valid_reg_shift[i] <= 1'b1;
+                        end
+                        4'b0100:
+                        begin
+                            output_shift_def[0].o_valid_reg_shift[i] <= 1'b1;
+                        end
+                        4'b1000:
+                        begin
+                            output_shift_def[0].o_valid_reg_shift[i] <= 1'b1;
+                        end
+                        default:
+                        begin
+                            output_shift_def[0].o_valid_reg_shift[i] <= 1'b0;
+                        end
+                    endcase
+                end
+                else
+                begin
+                    output_shift_def[0].o_valid_reg_shift[i] <= 1'b0;
+                end
+            end
+        end
+
+        for(j=1; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
+        begin:shift_output
+            always @(posedge clk) 
+            begin
+                output_shift_def[j].o_valid_reg_shift <= output_shift_def[j-1].o_valid_reg_shift;
+                output_shift_def[j].o_data_bus_reg_shift <=  output_shift_def[j-1].o_data_bus_reg_shift;
+            end
+        end 
+
+        always @(posedge clk) 
+        begin:shift_output_last
+            o_valid_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_valid_reg_shift;
+            o_data_bus_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_data_bus_reg_shift;
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif
+
+
+
+`ifdef In16_Out8_pipeline_wire_pipeline_double_8_8_xbar_separate
+// implement a 16-to-8 xbar as two separate 8-to-8 NoC, followed by a 2x1 MUX. 
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 16   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+	localparam NUM_IN_WIRE_PIPELINE = 8;
+
+	localparam NUM_IN_MUX_FIRST_STAGE = 4;
+	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+
+	localparam NUM_WIRE_PIPELINE_FIRST_STAGE = 2;
+
+	localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
+	localparam NUM_MUX_SECOND_STAGE = 1;
+
+    localparam NUM_OUT_WIRE_PIPELINE = 2;
+
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+    genvar i,j;
+    generate
+        // input pipeline -- divide wire into multiple pipeline stage to shorten the length of wire. 
+        for(j=0; j< NUM_IN_WIRE_PIPELINE; j=j+1)
+        begin:input_shift_def
+            reg  [NUM_INPUT_DATA-1:0]            i_valid_shift;
+            reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
+            reg  [TOTAL_COMMMAND-1:0]            i_cmd_shift;
+            reg                                  i_en_shift;
+            reg                                  rst_shift;
+        end
+
+        always @(posedge clk) 
+        begin:shift_input_initial
+            input_shift_def[0].i_valid_shift <= i_valid;
+            input_shift_def[0].i_data_shift <= i_data_bus;
+            input_shift_def[0].i_cmd_shift <= i_cmd;
+            input_shift_def[0].i_en_shift <= i_en;
+            input_shift_def[0].rst_shift <= rst;
+        end
+
+        for(j=1; j< NUM_IN_WIRE_PIPELINE; j=j+1)
+        begin:shift_input
+            always @(posedge clk) 
+            begin
+                input_shift_def[j].i_valid_shift <= input_shift_def[j-1].i_valid_shift;
+                input_shift_def[j].i_data_shift <= input_shift_def[j-1].i_data_shift;
+                input_shift_def[j].i_cmd_shift <= input_shift_def[j-1].i_cmd_shift;
+                input_shift_def[j].i_en_shift <= input_shift_def[j-1].i_en_shift;
+                input_shift_def[j].rst_shift <= input_shift_def[j-1].rst_shift;
+            end
+        end 
+
+        // output pipeline  
+        for(j=0; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
+        begin:output_shift_def
+            reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg_shift;
+            reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg_shift;
+        end 
+
+        // instantiate output data mux
+        for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
+        begin: o_data_output_mux
+
+            for(j=0; j< NUM_WIRE_PIPELINE_FIRST_STAGE; j=j+1)
+            begin:first_stage_def
+                reg   [NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]        inner_data_shift;
+                reg   [NUM_MUX_FIRST_STAGE-1:0]                   inner_valid_shift;
+                reg                                               inner_en_shift;
+                reg                                               inner_rst_shift;
+            end
+            
+            always @(posedge clk) 
+            begin
+                first_stage_def[0].inner_en_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift;
+                first_stage_def[0].inner_rst_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift;
+            end
+
+            for(j=1; j< NUM_WIRE_PIPELINE_FIRST_STAGE; j=j+1)
+            begin:shift_input_first_stage
+                always @(posedge clk)
+                begin
+                    first_stage_def[j].inner_valid_shift <= first_stage_def[j-1].inner_valid_shift;
+                    first_stage_def[j].inner_data_shift <= first_stage_def[j-1].inner_data_shift;
+                    first_stage_def[j].inner_en_shift <= first_stage_def[j-1].inner_en_shift;
+                    first_stage_def[j].inner_rst_shift <= first_stage_def[j-1].inner_rst_shift;
+                end
+            end
+            
+            // first pipeline stage -- data -- 1 * 8:1 mux logic.
+            for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
+            begin:first_stage_data
+                wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
+                assign  inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    begin
+                        case(inner_cmd_wire)
+                            4'b0001:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            4'b0010:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            4'b0100:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            4'b1000:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            end
+                            default:
+                            begin
+                                first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        first_stage_def[0].inner_data_shift[j*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    end
+                end
+            end
+
+            // first pipeline stage -- valid -- 4 * 4:1 mux logic.
+            for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
+            begin:first_stage_valid
+                wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_valid;
+                assign  inner_cmd_wire_valid = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
+                always@(posedge clk)
+                begin
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    begin
+                        case(inner_cmd_wire_valid)
+                            4'b0001:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[0+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b0010:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[1+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b0100:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[2+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            4'b1000:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[3+j*NUM_IN_MUX_FIRST_STAGE])?1'b1:1'b0;
+                            end
+                            default:
+                            begin
+                                first_stage_def[0].inner_valid_shift[j] <= 1'b0;
+                            end
+                        endcase
+                    end
+                    else
+                    begin
+                        first_stage_def[0].inner_valid_shift[j] <= 1'b0; 
+                    end
+                end
+            end
+
+            wire  [NUM_IN_MUX_SECOND_STAGE-1:0]  inner_cmd_wire_second_stage;
+            assign inner_cmd_wire_second_stage = {first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_valid_shift};
+
+            //data_mux
+            always@(posedge clk)
+            begin:second_stage_data
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                begin
+                    case(inner_cmd_wire_second_stage)
+                        4'b0001:
+                        begin
+                            output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[0*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        4'b0010:
+                        begin
+                            output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[1*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        4'b0100:
+                        begin
+                            output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[2*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        4'b1000:
+                        begin
+                            output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_data_shift[3*DATA_WIDTH+:DATA_WIDTH];
+                        end
+                        default:
+                        begin
+                            output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                        end
+                    endcase
+                end
+                else
+                begin
+                    output_shift_def[0].o_data_bus_reg_shift[i*DATA_WIDTH+:DATA_WIDTH] <= {WIDTH_OUTPUT_DATA{1'b0}};
+                end
+            end
+
+            //valid_mux
+            always@(posedge clk)
+            begin:second_stage_valid
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                begin
+                    case(inner_cmd_wire_second_stage)
+                        4'b0001:
+                        begin
+                            output_shift_def[0].o_valid_reg_shift[i] <= 1'b1;
+                        end
+                        4'b0010:
+                        begin
+                            output_shift_def[0].o_valid_reg_shift[i] <= 1'b1;
+                        end
+                        4'b0100:
+                        begin
+                            output_shift_def[0].o_valid_reg_shift[i] <= 1'b1;
+                        end
+                        4'b1000:
+                        begin
+                            output_shift_def[0].o_valid_reg_shift[i] <= 1'b1;
+                        end
+                        default:
+                        begin
+                            output_shift_def[0].o_valid_reg_shift[i] <= 1'b0;
+                        end
+                    endcase
+                end
+                else
+                begin
+                    output_shift_def[0].o_valid_reg_shift[i] <= 1'b0;
+                end
+            end
+        end
+
+        for(j=1; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
+        begin:shift_output
+            always @(posedge clk) 
+            begin
+                output_shift_def[j].o_valid_reg_shift <= output_shift_def[j-1].o_valid_reg_shift;
+                output_shift_def[j].o_data_bus_reg_shift <=  output_shift_def[j-1].o_data_bus_reg_shift;
+            end
+        end 
+
+        always @(posedge clk) 
+        begin:shift_output_last
+            o_valid_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_valid_reg_shift;
+            o_data_bus_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_data_bus_reg_shift;
+        end
+    endgenerate
+
+    assign o_data_bus = o_data_bus_reg;
+    assign o_valid = o_valid_reg;
+
+endmodule
+`endif
+
+`ifdef In16_Out8_pipeline_wire
+module crossbar_one_hot_seq#(
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+	parameter NUM_INPUT_DATA = 16   
+)(
+    // timeing signals
+    clk,
+	rst,
+	
+    // data signals
+	i_valid,        // valid input data signal
+	i_data_bus,     // input data bus coming into distribute switch
+	
+	o_valid,        // output valid
+    o_data_bus,     // output data 
+
+	// control signals
+	i_en,           // distribute switch enable
+	i_cmd           // the input should be one-hot encoded command 
+);
+
+	//parameter
+	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+	localparam NUM_IN_WIRE_PIPELINE = 7;
+    // interface
+	input                                        clk;
+	input                                        rst;
+	
+	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
+	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+	input                                        i_en;
+	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
+
+    genvar i,j;
+    generate
+        for(i=0; i< NUM_IN_WIRE_PIPELINE; i=i+1)
+        begin:input_shift_def
+            reg  [NUM_INPUT_DATA-1:0]            i_valid_shift;
+            reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
+            reg  [TOTAL_COMMMAND-1:0]            i_cmd_shift;
+            reg                                  i_en_shift;
+            reg                                  rst_shift;
+        end 
 
         always @(posedge clk) 
         begin:shift_first
             input_shift_def[0].i_valid_shift <= i_valid;
             input_shift_def[0].i_data_shift <= i_data_bus;
             input_shift_def[0].i_cmd_shift <= i_cmd;
+            input_shift_def[0].i_en_shift <= i_en;
+            input_shift_def[0].rst_shift <= rst;
         end
 
-        for(i=1; i< NUM_WIRE_PIPELINE; i=i+1)
+        for(i=1; i< NUM_IN_WIRE_PIPELINE; i=i+1)
         begin:input_shift
             always @(posedge clk) 
             begin
                 input_shift_def[i].i_valid_shift <= input_shift_def[i-1].i_valid_shift;
                 input_shift_def[i].i_data_shift <= input_shift_def[i-1].i_data_shift;
                 input_shift_def[i].i_cmd_shift <= input_shift_def[i-1].i_cmd_shift;
+                input_shift_def[i].i_en_shift <= input_shift_def[i-1].i_en_shift;
+                input_shift_def[i].rst_shift <= input_shift_def[i-1].rst_shift;
             end
         end 
-        
 
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: o_data_output_mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
-            assign inner_cmd_wire = {input_shift_def[4].i_cmd_shift[15*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[14*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[13*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[12*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[11*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[10*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[9*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[8*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[7*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[6*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[5*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[4*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[3*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[2*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[1*NUM_OUTPUT_DATA+i],input_shift_def[4].i_cmd_shift[0*NUM_OUTPUT_DATA+i]};
+            assign inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[15*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[14*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[13*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[12*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[11*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[10*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[9*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[8*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[7*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[6*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[5*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[4*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[3*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[2*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[1*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[0*NUM_OUTPUT_DATA+i]};
             
             //data_mux
             always@(posedge clk)
             begin
-               if(i_en && (~rst))
+                if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
                 begin
                     case(inner_cmd_wire)
                         16'b0000000000000001:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[0])?input_shift_def[4].i_data_shift[0*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[0])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[0*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0000000000000010:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[1])?input_shift_def[4].i_data_shift[1*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[1])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[1*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0000000000000100:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[2])?input_shift_def[4].i_data_shift[2*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[2])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[2*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0000000000001000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[3])?input_shift_def[4].i_data_shift[3*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[3])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[3*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0000000000010000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[4])?input_shift_def[4].i_data_shift[4*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[4])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[4*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0000000000100000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[5])?input_shift_def[4].i_data_shift[5*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[5])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[5*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0000000001000000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[6])?input_shift_def[4].i_data_shift[6*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[6])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[6*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0000000010000000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[7])?input_shift_def[4].i_data_shift[7*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[7])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[7*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0000000100000000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[8])?input_shift_def[4].i_data_shift[8*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[8])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[8*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0000001000000000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[9])?input_shift_def[4].i_data_shift[9*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[9])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[9*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0000010000000000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[10])?input_shift_def[4].i_data_shift[10*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[10])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[10*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0000100000000000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[11])?input_shift_def[4].i_data_shift[11*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[11])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[11*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0001000000000000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[12])?input_shift_def[4].i_data_shift[12*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[12])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[12*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0010000000000000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[13])?input_shift_def[4].i_data_shift[13*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[13])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[13*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b0100000000000000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[14])?input_shift_def[4].i_data_shift[14*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[14])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[14*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         16'b1000000000000000:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[4].i_valid_shift[15])?input_shift_def[4].i_data_shift[15*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[15])?input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_data_shift[15*DATA_WIDTH+:DATA_WIDTH]:{DATA_WIDTH{1'b0}};
                         end
                         default:
                         begin
@@ -396,72 +3574,72 @@ module crossbar_one_hot_seq#(
             //valid_mux
             always@(posedge clk)
             begin
-                if(i_en && (~rst))
+                if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
                 begin
                     case(inner_cmd_wire)
                         16'b0000000000000001:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[0])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[0])?1'b1:1'b0;
                         end
                         16'b0000000000000010:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[1])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[1])?1'b1:1'b0;
                         end
                         16'b0000000000000100:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[2])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[2])?1'b1:1'b0;
                         end
                         16'b0000000000001000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[3])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[3])?1'b1:1'b0;
                         end
                         16'b0000000000010000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[4])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[4])?1'b1:1'b0;
                         end
                         16'b0000000000100000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[5])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[5])?1'b1:1'b0;
                         end
                         16'b0000000001000000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[6])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[6])?1'b1:1'b0;
                         end
                         16'b0000000010000000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[7])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[7])?1'b1:1'b0;
                         end
                         16'b0000000100000000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[8])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[8])?1'b1:1'b0;
                         end
                         16'b0000001000000000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[9])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[9])?1'b1:1'b0;
                         end
                         16'b0000010000000000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[10])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[10])?1'b1:1'b0;
                         end
                         16'b0000100000000000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[11])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[11])?1'b1:1'b0;
                         end
                         16'b0001000000000000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[12])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[12])?1'b1:1'b0;
                         end
                         16'b0010000000000000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[13])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[13])?1'b1:1'b0;
                         end
                         16'b0100000000000000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[14])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[14])?1'b1:1'b0;
                         end
                         16'b1000000000000000:
                         begin
-                            o_valid_reg[i] <= (input_shift_def[4].i_valid_shift[15])?1'b1:1'b0;
+                            o_valid_reg[i] <= (input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_valid_shift[15])?1'b1:1'b0;
                         end
                         default:
                         begin
