@@ -1,0 +1,43 @@
+ 
+****************************************
+Report : area
+Design : crossbar_one_hot_seq
+Version: J-2014.09-SP3
+Date   : Fri Apr 16 21:47:33 2021
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140lvttt0p8v25c (File: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/unzipped/tcbn28hpcplusbwp30p140lvt_190a/tcbn28hpcplusbwp30p140lvt_180a_nldm/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp30p140lvt_180a/tcbn28hpcplusbwp30p140lvttt0p8v25c.db)
+
+Number of ports:                          308
+Number of nets:                           740
+Number of cells:                          465
+Number of combinational cells:            432
+Number of sequential cells:                33
+Number of macros/black boxes:               0
+Number of buf/inv:                         63
+Number of references:                      41
+
+Combinational area:                259.181999
+Buf/Inv area:                       51.407998
+Noncombinational area:              62.370000
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                   321.551998
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area          Local cell area
+                                  ------------------  --------------------------- 
+Hierarchical cell                 Absolute   Percent  Combi-    Noncombi-  Black-
+                                  Total      Total    national  national   boxes   Design
+--------------------------------  ---------  -------  --------  ---------  ------  ---------
+crossbar_one_hot_seq               321.5520    100.0  259.1820    62.3700  0.0000  crossbar_one_hot_seq
+--------------------------------  ---------  -------  --------  ---------  ------  ---------
+Total                                                 259.1820    62.3700  0.0000
+
+1

@@ -1,0 +1,88 @@
+*----------------------------------------------------------------------------------------
+*	Innovus 17.16-s058_1 (64bit) 10/23/2018 14:03 (Linux 2.6.18-194.el5)
+*	
+*
+* 	Date & Time:	2021-Apr-17 17:04:41 (2021-Apr-17 21:04:41 GMT)
+*
+*----------------------------------------------------------------------------------------
+*
+*	Design: crossbar_one_hot_seq
+*
+*	Liberty Libraries used: 
+*	        curAna: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/unzipped/tcbn28hpcplusbwp30p140lvt_190a/tcbn28hpcplusbwp30p140lvt_180a_nldm/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp30p140lvt_180a/tcbn28hpcplusbwp30p140lvttt0p8v25c.lib
+*	        curAna: ./LIB/ts1n28hpcplvtb256x32m4swbaso_180a_tt1v25c.lib
+*
+*	Power Domain used: 
+*		Rail:        VDD 	Voltage:        0.8 
+*
+*       Power View : curAna
+*
+*       User-Defined Activity : N.A.
+*
+*       Activity File: N.A.
+*
+*       Hierarchical Global Activity: N.A.
+*
+*       Global Activity: N.A.
+*
+*       Sequential Element Activity: 0.200000
+*
+*       Primary Input Activity: 0.200000
+*
+*       Default icg ratio: N.A.
+*
+*       Global Comb ClockGate Ratio: N.A.
+*
+*	Power Units = 1mW
+*
+*	Time Units = 1e-09 secs 
+*
+*       report_power -outfile ./timingReports/crossbar_one_hot_seq_preCTS.power
+*
+-----------------------------------------------------------------------------------------
+
+
+Total Power 
+-----------------------------------------------------------------------------------------
+Total Internal Power:        0.46086406 	   36.3615%
+Total Switching Power:       0.77712732 	   61.3142%
+Total Leakage Power:         0.02945853 	    2.3242%
+Total Power:                 1.26744990 
+-----------------------------------------------------------------------------------------
+
+
+Group                           Internal   Switching     Leakage       Total  Percentage 
+                                Power      Power         Power         Power  (%)        
+-----------------------------------------------------------------------------------------
+Sequential                        0.3327     0.03504    0.003154      0.3709       29.26 
+Macro                                  0           0           0           0           0 
+IO                                     0           0           0           0           0 
+Combinational                     0.1281      0.7421      0.0263      0.8965       70.74 
+Clock (Combinational)                  0           0           0           0           0 
+Clock (Sequential)                     0           0           0           0           0 
+-----------------------------------------------------------------------------------------
+Total                             0.4609      0.7771     0.02946       1.267         100 
+-----------------------------------------------------------------------------------------
+
+
+Rail                  Voltage   Internal   Switching     Leakage       Total  Percentage 
+                                Power      Power         Power         Power  (%)        
+-----------------------------------------------------------------------------------------
+VDD                       0.8     0.4609      0.7771     0.02946       1.267         100 
+
+
+-----------------------------------------------------------------------------------------
+*	Power Distribution Summary: 
+* 		Highest Average Power: placeopt_FE_OFC9_o_data_bus_6 (CKBD8BWP30P140LVT): 	   0.02412 
+* 		Highest Leakage Power:                      U532 (NR2OPTIBD12BWP30P140LVT): 	 0.0005052 
+* 		Total Cap: 	5.46747e-12 F
+* 		Total instances in design:   495
+* 		Total instances in design with no power:     0
+*          Total instances in design with no activity:     0
+* 		Total Fillers and Decap:     0
+-----------------------------------------------------------------------------------------
+
+Total leakage power = 0.0294585 mW
+ Cell usage statistics:  
+ Library tcbn28hpcplusbwp30p140lvttt0p8v25c , 495 cells ( 100.000000%) , 0.0294585 mW ( 100.000000%  ) 
+ 
