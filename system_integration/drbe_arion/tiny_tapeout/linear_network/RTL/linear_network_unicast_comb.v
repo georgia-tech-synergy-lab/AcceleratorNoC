@@ -5,7 +5,7 @@
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
 // Dummy Data:  {DATA_WIDTH{1'b0}}
-// 
+//
 // Function:    Unicast  or  Multicast(arbitrary Multicast)
 //                               i_data_bus & i_valid     i_data_bus & i_valid     
 //  i_data_bus & i_valid  -->|¯¯¯|------------------>|¯¯¯|------------------>|¯¯¯|--> i_data_bus & i_valid
@@ -38,7 +38,7 @@ module linear_network_unicast_comb#(
 	i_cmd           // command 
 );
 	//parameter
-	localparam COMMMAND_WIDTH = $clog2(NUM_NODE);
+	localparam COMMAND_WIDTH = $clog2(NUM_NODE);
 
 	localparam WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_NODE;
 	
@@ -50,7 +50,7 @@ module linear_network_unicast_comb#(
 	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // Node 0 output [0+:DATA_WIDTH]; Node max# output [(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH]
 
 	input                                        i_en;
-	input  [COMMMAND_WIDTH-1:0]                  i_cmd;      // destination tag.
+	input  [COMMAND_WIDTH-1:0]                  i_cmd;      // destination tag.
  
 	// inner logic
 	reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -60,59 +60,82 @@ module linear_network_unicast_comb#(
 	reg                                          o_valid_forward_reg[0:NUM_NODE-2];
 
 	// the first switch
-	reg [COMMMAND_WIDTH-1:0] node_id_reg_first;
+	// reg [COMMAND_WIDTH-1:0] node_id_reg_first;
+	reg [COMMAND_WIDTH-1:0] node_id_reg[0:NUM_NODE-1];
 
 	initial begin
-		node_id_reg_first = 0;
+		node_id_reg[0] = 2'b00;
+		node_id_reg[1] = 2'b01;
+		node_id_reg[2] = 2'b10;
+		node_id_reg[3] = 2'b11;
 	end
 
 	always @(*) begin
 		if(i_en)
 		begin
-			if(node_id_reg_first==i_cmd)
+			if(node_id_reg[0]==i_cmd)
 			begin
-				o_data_bus_reg[0*DATA_WIDTH+:DATA_WIDTH] = i_data_bus;
-				o_valid_reg[0] = i_valid;
+				o_data_bus_reg[0*DATA_WIDTH+:DATA_WIDTH] <= (i_valid)?i_data_bus:{DATA_WIDTH{1'b0}};
+				o_valid_reg[0] <= i_valid;
 			end
 			else
 			begin
-				o_data_bus_reg[0*DATA_WIDTH+:DATA_WIDTH] = {DATA_WIDTH{1'b0}};
-				o_valid_reg[0] = 1'b0;
+				o_data_bus_reg[0*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+				o_valid_reg[0] <= 1'b0;
 			end
+		end
+		else
+		begin
+			o_data_bus_reg[0*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+			o_valid_reg[0] <= 1'b0;
 		end
 	end
 
+	// the foward data from the first switch to the second switch
 	always@(*)
 	begin
 		if(i_en)
 		begin
-			o_data_forward_reg[0] = i_data_bus;
-			o_valid_forward_reg[0] = i_valid;
+			o_data_forward_reg[0] <= i_data_bus;
+			o_valid_forward_reg[0] <= i_valid;
+			o_cmd_forward_reg[0] <= i_cmd;
+		end
+		else
+		begin
+			o_data_forward_reg[0] <= {DATA_WIDTH{1'b0}};
+			o_valid_forward_reg[0] <= 1'b0;
+			o_cmd_forward_reg[0] <= {COMMAND_WIDTH{1'b0}};
 		end
 	end
 
+	// the following switches and the following forwarding logics
 	genvar i;
 	generate
 		for(i=1; i<NUM_NODE-1;i=i+1)
 		begin: node
-			reg [COMMMAND_WIDTH-1:0] node_id_reg;
-			initial begin
-				node_id_reg = i;
-			end
-
+			// reg [COMMAND_WIDTH-1:0] node_id_reg;
+			// initial begin
+			// 	node_id_reg <= i;
+			// end
+			
 			always @(*) begin
 				if(i_en)
 				begin
-					if(node_id_reg==i_cmd)
+					if(node_id_reg[i]==o_cmd_forward_reg[i-1])
 					begin
-						o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] = o_data_forward_reg[i-1];
-						o_valid_reg[i] = o_valid_forward_reg[i-1];
+						o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (o_valid_forward_reg[i-1])?o_data_forward_reg[i-1]:{DATA_WIDTH{1'b0}};
+						o_valid_reg[i] <= o_valid_forward_reg[i-1];
 					end
 					else
 					begin
-						o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] = {DATA_WIDTH{1'b0}};
-						o_valid_reg[i] = 1'b0;
+						o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+						o_valid_reg[i] <= 1'b0;
 					end
+				end
+				else
+				begin
+					o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+					o_valid_reg[i] <= 1'b0;
 				end
 			end
 
@@ -120,35 +143,48 @@ module linear_network_unicast_comb#(
 			begin
 				if(i_en)
 				begin
-					o_data_forward_reg[i] = o_data_forward_reg[i-1];
-					o_valid_forward_reg[i] = o_valid_forward_reg[i-1];
+					o_data_forward_reg[i] <= o_data_forward_reg[i-1];
+					o_valid_forward_reg[i] <= o_valid_forward_reg[i-1];
+					o_cmd_forward_reg[i] <= o_cmd_forward_reg[i-1];
+				end
+				else
+				begin
+					o_data_forward_reg[i] <= {DATA_WIDTH{1'b0}};
+					o_valid_forward_reg[i] <= 1'b0;
+					o_cmd_forward_reg[i] <= {COMMAND_WIDTH{1'b0}};
 				end
 			end
 		end
 	endgenerate
 
+	// the last switch and forwarding logics
+	// reg [COMMAND_WIDTH-1:0] node_id_reg_last;
 
-	reg [COMMMAND_WIDTH-1:0] node_id_reg_last;
-
-	initial begin
-		node_id_reg_last = NUM_NODE-1;
-	end
+	// initial begin
+	// 	node_id_reg_last <= NUM_NODE-1;
+	// end
 
 	always @(*) begin
 		if(i_en)
 		begin
-			if(node_id_reg_last==i_cmd)
+			if(node_id_reg[NUM_NODE-1]==o_cmd_forward_reg[NUM_NODE-2])
 			begin
-				o_data_bus_reg[(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH] = o_data_forward_reg[NUM_NODE-2];
-				o_valid_reg[NUM_NODE-1] = o_valid_forward_reg[NUM_NODE-2];
+				o_data_bus_reg[(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH] <= (o_valid_forward_reg[NUM_NODE-2])?o_data_forward_reg[NUM_NODE-2]:{DATA_WIDTH{1'b0}};
+				o_valid_reg[NUM_NODE-1] <= o_valid_forward_reg[NUM_NODE-2];
 			end
 			else
 			begin
-				o_data_bus_reg[(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH] = {DATA_WIDTH{1'b0}};
-				o_valid_reg[NUM_NODE-1] = 1'b0;
+				o_data_bus_reg[(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+				o_valid_reg[NUM_NODE-1] <= 1'b0;
 			end
 		end
+		else
+		begin
+			o_data_bus_reg[(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+			o_valid_reg[NUM_NODE-1] <= 1'b0;
+		end
 	end
+
 
 	assign o_data_bus = o_data_bus_reg;
 	assign o_valid = o_valid_reg;
