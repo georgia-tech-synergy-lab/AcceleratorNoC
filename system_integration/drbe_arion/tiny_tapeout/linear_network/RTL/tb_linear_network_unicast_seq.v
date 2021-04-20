@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  linear_network_unicast_comb
+// Top Module:  linear_network_unicast_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
@@ -22,8 +22,14 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
+`include "/home/jimmy/work/work_tushar/local_testbench/lib.v"
 
-module tb_linear_network_unicast_comb();
+// `define Out4
+`define Out16
+
+
+`ifdef Out4
+module tb_linear_network_unicast_seq();
 
 	parameter DATA_WIDTH  = 32;
 
@@ -39,6 +45,7 @@ module tb_linear_network_unicast_comb();
 
     // timing signals
     reg                              clk;
+    reg                              rst;
 
     // data signals
 	reg                              i_valid;        // valid input data signal
@@ -57,14 +64,24 @@ module tb_linear_network_unicast_comb();
     initial 
     begin
         clk = 1'b0;
+        rst = 1'b0;
         // not enable at start
         i_valid = 1'b0;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b0;
         i_cmd ={COMMAND_WIDTH{1'b1}};
 
+        // reset at start
+        #20
+        i_valid = 1'b0;
+        rst = 1'b1;
+        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_en = 1'b0;
+        i_cmd ={COMMAND_WIDTH{1'b1}};
+        
         // input active --  Pass to the next node
         #20
+        rst = 1'b0;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
@@ -104,15 +121,16 @@ module tb_linear_network_unicast_comb();
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
         i_cmd = {{(COMMAND_WIDTH-1){1'b1}}, 1'b0};
-       
+
+        #100
         $stop;
     end
 
+
     // instantiate DUT (device under test)
-    linear_network_unicast_comb #(
-		.DATA_WIDTH(DATA_WIDTH),
-        .NUM_NODE(NUM_NODE)
-	) dut(
+    linear_network_unicast_seq dut(
+        .clk(clk),
+        .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),
@@ -124,3 +142,120 @@ module tb_linear_network_unicast_comb();
     always#5 clk=~clk;
 
 endmodule
+`endif 
+
+
+`ifdef Out16
+module tb_linear_network_unicast_seq();
+
+	parameter DATA_WIDTH  = 32;
+
+    // variable parameter
+	// parameter NUM_NODE = NUM_DATA_IN * DESTINATION_TAG_WIDTH;
+	parameter NUM_NODE = 16;
+	parameter COMMAND_WIDTH = $clog2(NUM_NODE);
+
+	// localparam
+	parameter NUM_DATA_IN = 1;
+
+
+    // timing signals
+    reg                              clk;
+    reg                              rst;
+
+    // data signals
+	reg                              i_valid;        // valid input data signal
+	reg    [DATA_WIDTH-1:0]          i_data_bus;     // input data bus coming into mux
+	
+	wire   [NUM_NODE-1:0]            o_valid;        // output valid
+    wire   [NUM_NODE*DATA_WIDTH-1:0] o_data_bus;     // output data 
+
+	// control signals
+	reg                              i_en;           // mux enable
+	reg    [COMMAND_WIDTH-1:0]       i_cmd;
+	
+
+    // Test case declaration
+    // all cases for control
+    initial 
+    begin
+        clk = 1'b0;
+        rst = 1'b0;
+        // not enable at start
+        i_valid = 1'b0;
+        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_en = 1'b0;
+        i_cmd ={1'b1,{(COMMAND_WIDTH-1){1'b0}}};
+        #20
+
+        // reset at start
+        i_valid = 1'b0;
+        rst = 1'b1;
+        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_en = 1'b0;
+        i_cmd ={1'b1,{(COMMAND_WIDTH-1){1'b0}}};
+        #20
+        
+        // input active --  Pass to the next node
+        rst = 1'b0;
+        i_valid = 1'b1;
+        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_en = 1'b1;
+        i_cmd = {{(COMMAND_WIDTH-1){1'b0}}, 1'b1};
+        #20
+     
+        // input active --  output to Node & Pass to the next node
+        i_valid = 1'b1;
+        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_en = 1'b1;
+        i_cmd = {{(COMMAND_WIDTH-1){1'b1}}, 1'b0};
+        #20
+        
+        // disable in progress
+        i_valid = 1'b1;
+        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_en = 1'b0;
+        i_cmd = {{(COMMAND_WIDTH-1){1'b1}}, 1'b0};
+        #20
+         
+        // enable in progress -- 
+        i_valid = 1'b1;
+        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_en = 1'b1;
+        i_cmd = {{(COMMAND_WIDTH-1){1'b1}}, 1'b0};
+        #20
+        
+        // change data half way -- the highest output.
+        i_valid = 1'b1;
+        i_data_bus = {(DATA_WIDTH>>2){4'hB}};
+        i_en = 1'b1;
+        i_cmd = {(COMMAND_WIDTH){1'b1}};
+        #20
+        
+        // invalid input 
+        i_valid = 1'b0;
+        i_data_bus = {(DATA_WIDTH>>2){4'hB}};
+        i_en = 1'b1;
+        i_cmd = {{(COMMAND_WIDTH-1){1'b1}}, 1'b1};
+        #100
+        $stop;
+    end
+
+
+    // instantiate DUT (device under test)
+    linear_network_unicast_seq dut(
+        .clk(clk),
+        .rst(rst),
+		.i_valid(i_valid),
+		.i_data_bus(i_data_bus),
+		.o_valid(o_valid),
+		.o_data_bus(o_data_bus),
+		.i_en(i_en),
+		.i_cmd(i_cmd)
+	);
+
+    always#5 clk=~clk;
+
+endmodule
+`endif 
+

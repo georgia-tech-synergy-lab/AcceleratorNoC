@@ -21,7 +21,6 @@
 //     
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
-`include "/home/jimmy/work/work_tushar/local_testbench/lib.v"
 
 
 module tb_linear_network_unicast_seq();
@@ -123,7 +122,10 @@ module tb_linear_network_unicast_seq();
 
 
     // instantiate DUT (device under test)
-    linear_network_unicast_seq dut(
+    linear_network_unicast_seq #(
+		.DATA_WIDTH(DATA_WIDTH),
+        .NUM_NODE(NUM_NODE)
+	) dut(
         .clk(clk),
         .rst(rst),
 		.i_valid(i_valid),
@@ -133,21 +135,6 @@ module tb_linear_network_unicast_seq();
 		.i_en(i_en),
 		.i_cmd(i_cmd)
 	);
-
-    // instantiate DUT (device under test)
-    // linear_network_unicast_seq #(
-	// 	.DATA_WIDTH(DATA_WIDTH),
-    //     .NUM_NODE(NUM_NODE)
-	// ) dut(
-    //     .clk(clk),
-    //     .rst(rst),
-	// 	.i_valid(i_valid),
-	// 	.i_data_bus(i_data_bus),
-	// 	.o_valid(o_valid),
-	// 	.o_data_bus(o_data_bus),
-	// 	.i_en(i_en),
-	// 	.i_cmd(i_cmd)
-	// );
 
     always#5 clk=~clk;
 
