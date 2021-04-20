@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  linear_network_unicast_seq
+// Top Module:  linear_network_unicast_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
@@ -23,7 +23,7 @@
 /////////////////////////////////////////////////////////////
 
 
-module tb_linear_network_unicast_seq();
+module tb_linear_network_unicast_comb();
 
 	parameter DATA_WIDTH  = 32;
 
@@ -39,7 +39,6 @@ module tb_linear_network_unicast_seq();
 
     // timing signals
     reg                              clk;
-    reg                              rst;
 
     // data signals
 	reg                              i_valid;        // valid input data signal
@@ -58,24 +57,14 @@ module tb_linear_network_unicast_seq();
     initial 
     begin
         clk = 1'b0;
-        rst = 1'b0;
         // not enable at start
         i_valid = 1'b0;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b0;
         i_cmd ={COMMAND_WIDTH{1'b1}};
 
-        // reset at start
-        #20
-        i_valid = 1'b0;
-        rst = 1'b1;
-        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
-        i_en = 1'b0;
-        i_cmd ={COMMAND_WIDTH{1'b1}};
-        
         // input active --  Pass to the next node
         #20
-        rst = 1'b0;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
@@ -115,17 +104,16 @@ module tb_linear_network_unicast_seq();
         i_data_bus = {(DATA_WIDTH>>2){4'hB}};
         i_en = 1'b1;
         i_cmd = {{(COMMAND_WIDTH-1){1'b1}}, 1'b0};
-       
+
+        #100
         $stop;
     end
 
     // instantiate DUT (device under test)
-    linear_network_unicast_seq #(
+    linear_network_unicast_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_NODE(NUM_NODE)
 	) dut(
-        .clk(clk),
-        .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),

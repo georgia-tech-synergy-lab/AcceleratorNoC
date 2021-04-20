@@ -1,0 +1,48 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : linear_network_unicast_seq
+Version: J-2014.09-SP3
+Date   : Tue Apr 20 13:10:09 2021
+****************************************
+
+Operating Conditions: tt0p8v25c   Library: tcbn28hpcplusbwp30p140lvttt0p8v25c
+Wire Load Model Mode: segmented
+
+  Startpoint: o_data_bus_reg_reg_0_
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: o_data_bus[0]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  linear_network_unicast_seq
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  o_data_bus_reg_reg_0_/CP (DFQD4BWP30P140LVT)            0.00       0.00 r
+  o_data_bus_reg_reg_0_/Q (DFQD4BWP30P140LVT)             0.09       0.09 f
+  o_data_bus[0] (out)                                     0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.30       0.30
+  clock network delay (ideal)                             0.00       0.30
+  clock uncertainty                                      -0.15       0.15
+  output external delay                                  -0.06       0.09
+  data required time                                                 0.09
+  --------------------------------------------------------------------------
+  data required time                                                 0.09
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+1
