@@ -8,7 +8,7 @@ Report : power
         -analysis_effort low
 Design : linear_network_unicast_seq
 Version: J-2014.09-SP3
-Date   : Tue Apr 20 13:10:09 2021
+Date   : Tue Apr 20 14:09:07 2021
 ****************************************
 
 
@@ -39,5 +39,5 @@ Power-specific unit information :
                                        Switch   Int      Leak     Total
 Hierarchy                              Power    Power    Power    Power    %
 --------------------------------------------------------------------------------
-linear_network_unicast_seq                0.261    2.291 2.58e+04    2.578 100.0
+linear_network_unicast_seq                0.135   10.085 1.13e+05   10.333 100.0
 1

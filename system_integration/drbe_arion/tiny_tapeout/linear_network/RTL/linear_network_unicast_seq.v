@@ -25,7 +25,7 @@
 
 module linear_network_unicast_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
-	parameter NUM_NODE = 4         // could be arbitrary integer.
+	parameter NUM_NODE = 16        // could be arbitrary integer.
 )(
 	// interface
 	clk,
@@ -69,24 +69,10 @@ module linear_network_unicast_seq#(
 	reg                                          o_valid_forward_reg[0:NUM_NODE-2];
 
 	// the first switch
-	// reg [COMMAND_WIDTH-1:0] node_id_reg_first;
-
-	// initial begin
-	// 	node_id_reg_first <= 0;
-	// end
-	reg [COMMAND_WIDTH-1:0] node_id_reg[0:NUM_NODE-1];
-
-	initial begin
-		node_id_reg[0] = 2'b00;
-		node_id_reg[1] = 2'b01;
-		node_id_reg[2] = 2'b10;
-		node_id_reg[3] = 2'b11;
-	end
-
 	always @(posedge clk) begin
 		if(i_en && (~rst))
 		begin
-			if(node_id_reg[0]==i_cmd)
+			if(i_cmd=={COMMAND_WIDTH{1'b0}})
 			begin
 				o_data_bus_reg[0*DATA_WIDTH+:DATA_WIDTH] <= (i_valid)?i_data_bus:{DATA_WIDTH{1'b0}};
 				o_valid_reg[0] <= i_valid;
@@ -125,16 +111,11 @@ module linear_network_unicast_seq#(
 	genvar i;
 	generate
 		for(i=1; i<NUM_NODE-1;i=i+1)
-		begin: node
-			// reg [COMMAND_WIDTH-1:0] node_id_reg;
-			// initial begin
-			// 	node_id_reg <= i;
-			// end
-			
+		begin: node	
 			always @(posedge clk) begin
 				if(i_en && (~rst))
 				begin
-					if(node_id_reg[i]==o_cmd_forward_reg[i-1])
+					if(o_cmd_forward_reg[i-1]==({COMMAND_WIDTH{1'b0}}+i))
 					begin
 						o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= (o_valid_forward_reg[i-1])?o_data_forward_reg[i-1]:{DATA_WIDTH{1'b0}};
 						o_valid_reg[i] <= o_valid_forward_reg[i-1];
@@ -171,16 +152,10 @@ module linear_network_unicast_seq#(
 	endgenerate
 
 	// the last switch and forwarding logics
-	// reg [COMMAND_WIDTH-1:0] node_id_reg_last;
-
-	// initial begin
-	// 	node_id_reg_last <= NUM_NODE-1;
-	// end
-
 	always @(posedge clk) begin
 		if(i_en && (~rst))
 		begin
-			if(node_id_reg[NUM_NODE-1]==o_cmd_forward_reg[NUM_NODE-2])
+			if(o_cmd_forward_reg[NUM_NODE-2]=={COMMAND_WIDTH{1'b1}})
 			begin
 				o_data_bus_reg[(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH] <= (o_valid_forward_reg[NUM_NODE-2])?o_data_forward_reg[NUM_NODE-2]:{DATA_WIDTH{1'b0}};
 				o_valid_reg[NUM_NODE-1] <= o_valid_forward_reg[NUM_NODE-2];

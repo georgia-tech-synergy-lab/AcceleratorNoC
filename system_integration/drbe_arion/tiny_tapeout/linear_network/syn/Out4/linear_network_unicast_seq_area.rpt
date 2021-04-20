@@ -1,0 +1,43 @@
+ 
+****************************************
+Report : area
+Design : linear_network_unicast_seq
+Version: J-2014.09-SP3
+Date   : Tue Apr 20 13:54:25 2021
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140lvttt0p8v25c (File: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/unzipped/tcbn28hpcplusbwp30p140lvt_190a/tcbn28hpcplusbwp30p140lvt_180a_nldm/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp30p140lvt_180a/tcbn28hpcplusbwp30p140lvttt0p8v25c.db)
+
+Number of ports:                          170
+Number of nets:                           520
+Number of cells:                          482
+Number of combinational cells:            245
+Number of sequential cells:               237
+Number of macros/black boxes:               0
+Number of buf/inv:                          5
+Number of references:                      11
+
+Combinational area:                123.354002
+Buf/Inv area:                        1.260000
+Noncombinational area:             497.825984
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                   621.179986
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area          Local cell area
+                                  ------------------  --------------------------- 
+Hierarchical cell                 Absolute   Percent  Combi-    Noncombi-  Black-
+                                  Total      Total    national  national   boxes   Design
+--------------------------------  ---------  -------  --------  ---------  ------  ---------
+linear_network_unicast_seq         621.1800    100.0  123.3540   497.8260  0.0000  linear_network_unicast_seq
+--------------------------------  ---------  -------  --------  ---------  ------  ---------
+Total                                                 123.3540   497.8260  0.0000
+
+1
