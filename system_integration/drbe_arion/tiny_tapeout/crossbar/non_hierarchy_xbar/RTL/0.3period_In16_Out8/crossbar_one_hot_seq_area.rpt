@@ -1,0 +1,141 @@
+ 
+****************************************
+Report : area
+Design : crossbar_one_hot_seq
+Version: J-2014.09-SP3
+Date   : Tue Apr 20 23:12:46 2021
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140lvttt0p8v25c (File: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/unzipped/tcbn28hpcplusbwp30p140lvt_190a/tcbn28hpcplusbwp30p140lvt_180a_nldm/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp30p140lvt_180a/tcbn28hpcplusbwp30p140lvttt0p8v25c.db)
+
+Number of ports:                          923
+Number of nets:                          1750
+Number of cells:                          565
+Number of combinational cells:            299
+Number of sequential cells:               264
+Number of macros/black boxes:               0
+Number of buf/inv:                         18
+Number of references:                      10
+
+Combinational area:               4989.978033
+Buf/Inv area:                      412.524004
+Noncombinational area:           17761.715846
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                 22751.693879
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area            Local cell area
+                                  -------------------  ----------------------------- 
+Hierarchical cell                 Absolute    Percent  Combi-     Noncombi-   Black-
+                                  Total       Total    national   national    boxes   Design
+--------------------------------  ----------  -------  ---------  ----------  ------  -----------------------------------------------------------------------------
+crossbar_one_hot_seq              22751.6939    100.0   244.0620    798.3360  0.0000  crossbar_one_hot_seq
+xbar_8_8_0__xba8_8                10849.6079     47.7     0.0000      0.0000  0.0000  crossbar_8_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA8_0
+xbar_8_8_0__xba8_8/bottom_half_0__mux_tree
+                                    220.2480      1.0   157.8780     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_0
+xbar_8_8_0__xba8_8/bottom_half_1__mux_tree
+                                    221.3820      1.0   159.0120     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_15
+xbar_8_8_0__xba8_8/bottom_half_2__mux_tree
+                                    221.1300      1.0   158.7600     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_14
+xbar_8_8_0__xba8_8/bottom_half_3__mux_tree
+                                    218.8620      1.0   156.4920     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_13
+xbar_8_8_0__xba8_8/bottom_half_4__mux_tree
+                                    221.2560      1.0   158.6340     62.6220  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_12
+xbar_8_8_0__xba8_8/bottom_half_5__mux_tree
+                                    219.9960      1.0   157.6260     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_11
+xbar_8_8_0__xba8_8/bottom_half_6__mux_tree
+                                    217.2240      1.0   154.8540     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_10
+xbar_8_8_0__xba8_8/bottom_half_7__mux_tree
+                                    221.2560      1.0   158.8860     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_9
+xbar_8_8_0__xba8_8/i_cmd_id_0__cmd_pipeline
+                                     66.9060      0.3     4.5360     62.3700  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0
+xbar_8_8_0__xba8_8/i_cmd_id_1__cmd_pipeline
+                                     67.6620      0.3     4.5360     63.1260  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_15
+xbar_8_8_0__xba8_8/i_cmd_id_2__cmd_pipeline
+                                     67.6620      0.3     4.5360     63.1260  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_14
+xbar_8_8_0__xba8_8/i_cmd_id_3__cmd_pipeline
+                                     66.1500      0.3     4.5360     61.6140  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_13
+xbar_8_8_0__xba8_8/i_cmd_id_4__cmd_pipeline
+                                     65.7720      0.3     4.5360     61.2360  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_12
+xbar_8_8_0__xba8_8/i_cmd_id_5__cmd_pipeline
+                                     65.0160      0.3     4.5360     60.4800  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_11
+xbar_8_8_0__xba8_8/i_cmd_id_6__cmd_pipeline
+                                     66.9060      0.3     4.5360     62.3700  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_10
+xbar_8_8_0__xba8_8/i_cmd_id_7__cmd_pipeline
+                                     66.9060      0.3     4.5360     62.3700  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_9
+xbar_8_8_0__xba8_8/top_half_0__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0
+xbar_8_8_0__xba8_8/top_half_1__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_15
+xbar_8_8_0__xba8_8/top_half_2__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_14
+xbar_8_8_0__xba8_8/top_half_3__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_13
+xbar_8_8_0__xba8_8/top_half_4__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_12
+xbar_8_8_0__xba8_8/top_half_5__wire_pipeline
+                                   1069.7400      4.7   133.8120    935.9280  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_11
+xbar_8_8_0__xba8_8/top_half_6__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_10
+xbar_8_8_0__xba8_8/top_half_7__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_9
+xbar_8_8_1__xba8_8                10859.6879     47.7     0.0000      0.0000  0.0000  crossbar_8_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA8_1
+xbar_8_8_1__xba8_8/bottom_half_0__mux_tree
+                                    218.7360      1.0   156.3660     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_8
+xbar_8_8_1__xba8_8/bottom_half_1__mux_tree
+                                    223.5240      1.0   161.1540     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_7
+xbar_8_8_1__xba8_8/bottom_half_2__mux_tree
+                                    217.7280      1.0   155.3580     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_6
+xbar_8_8_1__xba8_8/bottom_half_3__mux_tree
+                                    223.5240      1.0   161.1540     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_5
+xbar_8_8_1__xba8_8/bottom_half_4__mux_tree
+                                    222.1380      1.0   159.7680     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_4
+xbar_8_8_1__xba8_8/bottom_half_5__mux_tree
+                                    220.7520      1.0   158.3820     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_3
+xbar_8_8_1__xba8_8/bottom_half_6__mux_tree
+                                    218.9880      1.0   156.6180     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_2
+xbar_8_8_1__xba8_8/bottom_half_7__mux_tree
+                                    223.7760      1.0   161.4060     62.3700  0.0000  mux_tree_8_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA8_1
+xbar_8_8_1__xba8_8/i_cmd_id_0__cmd_pipeline
+                                     66.1500      0.3     4.5360     61.6140  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_8
+xbar_8_8_1__xba8_8/i_cmd_id_1__cmd_pipeline
+                                     68.0400      0.3     4.5360     63.5040  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_7
+xbar_8_8_1__xba8_8/i_cmd_id_2__cmd_pipeline
+                                     67.6620      0.3     4.5360     63.1260  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_6
+xbar_8_8_1__xba8_8/i_cmd_id_3__cmd_pipeline
+                                     66.5280      0.3     4.5360     61.9920  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_5
+xbar_8_8_1__xba8_8/i_cmd_id_4__cmd_pipeline
+                                     66.1500      0.3     4.5360     61.6140  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_4
+xbar_8_8_1__xba8_8/i_cmd_id_5__cmd_pipeline
+                                     65.3940      0.3     4.5360     60.8580  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_3
+xbar_8_8_1__xba8_8/i_cmd_id_6__cmd_pipeline
+                                     67.6620      0.3     4.5360     63.1260  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_2
+xbar_8_8_1__xba8_8/i_cmd_id_7__cmd_pipeline
+                                     67.6620      0.3     4.5360     63.1260  0.0000  cmd_wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_1
+xbar_8_8_1__xba8_8/top_half_0__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_8
+xbar_8_8_1__xba8_8/top_half_1__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_7
+xbar_8_8_1__xba8_8/top_half_2__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_6
+xbar_8_8_1__xba8_8/top_half_3__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_5
+xbar_8_8_1__xba8_8/top_half_4__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_4
+xbar_8_8_1__xba8_8/top_half_5__wire_pipeline
+                                   1069.7400      4.7   133.8120    935.9280  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_3
+xbar_8_8_1__xba8_8/top_half_6__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_2
+xbar_8_8_1__xba8_8/top_half_7__wire_pipeline
+                                   1069.3620      4.7   133.8120    935.5500  0.0000  wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_1
+--------------------------------  ----------  -------  ---------  ----------  ------  -----------------------------------------------------------------------------
+Total                                                  4989.9780  17761.7158  0.0000
+
+1
