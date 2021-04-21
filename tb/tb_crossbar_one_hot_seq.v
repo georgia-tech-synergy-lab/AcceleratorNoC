@@ -65,8 +65,8 @@
 /////////////////////////////////////////////////////////////
 
 // `define In8_Out1
-`define In8_Out8 
-// `define In16_Out8 
+// `define In8_Out8 
+`define In16_Out8 
 // `define In32_Out8
 // `define In64_Out8
 
