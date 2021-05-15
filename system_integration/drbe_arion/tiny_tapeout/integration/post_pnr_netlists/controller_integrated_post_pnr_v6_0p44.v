@@ -5691,7 +5691,40 @@ module wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0 
    wire [1:0] wire_tree_level_1__i_valid_latch;
    wire [127:0] wire_tree_level_2__i_data_latch;
    wire [3:0] wire_tree_level_2__i_valid_latch;
-
+// added by jianming
+	wire N411_buf0;
+	wire N411_buf1;
+	wire N411_buf2;
+	wire N411_buf3;
+	wire N203_0;
+	wire N203_1;
+	wire N203_2;
+	wire N203_3;
+	wire N411_buf2_0;
+	wire N411_buf2_1;
+	wire N411_buf2_2;
+	wire N411_buf2_3;
+   	wire N404_buf_0;
+	wire N404_buf_1;
+	wire N404_buf_2;
+	wire N404_buf_3;
+	wire N405_buf_0;
+	wire N405_buf_1;
+	wire N405_buf_2;
+	wire N405_buf_3;
+	wire N210_buf_0;
+	wire N210_buf_1;
+	wire N210_buf_2;
+	wire N210_buf_3;
+	wire N203_buf_0;
+	wire N203_buf_1;
+	wire N203_buf_2;
+	wire N203_buf_3;
+	wire N210_buf2_0;
+	wire N210_buf2_1;
+	wire N210_buf2_2;
+	wire N210_buf2_3;
+	
    INVD12BWP30P140LVT postctshold_FE_RC_346_0 (.I(i_data_bus[8]),
 	.ZN(FE_RN_149_0));
    INR2D8BWP30P140LVT postctshold_FE_RC_345_0 (.A1(FE_OFN974_n),
@@ -6884,8 +6917,14 @@ module wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0 
    DFQD1BWP30P140LVT o_data_bus_reg_reg_174_ (.CP(CLK_clone32),
 	.D(N412),
 	.Q(o_data_bus[174]));
+
+
+   BUFFD0BWP30P140LVT UI_N411_buf0 (.I(N411), .Z(N411_buf0));
+   BUFFD0BWP30P140LVT UI_N411_buf1 (.I(N411_buf0), .Z(N411_buf1));
+   BUFFD0BWP30P140LVT UI_N411_buf2 (.I(N411_buf1), .Z(N411_buf2));
+   BUFFD0BWP30P140LVT UI_N411_buf3 (.I(N411_buf2), .Z(N411_buf3));
    DFQD1BWP30P140LVT o_data_bus_reg_reg_173_ (.CP(CLK_clone33),
-	.D(N411),
+	.D(N411_buf3),
 	.Q(o_data_bus[173]));
    DFQD1BWP30P140LVT o_data_bus_reg_reg_172_ (.CP(CLK_clone41),
 	.D(N410),
@@ -6980,8 +7019,13 @@ module wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_0 
    DFQD1BWP30P140LVT o_data_bus_reg_reg_142_ (.CP(CLK_clone33),
 	.D(N412),
 	.Q(o_data_bus[142]));
+
+   BUFFD0BWP30P140LVT UI_N411_buf2_0 (.I(N411), .Z(N411_buf2_0));
+   BUFFD0BWP30P140LVT UI_N411_buf2_1 (.I(N411_buf2_0), .Z(N411_buf2_1));
+   BUFFD0BWP30P140LVT UI_N411_buf2_2 (.I(N411_buf2_1), .Z(N411_buf2_2));
+   BUFFD0BWP30P140LVT UI_N411_buf2_3 (.I(N411_buf2_2), .Z(N411_buf2_3));
    DFQD1BWP30P140LVT o_data_bus_reg_reg_141_ (.CP(CLK_clone33),
-	.D(N411),
+	.D(N411_buf2_3),
 	.Q(o_data_bus[141]));
    DFQD1BWP30P140LVT o_data_bus_reg_reg_140_ (.CP(CLK_clone41),
 	.D(N410),
@@ -11510,8 +11554,13 @@ module wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_9 
    DFQD1BWP30P140LVT o_data_bus_reg_reg_135_ (.CP(CLK_clone21),
 	.D(N405),
 	.Q(o_data_bus[135]));
+
+   BUFFD0BWP30P140LVT UI_N404_buf_0 (.I(N404), .Z(N404_buf_0));
+   BUFFD0BWP30P140LVT UI_N404_buf_1 (.I(N404_buf_0), .Z(N404_buf_1));
+   BUFFD0BWP30P140LVT UI_N404_buf_2 (.I(N404_buf_1), .Z(N404_buf_2));
+   BUFFD0BWP30P140LVT UI_N404_buf_3 (.I(N404_buf_2), .Z(N404_buf_3));
    DFQD1BWP30P140LVT o_data_bus_reg_reg_134_ (.CP(CLK_clone21),
-	.D(N404),
+	.D(N404_buf_3),
 	.Q(o_data_bus[134]));
    DFQD1BWP30P140LVT o_data_bus_reg_reg_133_ (.CP(CLK_clone43),
 	.D(N403),
@@ -14156,8 +14205,14 @@ module wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_10
    DFQD1BWP30P140LVT o_data_bus_reg_reg_168_ (.CP(CLK_clone12),
 	.D(N406),
 	.Q(o_data_bus[168]));
+
+
+   BUFFD0BWP30P140LVT UI_N405_buf_0 (.I(N405), .Z(N405_buf_0));
+   BUFFD0BWP30P140LVT UI_N405_buf_1 (.I(N405_buf_0), .Z(N405_buf_1));
+   BUFFD0BWP30P140LVT UI_N405_buf_2 (.I(N405_buf_1), .Z(N405_buf_2));
+   BUFFD0BWP30P140LVT UI_N405_buf_3 (.I(N405_buf_2), .Z(N405_buf_3));
    DFQD1BWP30P140LVT o_data_bus_reg_reg_167_ (.CP(CLK_clone35),
-	.D(N405),
+	.D(N405_buf_3),
 	.Q(o_data_bus[167]));
    DFQD1BWP30P140LVT o_data_bus_reg_reg_166_ (.CP(CLK_clone35),
 	.D(N404),
@@ -16287,8 +16342,13 @@ module wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_11
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_107_ (.CP(CLK_clone26),
 	.D(N211),
 	.Q(wire_tree_level_2__i_data_latch[107]));
+
+   BUFFD0BWP30P140LVT UI_N210_buf_0 (.I(N210), .Z(N210_buf_0));
+   BUFFD0BWP30P140LVT UI_N210_buf_1 (.I(N210_buf_0), .Z(N210_buf_1));
+   BUFFD0BWP30P140LVT UI_N210_buf_2 (.I(N210_buf_1), .Z(N210_buf_2));
+   BUFFD0BWP30P140LVT UI_N210_buf_3 (.I(N210_buf_2), .Z(N210_buf_3));
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_106_ (.CP(CLK_clone29),
-	.D(N210),
+	.D(N210_buf_3),
 	.Q(wire_tree_level_2__i_data_latch[106]));
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_105_ (.CP(CLK_clone14),
 	.D(N209),
@@ -16308,8 +16368,14 @@ module wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_11
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_100_ (.CP(CLK_clone12),
 	.D(N204),
 	.Q(wire_tree_level_2__i_data_latch[100]));
+
+
+   BUFFD0BWP30P140LVT UI_N203_buf_0 (.I(N203), .Z(N203_buf_0));
+   BUFFD0BWP30P140LVT UI_N203_buf_1 (.I(N203_buf_0), .Z(N203_buf_1));
+   BUFFD0BWP30P140LVT UI_N203_buf_2 (.I(N203_buf_1), .Z(N203_buf_2));
+   BUFFD0BWP30P140LVT UI_N203_buf_3 (.I(N203_buf_2), .Z(N203_buf_3));
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_99_ (.CP(CLK_clone3),
-	.D(N203),
+	.D(N203_buf_3),
 	.Q(wire_tree_level_2__i_data_latch[99]));
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_98_ (.CP(CLK_clone3),
 	.D(N202),
@@ -16383,8 +16449,13 @@ module wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_11
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_75_ (.CP(CLK_clone29),
 	.D(N211),
 	.Q(wire_tree_level_2__i_data_latch[75]));
+
+   BUFFD0BWP30P140LVT UI_wire74_0 (.I(N210), .Z(N210_buf2_0));
+   BUFFD0BWP30P140LVT UI_wire74_1 (.I(N210_buf2_0), .Z(N210_buf2_1));
+   BUFFD0BWP30P140LVT UI_wire74_2 (.I(N210_buf2_1), .Z(N210_buf2_2));
+   BUFFD0BWP30P140LVT UI_wire74_3 (.I(N210_buf2_2), .Z(N210_buf2_3));
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_74_ (.CP(CLK_clone29),
-	.D(N210),
+	.D(N210_buf2_3),
 	.Q(wire_tree_level_2__i_data_latch[74]));
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_73_ (.CP(CLK_clone14),
 	.D(N209),
@@ -16404,8 +16475,13 @@ module wire_binary_tree_1_8_seq_DATA_WIDTH32_NUM_OUTPUT_DATA8_NUM_INPUT_DATA1_11
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_68_ (.CP(CLK_clone16),
 	.D(N204),
 	.Q(wire_tree_level_2__i_data_latch[68]));
+
+   BUFFD0BWP30P140LVT UI_N203_0 (.I(N203), .Z(N203_0));
+   BUFFD0BWP30P140LVT UI_N203_1 (.I(N203_0), .Z(N203_1));
+   BUFFD0BWP30P140LVT UI_N203_2 (.I(N203_1), .Z(N203_2));
+   BUFFD0BWP30P140LVT UI_N203_3 (.I(N203_2), .Z(N203_3));
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_67_ (.CP(CLK_clone6),
-	.D(N203),
+	.D(N203_3),
 	.Q(wire_tree_level_2__i_data_latch[67]));
    DFQD1BWP30P140LVT wire_tree_level_2__i_data_latch_reg_66_ (.CP(CLK_clone9),
 	.D(N202),
