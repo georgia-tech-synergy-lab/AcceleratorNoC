@@ -24,6 +24,7 @@ module wire_binary_tree_1_8_seq #(
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
 	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+	localparam NUM_BUF_LEVEL = 4;
 
     // interface
 	input                                        CLK;
@@ -67,7 +68,7 @@ module wire_binary_tree_1_8_seq #(
             end
         end
         
-        for (i = 0; i< NUM_LEVEL-2; i=i+1)
+        for (i = 0; i< NUM_LEVEL-1; i=i+1)
         begin: wire_tree_assignment
             localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
             localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH; 
@@ -96,67 +97,66 @@ module wire_binary_tree_1_8_seq #(
             end
         end
 
-        for (i = NUM_LEVEL-2; i< NUM_LEVEL; i=i+1)
-        begin: buf_level
-            localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
+        // define the buffer for the input of last level
+        for (i = 0; i< NUM_BUF_LEVEL; i=i+1)
+        begin: buf_in_last_level
+            localparam NUM_SWITCH_SHIFT =  (4'b0001 << (NUM_LEVEL-1));
             localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH;
 
-            // define the output wire for switches of level i
             wire      [WIDTH_DATA_LEVEL-1:0]         i_data_o_buf;
-            wire      [NUM_SWITCH_SHIFT-1:0]         i_valid_o_buf;
+            // wire      [NUM_SWITCH_SHIFT-1:0]         i_valid_o_buf;
         end
 
-        for (i=NUM_LEVEL-2; i<NUM_LEVEL;i=i+1)
-        begin
-            for (j=0; j<buf_level[NUM_LEVEL-2];j=j+1)
-            begin 
-                // option 1: add buf0 chain to 3 bit of 128 bits
-                BUFFD0BWP30P140LVT UI_second_last (.I(), .Z(buf_level[i].i_data_o_buf[i]));
-                BUFFD0BWP30P140LVT UI_second_last (.I(), .Z(buf_level[i].i_data_o_buf[i]));
-                BUFFD0BWP30P140LVT UI_second_last (.I(), .Z(buf_level[i].i_data_o_buf[i]));
-                BUFFD0BWP30P140LVT UI_second_last (.I(), .Z(buf_level[i].i_data_o_buf[i]));
-                
-                // option 2: add buf0 chain to 128 bit of 128 bits
+        // assign the buffer for the second last level
+        for (j=0; j<buf_in_last_level[NUM_LEVEL-1].WIDTH_DATA_LEVEL; j=j+1)
+        begin: buf_in_last_level_assign
+            BUFFD0BWP30P140LVT UI_BUF_o_data_bus_first (.I(wire_tree_level[NUM_LEVEL-1].i_data_latch[j]), .Z(buf_in_last_level[0].i_data_o_buf[j]));
+            for (i = 0; i< NUM_BUF_LEVEL-1; i=i+1)
+               begin: buf_level
+                BUFFD0BWP30P140LVT UI_BUF_o_data_bus_stage_after (.I(buf_in_last_level[i].i_data_o_buf[j]), .Z(buf_in_last_level[i+1].i_data_o_buf[j]));
             end
         end
-
-        begin: wire_second_last_tree_assignment
-            localparam NUM_SWITCH_SHIFT =  (4'b0001 << (NUM_LEVEL-2));
-            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH; 
+        
+        // the second last level -- NUM_LEVEL-1
+        // begin: wire_second_last_tree_assignment
+        //     localparam NUM_SWITCH_SHIFT =  (4'b0001 << (NUM_LEVEL-2));
+        //     localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH; 
             
-            for( j=0; j<NUM_SWITCH_SHIFT; j=j+1)
-            begin: level_assignment
-                always@(posedge CLK)
-                begin
-                    if(i_en && (~rst))
-                    begin
-                        wire_tree_level[NUM_LEVEL-1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-2].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
-                        wire_tree_level[NUM_LEVEL-1].i_valid_latch[2*j] <= wire_tree_level[NUM_LEVEL-2].i_valid_latch[j];
+        //     for( j=0; j<NUM_SWITCH_SHIFT; j=j+1)
+        //     begin: level_assignment
+        //         always@(posedge CLK)
+        //         begin
+        //             if(i_en && (~rst))
+        //             begin
+        //                 wire_tree_level[NUM_LEVEL-1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= buf_in_last_level[NUM_BUF_LEVEL-1].i_data_o_buf[j*DATA_WIDTH+:DATA_WIDTH]; // wire_tree_level[NUM_LEVEL-2].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
+        //                 wire_tree_level[NUM_LEVEL-1].i_valid_latch[2*j] <= wire_tree_level[NUM_LEVEL-2].i_valid_latch[j];
 
-                        wire_tree_level[NUM_LEVEL-1].i_data_latch[(2*j+1)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-2].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
-                        wire_tree_level[NUM_LEVEL-1].i_valid_latch[2*j+1] <= wire_tree_level[NUM_LEVEL-2].i_valid_latch[j];
-                    end
-                    else
-                    begin
-                        wire_tree_level[NUM_LEVEL-1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                        wire_tree_level[NUM_LEVEL-1].i_valid_latch[2*j] <= 1'b0;
+        //                 wire_tree_level[NUM_LEVEL-1].i_data_latch[(2*j+1)*DATA_WIDTH+:DATA_WIDTH] <= buf_in_last_level[NUM_BUF_LEVEL-1].i_data_o_buf[j*DATA_WIDTH+:DATA_WIDTH]; // wire_tree_level[NUM_LEVEL-2].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
+        //                 wire_tree_level[NUM_LEVEL-1].i_valid_latch[2*j+1] <= wire_tree_level[NUM_LEVEL-2].i_valid_latch[j];
+        //             end
+        //             else
+        //             begin
+        //                 wire_tree_level[NUM_LEVEL-1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+        //                 wire_tree_level[NUM_LEVEL-1].i_valid_latch[2*j] <= 1'b0;
 
-                        wire_tree_level[NUM_LEVEL-1].i_data_latch[(2*j+1)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                        wire_tree_level[NUM_LEVEL-1].i_valid_latch[2*j+1] <= 1'b0;
-                    end
-                end
-            end
-        end
+        //                 wire_tree_level[NUM_LEVEL-1].i_data_latch[(2*j+1)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+        //                 wire_tree_level[NUM_LEVEL-1].i_valid_latch[2*j+1] <= 1'b0;
+        //             end
+        //         end
+        //     end
+        // end
 
         for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
         begin: assign_output_latch
             always @(posedge CLK) begin
                 if(i_en && (~rst))
                 begin
-                    o_data_bus_reg[2*i*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
+                    // o_data_bus_reg[2*i*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
+                    o_data_bus_reg[2*i*DATA_WIDTH+:DATA_WIDTH] <= buf_in_last_level[NUM_BUF_LEVEL-1].i_data_o_buf[i*DATA_WIDTH+:DATA_WIDTH];
                     o_valid_reg[2*i] <= wire_tree_level[NUM_LEVEL-1].i_valid_latch[i];
 
-                    o_data_bus_reg[(2*i+1)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
+                    // o_data_bus_reg[(2*i+1)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
+                    o_data_bus_reg[(2*i+1)*DATA_WIDTH+:DATA_WIDTH] <= buf_in_last_level[NUM_BUF_LEVEL-1].i_data_o_buf[i*DATA_WIDTH+:DATA_WIDTH];
                     o_valid_reg[2*i+1] <= wire_tree_level[NUM_LEVEL-1].i_valid_latch[i];
                 end
                 else
@@ -178,8 +178,10 @@ endmodule
 
 
 
-
 /* original design
+
+add 4 buffer chain before every bit of the output data.
+
 module wire_binary_tree_1_8_seq #(
 	parameter DATA_WIDTH = 32,      // could be arbitrary number
 	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
