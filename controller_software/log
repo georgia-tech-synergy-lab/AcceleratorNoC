@@ -1,0 +1,46 @@
+0 4 1 5 2 6 3 7 
+0 2 1 3 4 6 5 7 
+0 2 1 3 4 6 5 7 
+0 4 1 5 2 6 3 7 
+first index in = 0 next_served_data = 6
+pair_idx = 0 idx_out = 5 next_served_data = 5
+pair_idx = 0 idx_in = 3 data = 4 next_served_data = 4 is_config_gen == false
+
+pair_idx = 0 idx_out = 7 next_served_data = 7
+pair_idx = 0 idx_in = 0 data = 6 next_served_data = 6 is_config_gen == true
+
+first index in = 4 next_served_data = 3
+pair_idx = 0 idx_out = 2 next_served_data = 2
+pair_idx = 0 idx_in = 4 data = 3 next_served_data = 3 is_config_gen == true
+
+first index in = 6 next_served_data = 1
+pair_idx = 0 idx_out = 0 next_served_data = 0
+pair_idx = 0 idx_in = 6 data = 1 next_served_data = 1 is_config_gen == true
+
+first index in = 0 next_served_data = 6
+pair_idx = 1 idx_out = 2 next_served_data = 4
+pair_idx = 1 idx_in = 0 data = 6 next_served_data = 6 is_config_gen == true
+
+first index in = 2 next_served_data = 3
+pair_idx = 1 idx_out = 0 next_served_data = 1
+pair_idx = 1 idx_in = 2 data = 3 next_served_data = 3 is_config_gen == true
+
+first index in = 4 next_served_data = 5
+pair_idx = 1 idx_out = 7 next_served_data = 7
+pair_idx = 1 idx_in = 4 data = 5 next_served_data = 5 is_config_gen == true
+
+first index in = 6 next_served_data = 2
+pair_idx = 1 idx_out = 4 next_served_data = 0
+pair_idx = 1 idx_in = 6 data = 2 next_served_data = 2 is_config_gen == true
+
+6 5 7 4 3 2 1 0 
+6 4 3 1 5 7 2 0 
+6 3 4 1 5 2 7 0 
+3 6 1 4 2 5 0 7 
+1 3 4 6 0 2 5 7 
+0 1 2 3 4 5 6 7 
+4 3 4 4 
+4 4 4 4 
+3 3 3 3 
+3 3 3 4 
+3 3 4 4 
