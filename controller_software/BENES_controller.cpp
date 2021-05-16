@@ -1,5 +1,6 @@
 #include "BENES_controller.hpp"
 #define generate_config
+// #define DEBUG
 
 // global variable
 sim_config_t sim_conf;
@@ -93,14 +94,14 @@ void setup_proc(const sim_config_t* sim_conf){
     }
 
     // for debug -- print the connection functions  
-    // /*
+#ifdef DEBUG
     for(int i=0; i<sim_conf->num_stage-1; i++){
         for(int j=0; j<sim_conf->num_in_data; j++){
             std::cout <<BENES_connection[i][j] << " ";
         }
         std::cout << std::endl;
     }
-    // */
+#endif
 }
 
 void read_input(const sim_config_t* sim_conf){
@@ -109,12 +110,12 @@ void read_input(const sim_config_t* sim_conf){
     }
  
     // for debug -- print the content read from the input file.  
-    /*
+#ifdef DEBUG
     for(int i=0; i< sim_conf->num_in_data; i++){
         std::cout << data_stage[0][i] << " ";
     }
     std::cout << std::endl;
-    */
+#endif
 }
 
 void run_proc(const sim_config_t* sim_conf){
@@ -122,7 +123,6 @@ void run_proc(const sim_config_t* sim_conf){
     Var: the data_stage records the data where 
     1. fill destination into the last stage of the BENES network.
     2. generate the config for the external stagae of the BENES network.
-    3. .
     */
 
     // 1 
@@ -153,8 +153,9 @@ void run_proc(const sim_config_t* sim_conf){
                     break;
                 }
             }
+#ifdef DEBUG
             std::cout << "first index in = " << idx_in << " next_served_data = " << next_served_data << std::endl;
-            
+#endif      
             // 2 
             // Need to decide which data of a single switch go through the upper part of BENES
             // initially, pick the first unassigned switch & make the lower input go to the upper half of inner BENES
@@ -227,8 +228,9 @@ void run_proc(const sim_config_t* sim_conf){
                         idx_out = j;
                     }
                 }
+#ifdef DEBUG 
                 std::cout << "pair_idx = " << pair_idx << " idx_out = " << idx_out << " next_served_data = " << next_served_data << std::endl;
-
+#endif
                 // 5 
                 data_stage[sim_conf->num_stage - pair_idx][((idx_out>>1)<<1)].is_config_gen = true;
                 data_stage[sim_conf->num_stage - pair_idx][((idx_out>>1)<<1)+1].is_config_gen = true;
@@ -273,6 +275,7 @@ void run_proc(const sim_config_t* sim_conf){
                         idx_in = j;
                     }
                 }
+#ifdef DEBUG 
                 std::cout << "pair_idx = " << pair_idx << " idx_in = " << idx_in << " data = " << data_stage[pair_idx][idx_in].data << " next_served_data = " << next_served_data;
                 if( data_stage[pair_idx][idx_in].is_config_gen){
                     std::cout << " is_config_gen == true" << std::endl << std::endl;
@@ -280,6 +283,7 @@ void run_proc(const sim_config_t* sim_conf){
                 else{
                     std::cout << " is_config_gen == false" << std::endl << std::endl;
                 }
+#endif
             }
         }
 
@@ -294,7 +298,173 @@ void run_proc(const sim_config_t* sim_conf){
 #endif
 }
 
+
+void test_config(const sim_config_t* sim_conf){
+    /* 
+        1. design BENES connection function 
+            (second half differ from the original one)
+            becuase here we only forward data from input to output
+            while in the previous configuration generation stage,
+            we need to back trace the data back from the output stage.
+        2. process the first stage of switches
+        3. process the stages remaining.
+    */
+
+    // 1 -- connection function generation -- first half stages
+    std::vector<int *> test_BENES_connection;
+    test_BENES_connection.resize(sim_conf->num_stage-1);
+    for(int i = 0; i<sim_conf->num_half_stage-1; i++){
+        int num_data_per_group = (0b1 << sim_conf->num_half_stage) >> i; 
+        int data_mask = num_data_per_group-0b1;
+        int* connection_ptr = new int [sim_conf->num_in_data];
+        for(int g = 0; g < (0b1 << i); g++){
+            for(int j=0; j < num_data_per_group; j++){
+                connection_ptr[j+g*num_data_per_group] = ((j >> 1)&data_mask);
+                if((j & 0b1) == 0b1){
+                    connection_ptr[j+g*num_data_per_group] += (num_data_per_group>>1) ;
+                }
+                connection_ptr[j+g*num_data_per_group] += num_data_per_group*g;
+            }
+        }
+        test_BENES_connection[i] = connection_ptr;
+    }
+
+    // 1 -- connection function generation -- second half stages
+    for(int i = sim_conf->num_half_stage-1; i<sim_conf->num_stage-1; i++){
+        int num_data_per_group = (0b1 << sim_conf->num_half_stage) >> (sim_conf->num_stage-2-i); 
+        int data_mask = num_data_per_group - 0b1;
+        int* connection_ptr = new int [sim_conf->num_in_data];
+        int MSB_mask = num_data_per_group >> 1;
+        for(int g = 0; g < (0b1 << (sim_conf->num_stage-2-i)); g++){
+            for(int j=0; j < num_data_per_group; j++){
+                connection_ptr[j+g*num_data_per_group] = ((j << 1)&data_mask);
+                if((j & MSB_mask) == MSB_mask){
+                    connection_ptr[j+g*num_data_per_group] += 0b1;
+                }
+                connection_ptr[j+g*num_data_per_group] += num_data_per_group*g;
+            }
+        }
+        test_BENES_connection[i] = connection_ptr;
+    }
+    
+#ifdef DEBUG 
+    std::cout << "test test_BENES_connection: " << std::endl;
+    for(int i=0; i< sim_conf->num_stage-1; i++){
+        for(int j=0; j<sim_conf->num_in_data; j++){
+            std::cout << test_BENES_connection[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+#endif
+
+    // 2 -- initialization
+    std::vector<int* > test_data_stage;
+    // test_data_stage record the both input and output all stages.
+    
+    test_data_stage.resize(sim_conf->num_stage+1);
+    // initialization -- first stage
+    {
+        int* data_ptr = new int [sim_conf->num_in_data];
+        for(int i=0; i< sim_conf->num_in_data; i++){
+            data_ptr[i] = data_stage[0][i].data;
+        }    
+        test_data_stage[0] = data_ptr;
+    }
+
+    // initialization -- stages afterward
+    for(int j=1;j<sim_conf->num_stage+1; j++){
+        int* data_ptr = new int [sim_conf->num_in_data];
+        for(int i=0; i<sim_conf->num_in_data; i++){
+            data_ptr[i] = 0;
+        }
+        test_data_stage[j] = data_ptr;
+    }
+
+    // 2 -- forward data based on the configuration and connection functions.
+    // forward the first stage -- calculate the output of the first stage
+    for(int i=0; i< sim_conf->num_in_switch; i++){
+        if(config_stage[0][i] == OP_PT){
+            test_data_stage[1][i<<1] = test_data_stage[0][i<<1];
+            test_data_stage[1][(i<<1)+1] = test_data_stage[0][(i<<1)+1];
+        } 
+        else{
+            test_data_stage[1][i<<1] = test_data_stage[0][(i<<1)+1];
+            test_data_stage[1][(i<<1)+1] = test_data_stage[0][(i<<1)];
+        }
+    }
+
+    // 3 -- forward the stages afterward
+    for(int i=1; i< sim_conf->num_stage; i++){
+        // forward the data to the input of next stage based on the connection function.
+        for(int j=0; j<sim_conf->num_in_switch; j++){
+            test_data_stage[i+1][test_BENES_connection[i-1][j<<1]] = test_data_stage[i][j<<1];
+            test_data_stage[i+1][test_BENES_connection[i-1][(j<<1)+1]] = test_data_stage[i][(j<<1)+1];
+        }
+
+        // forward the data into the output ports of the switches based on the configuration.
+        for(int j=0; j<sim_conf->num_in_switch; j++){
+            if(config_stage[i][j] == OP_CROSS){
+                int temp = test_data_stage[i+1][j<<1];
+                test_data_stage[i+1][j<<1] = test_data_stage[i+1][(j<<1) + 1];
+                test_data_stage[i+1][(j<<1) + 1] = temp;
+            }
+            else if(config_stage[i][j] == OP_MH){
+                test_data_stage[i+1][j<<1] = test_data_stage[i+1][(j<<1)+1];
+            }
+            else if(config_stage[i][j] == OP_ML){
+                test_data_stage[i+1][(j<<1) + 1] = test_data_stage[i+1][(j<<1)];
+            }
+        }
+    }
+
+#ifdef DEBUG 
+    std::cout << "test forward data -- output data: " << std::endl;
+    for(int i=0; i< sim_conf->num_stage+1; i++){
+        for(int j=0; j<sim_conf->num_in_data; j++){
+            std::cout << test_data_stage[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+#endif
+
+    bool test_pass = true;
+    for(int i=0; i<sim_conf->num_in_data; i++){
+        if(data_stage[sim_conf->num_stage][i].data != test_data_stage[sim_conf->num_stage][i]){
+            test_pass = false;
+            break;
+        }
+    }
+
+    if(!test_pass){
+        std::cout << "#############    ERROR case    ###############" << std::endl;
+        std::cout << "#############       Input      ###############" << std::endl;
+        for(int i=0; i<sim_conf->num_in_data; i++){
+            std::cout << data_stage[0][i].data << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "############# expected transfer ###############" << std::endl;
+        for(int i=0; i< sim_conf->num_stage+1; i++){
+            for(int j=0; j<sim_conf->num_in_data; j++){
+                std::cout << data_stage[i][j].data << " ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << "#############  tested transfer  ###############" << std::endl;
+        for(int i=0; i< sim_conf->num_stage+1; i++){
+            for(int j=0; j<sim_conf->num_in_data; j++){
+                std::cout << test_data_stage[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
 void complete_proc(const sim_config_t* sim_conf){
+#ifdef DEBUG
     // output data stage
     for(int i=0; i<sim_conf->num_stage+1; i++){
         for(int j=0; j<sim_conf->num_in_data; j++){
@@ -310,6 +480,24 @@ void complete_proc(const sim_config_t* sim_conf){
         }
         std::cout << std::endl;
     }
+#endif
+
+    // delete all pointer:
+    // delete data_stage
+    for(int i = 0; i<data_stage.size(); i++){
+        delete [] data_stage[i];
+    }
+
+    // delete config_stage
+    for(int i = 0; i<config_stage.size(); i++){
+        delete [] config_stage[i];
+    }
+
+    // delete BENES_connection
+    for(int i = 0; i<BENES_connection.size(); i++){
+        delete [] BENES_connection[i];
+    }
+
 }
 
 
@@ -358,6 +546,6 @@ int main(int argc, char *const argv[])
     setup_proc(&sim_conf);
     read_input(&sim_conf);
     run_proc(&sim_conf);
+    test_config(&sim_conf);
     complete_proc(&sim_conf);
-    
 }

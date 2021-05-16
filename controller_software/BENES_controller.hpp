@@ -36,4 +36,5 @@ struct data_t{
 void setup_proc(const sim_config_t* sim_conf);
 void read_input(const sim_config_t* sim_conf);
 void run_proc(const sim_config_t* sim_conf);
+void test_config(const sim_config_t* sim_conf);
 void complete_proc(const sim_config_t* sim_conf);
