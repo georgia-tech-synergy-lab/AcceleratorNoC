@@ -108,11 +108,11 @@ module wire_binary_tree_1_8_seq #(
         end
 
         // assign the buffer for the second last level
-        for (j=0; j<buf_in_last_level[NUM_LEVEL-1].WIDTH_DATA_LEVEL; j=j+1)
-        begin: buf_in_last_level_assign
+        for (j=0; j<((4'b0001 << (NUM_LEVEL-1))*DATA_WIDTH); j=j+1)
+        begin: UI_buf_in_last_level_assign
             BUFFD0BWP30P140LVT UI_BUF_o_data_bus_first (.I(wire_tree_level[NUM_LEVEL-1].i_data_latch[j]), .Z(buf_in_last_level[0].i_data_o_buf[j]));
             for (i = 0; i< NUM_BUF_LEVEL-1; i=i+1)
-               begin: buf_level
+            begin: buf_levelS
                 BUFFD0BWP30P140LVT UI_BUF_o_data_bus_stage_after (.I(buf_in_last_level[i].i_data_o_buf[j]), .Z(buf_in_last_level[i+1].i_data_o_buf[j]));
             end
         end
