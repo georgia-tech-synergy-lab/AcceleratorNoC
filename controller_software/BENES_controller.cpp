@@ -108,11 +108,10 @@ void read_input(const sim_config_t* sim_conf){
     for(int i=0; i<sim_conf->num_in_data;i++){
         fscanf(i_data, "%d", &data_stage[0][i].data);
     }
- 
     // for debug -- print the content read from the input file.  
 #ifdef DEBUG
     for(int i=0; i< sim_conf->num_in_data; i++){
-        std::cout << data_stage[0][i] << " ";
+        std::cout << data_stage[0][i].data << " ";
     }
     std::cout << std::endl;
 #endif
@@ -260,13 +259,13 @@ void run_proc(const sim_config_t* sim_conf){
                 }
 
                 // 8
-                if(config_stage[sim_conf->num_stage-1-pair_idx][idx_in>>1] == OP_PT){
-                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[sim_conf->num_stage-pair_idx-2][((idx_in>>1)<<1)]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_in>>1)<<1)].data;
-                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[sim_conf->num_stage-pair_idx-2][((idx_in>>1)<<1)+1]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_in>>1)<<1)+1].data;
+                if(config_stage[sim_conf->num_stage-1-pair_idx][idx_out>>1] == OP_PT){
+                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)].data;
+                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)+1]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)+1].data;
                 }
                 else{
-                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[sim_conf->num_stage-pair_idx-2][((idx_in>>1)<<1)]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_in>>1)<<1)+1].data;
-                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[sim_conf->num_stage-pair_idx-2][((idx_in>>1)<<1)+1]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_in>>1)<<1)].data;
+                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)+1].data;
+                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)+1]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)].data;
                 }
                 
                 // 9 
@@ -329,7 +328,7 @@ void test_config(const sim_config_t* sim_conf){
         test_BENES_connection[i] = connection_ptr;
     }
 
-    // 1 -- connection function generation -- second half stages
+    // 1 -- connection function generation -- second half stages 
     for(int i = sim_conf->num_half_stage-1; i<sim_conf->num_stage-1; i++){
         int num_data_per_group = (0b1 << sim_conf->num_half_stage) >> (sim_conf->num_stage-2-i); 
         int data_mask = num_data_per_group - 0b1;
@@ -367,7 +366,8 @@ void test_config(const sim_config_t* sim_conf){
     {
         int* data_ptr = new int [sim_conf->num_in_data];
         for(int i=0; i< sim_conf->num_in_data; i++){
-            data_ptr[i] = data_stage[0][i].data;
+            int temp =  data_stage[0][i].data;
+            data_ptr[i] = temp;
         }    
         test_data_stage[0] = data_ptr;
     }
@@ -459,8 +459,28 @@ void test_config(const sim_config_t* sim_conf){
             std::cout << std::endl;
         }
         std::cout << std::endl;
-        exit(EXIT_FAILURE);
+        std::cout << "#############   configuration   ###############" << std::endl;
+        for(int i=0; i<sim_conf->num_stage;i++){
+            for(int j=0; j<sim_conf->num_in_switch; j++){
+                std::cout << config_stage[i][j] << " "; 
+            }
+            std::cout << std::endl; 
+        }
     }
+
+    // delete memory 
+    for(int i=0; i< test_data_stage.size(); i++){
+        delete [] test_data_stage[i];
+    }
+
+    for(int i=0; i< test_BENES_connection.size(); i++){
+        delete [] test_BENES_connection[i];
+    }
+
+
+    if(!test_pass)
+        exit(EXIT_FAILURE);
+
 }
 
 void complete_proc(const sim_config_t* sim_conf){
@@ -487,16 +507,19 @@ void complete_proc(const sim_config_t* sim_conf){
     for(int i = 0; i<data_stage.size(); i++){
         delete [] data_stage[i];
     }
+    data_stage.clear();
 
     // delete config_stage
     for(int i = 0; i<config_stage.size(); i++){
         delete [] config_stage[i];
     }
+    config_stage.clear();
 
     // delete BENES_connection
     for(int i = 0; i<BENES_connection.size(); i++){
         delete [] BENES_connection[i];
     }
+    BENES_connection.clear();
 
 }
 
@@ -542,10 +565,12 @@ int main(int argc, char *const argv[])
     sim_conf.num_half_stage = (uint64_t) log2(sim_conf.num_in_data);
     sim_conf.num_stage = (uint64_t)(2*sim_conf.num_half_stage-1);
     sim_conf.num_in_switch = sim_conf.num_in_data >> 1;
-    
-    setup_proc(&sim_conf);
-    read_input(&sim_conf);
-    run_proc(&sim_conf);
-    test_config(&sim_conf);
-    complete_proc(&sim_conf);
+
+    for(int k=0; k<40319; k++){
+        setup_proc(&sim_conf);
+        read_input(&sim_conf);
+        run_proc(&sim_conf);
+        test_config(&sim_conf);
+        complete_proc(&sim_conf);
+    }
 }
