@@ -37,7 +37,7 @@ def get_paths_violating_holding_time():
     for i in range(len(path_list)-1):
         if path_list[i] != path_list[i+1]:
              unique_path_list.append(path_list[i+1])
-    # print(unique_path_list)
+    print(unique_path_list)
     err_log.close()
 
 
