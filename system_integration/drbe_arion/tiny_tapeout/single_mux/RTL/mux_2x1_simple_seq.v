@@ -40,6 +40,10 @@ module mux_2x1_simple_seq#(
 	// control signals
 	i_en            // mux enable
 );
+
+    // parameters
+    localparam  NUM_BUF_LEVEL  = 4;
+    
     // timing signals
     input                          clk;
     input                          rst;
@@ -64,45 +68,65 @@ module mux_2x1_simple_seq#(
         i_valid_inner = i_valid;
     end
 
-    always@(posedge clk)
-    begin
-        if(i_en)
+    genvar i,j;
+
+    generate
+       // define the buffer for the input of last level
+        for (i = 0; i< NUM_BUF_LEVEL; i=i+1)
+        begin: buf_def
+            wire      [2*DATA_WIDTH-1:0]         i_data_o_buf;
+        end
+
+        // assign the buffer for the second last level
+        for (j=0; j<2*DATA_WIDTH; j=j+1)
+        begin: UI_buf_assign
+            BUFFD0BWP30P140LVT UI_BUF_o_data_bus_first (.I(i_data_bus[j]), .Z(buf_def[0].i_data_o_buf[j]));
+            for (i = 0; i< NUM_BUF_LEVEL-1; i=i+1)
+            begin: buf_level
+                BUFFD0BWP30P140LVT UI_BUF_o_data_bus_stage_after (.I(buf_def[i].i_data_o_buf[j]), .Z(buf_def[i+1].i_data_o_buf[j]));
+            end
+        end
+
+        always@(posedge clk)
         begin
-            if(rst)
+            if(i_en)
             begin
-                o_data_bus_inner <= {DATA_WIDTH{1'b0}};
-                o_valid_inner <= 1'b0;
+                if(rst)
+                begin
+                    o_data_bus_inner <= {DATA_WIDTH{1'b0}};
+                    o_valid_inner <= 1'b0;
+                end
+                else
+                begin
+                    case({i_valid_inner})
+                        2'b01:
+                        begin
+                            begin
+                                o_valid_inner <= 1'b1;
+                                o_data_bus_inner <= buf_def[NUM_BUF_LEVEL-1].i_data_o_buf[0 +:DATA_WIDTH];
+                            end
+                        end						
+                        2'b10:
+                        begin
+                            o_valid_inner <= 1'b1;
+                            o_data_bus_inner <= buf_def[NUM_BUF_LEVEL-1].i_data_o_buf[DATA_WIDTH +:DATA_WIDTH];
+                        end						
+                        default:
+                        begin
+                            o_valid_inner <= 1'b0;
+                            o_data_bus_inner <= {DATA_WIDTH{1'b0}};
+                        end											
+                    endcase
+                end
             end
             else
             begin
-                casex({i_valid_inner})
-                    2'b01:
-                    begin
-                        begin
-                            o_valid_inner <= 1'b1;
-                            o_data_bus_inner <= i_data_bus[0 +:DATA_WIDTH];
-                        end
-                    end						
-                    2'b10:
-                    begin
-                        o_valid_inner <= 1'b1;
-                        o_data_bus_inner <= i_data_bus[DATA_WIDTH +:DATA_WIDTH];
-                    end						
-                    default:
-                    begin
-                        o_valid_inner <= 1'b0;
-                        o_data_bus_inner <= {DATA_WIDTH{1'b0}};
-                    end											
-                endcase
+                o_valid_inner <= 1'b0;
+                o_data_bus_inner <= {DATA_WIDTH{1'b0}};
             end
         end
-        else
-        begin
-            o_valid_inner <= 1'b0;
-            o_data_bus_inner <= {DATA_WIDTH{1'b0}};
-        end
-    end
-
+        
+    endgenerate
 	// output inner logic
 	assign  o_data_bus = o_data_bus_inner;
 	assign  o_valid = o_valid_inner;

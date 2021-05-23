@@ -33,7 +33,7 @@ module tb_controller_integrated_dft;
 	parameter obj_id_width = 2; // log(N_obj)
 	parameter tapping_loc_packet_width = sample_address_width + obj_id_width; // log(N_obj)
 	parameter scen_len_width = 14;   //needs to be revised
-	parameter T_clk = 1;//0.52;   //needs to be revised
+	parameter T_clk = 2;//0.52;   //needs to be revised
  	parameter noc_output_half = 8;   //needs to be revised
    
     	reg CLK;

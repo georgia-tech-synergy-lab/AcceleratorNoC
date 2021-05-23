@@ -1,0 +1,43 @@
+ 
+****************************************
+Report : area
+Design : mux_2x1_simple_seq
+Version: J-2014.09-SP3
+Date   : Sat May 22 22:59:41 2021
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140lvttt0p8v25c (File: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/unzipped/tcbn28hpcplusbwp30p140lvt_190a/tcbn28hpcplusbwp30p140lvt_180a_nldm/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp30p140lvt_180a/tcbn28hpcplusbwp30p140lvttt0p8v25c.db)
+
+Number of ports:                          102
+Number of nets:                           431
+Number of cells:                          362
+Number of combinational cells:            329
+Number of sequential cells:                33
+Number of macros/black boxes:               0
+Number of buf/inv:                        292
+Number of references:                      10
+
+Combinational area:                134.063997
+Buf/Inv area:                      105.965998
+Noncombinational area:              74.843996
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                   208.907994
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area          Local cell area
+                                  ------------------  --------------------------- 
+Hierarchical cell                 Absolute   Percent  Combi-    Noncombi-  Black-
+                                  Total      Total    national  national   boxes   Design
+--------------------------------  ---------  -------  --------  ---------  ------  ---------
+mux_2x1_simple_seq                 208.9080    100.0  134.0640    74.8440  0.0000  mux_2x1_simple_seq
+--------------------------------  ---------  -------  --------  ---------  ------  ---------
+Total                                                 134.0640    74.8440  0.0000
+
+1

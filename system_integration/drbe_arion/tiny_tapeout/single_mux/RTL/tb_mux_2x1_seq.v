@@ -88,10 +88,11 @@ end
 
 
     // instantiate DUT (device under test)
-    mux_2x1_simple_seq #(
-		.DATA_WIDTH(DATA_WIDTH),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH)
-	) dut(
+    // mux_2x1_simple_seq #(
+	// 	.DATA_WIDTH(DATA_WIDTH),
+    //     .COMMMAND_WIDTH(COMMMAND_WIDTH)
+	// ) dut(
+    mux_2x1_simple_seq dut(
 	    .clk(clk),
 	    .rst(rst),
 		.i_valid(i_valid),
