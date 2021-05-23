@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+
 /////////////////////////////////////////////////////////////
 // Top Module:  adder_tree_comb
 // Data:        Only data width matters.
@@ -8,7 +9,8 @@
 //
 // Parameter:   NUM_INPUT_DATA could be arbitrary integer
 //
-// Function:   sum all input together
+// Function:    sum all input together
+//
 //   \     /     \     / ... \     /     \     /
 //    v   v       v   v  ...  v   v       v   v    
 //    |¯¯¯|       |¯¯¯|  ...  |¯¯¯|       |¯¯¯|
