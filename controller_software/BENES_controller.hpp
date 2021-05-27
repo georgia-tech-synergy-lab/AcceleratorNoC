@@ -7,7 +7,7 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
-
+#include <algorithm>
 #define INVALID_DATA -1
 
 // Struct for tracking the simulation parameters
@@ -30,6 +30,7 @@ typedef enum {
 
 struct data_t{
     bool is_config_gen;
+    int target_data;   //only used for multicasting, because this data will be replaced by target_data somewhere
     int data;
 };
 
