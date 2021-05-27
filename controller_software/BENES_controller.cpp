@@ -9,6 +9,7 @@ std::vector<config_t *> config_stage;
 std::vector<int *> BENES_connection;
 FILE *fin = stdin; // config file
 FILE *i_data = NULL; // i_data file
+bool IsMulticasting = false; // global variable to decide whether to implement multicasting.
 
 // Print error usage
 static void print_err_usage(const char *err)
@@ -21,8 +22,12 @@ static void print_err_usage(const char *err)
     exit(EXIT_FAILURE);
 }
 
-
 void setup_proc(const sim_config_t* sim_conf){
+    /*
+        Initialize the mode with unicasting
+    */
+    IsMulticasting = true;
+
     /*
         data should record both input and output of all stages
         So here we need an extra stage.
@@ -33,6 +38,7 @@ void setup_proc(const sim_config_t* sim_conf){
         for(int j=0; j< sim_conf->num_in_data; j++){
             data_ptr[j].data = INVALID_DATA;
             data_ptr[j].is_config_gen = false;
+            data_ptr[j].target_data = INVALID_DATA;
         }
         data_stage[i] = data_ptr;
     }
@@ -53,7 +59,7 @@ void setup_proc(const sim_config_t* sim_conf){
     BENES_connection.resize(sim_conf->num_stage-1);
     for(int i = 0; i<sim_conf->num_half_stage-1; i++){
         int num_data_per_group = (0b1 << sim_conf->num_half_stage) >> i; 
-        int data_mask = num_data_per_group-0b1;
+        int data_mask = num_data_per_group - 0b1;
         int* connection_ptr = new int [sim_conf->num_in_data];
         for(int g = 0; g < (0b1 << i); g++){
             for(int j=0; j < num_data_per_group; j++){
@@ -105,198 +111,302 @@ void setup_proc(const sim_config_t* sim_conf){
 }
 
 void read_input(const sim_config_t* sim_conf){
+    std::vector<int> in_data;
+    in_data.resize(sim_conf->num_in_data);
+
     for(int i=0; i<sim_conf->num_in_data;i++){
         fscanf(i_data, "%d", &data_stage[0][i].data);
+        in_data[i] = data_stage[0][i].data;
     }
+
+    for(int i =0; i<sim_conf->num_in_data-1; i++){
+        if(in_data[i] == in_data[i+1])
+            IsMulticasting = true;
+    }
+
     // for debug -- print the content read from the input file.  
 #ifdef DEBUG
     for(int i=0; i< sim_conf->num_in_data; i++){
         std::cout << data_stage[0][i].data << " ";
     }
     std::cout << std::endl;
+    if(IsMulticasting)
+        std::cout << "Multicasting" << std::endl;
 #endif
 }
 
 void run_proc(const sim_config_t* sim_conf){
-    /*
-    Var: the data_stage records the data where 
-    1. fill destination into the last stage of the BENES network.
-    2. generate the config for the external stagae of the BENES network.
-    */
+    // choose the corresponding configuration generation strategy based on IsMulticasting
 
-    // 1 
-    for(int i=0; i<sim_conf->num_in_data; i++){
-        data_stage[sim_conf->num_stage][i].data = i;
-        data_stage[sim_conf->num_stage][i].is_config_gen = false;
-    }
+    if(IsMulticasting){
+        /*
+            Var: the data_stage records the data where 
+            1. fill destination into the last stage of the BENES network.
+            2. reset input data into 0~7, and put the data read from input file into target_data
+            Loop of all stages 
+                3. generate the config for the external stage of the BENES network based
+                Essential idea: replace data by target data if data and target_data is different.  
+                4. pass the data into the next stage
+                5. pass the target_data into the next stage
+        */
 
-#ifdef generate_config
-    // 2 
-    for(int pair_idx=0; pair_idx<sim_conf->num_half_stage-1; pair_idx++){
-        // loop for all pairs of external stages. 
-        int num_processed = 0;
-        int next_served_data = 0;
-        while(num_processed < sim_conf->num_in_switch){
-            /*
-                1. find one and start there
-                2. define destination half variable
-                3. generate configuration until forming a loop
-            */
-
-            // 1 
-            int idx_in = 0;
-            for(int j=0; j<sim_conf->num_in_data; j++){
-                if(data_stage[pair_idx][j].is_config_gen == false){
-                    next_served_data = data_stage[pair_idx][j].data;
-                    idx_in = j;
-                    break;
+        // connection function generation -- second half stages
+        // the commented part are specifing the inverse shuffle connection
+        for(int i = sim_conf->num_half_stage-1; i<sim_conf->num_stage-1; i++){
+            int num_data_per_group = (0b1 << sim_conf->num_half_stage) >> (sim_conf->num_stage-2-i); 
+            int data_mask = num_data_per_group - 0b1;
+            int* connection_ptr = new int [sim_conf->num_in_data];
+            int MSB_mask = num_data_per_group >> 1;
+            for(int g = 0; g < (0b1 << (sim_conf->num_stage-2-i)); g++){
+                for(int j=0; j < num_data_per_group; j++){
+                    connection_ptr[j+g*num_data_per_group] = ((j << 1)&data_mask);
+                    if((j & MSB_mask) == MSB_mask){
+                        connection_ptr[j+g*num_data_per_group] += 0b1;
+                    }
+                    connection_ptr[j+g*num_data_per_group] += num_data_per_group*g;
                 }
             }
-#ifdef DEBUG
-            std::cout << "first index in = " << idx_in << " next_served_data = " << next_served_data << std::endl;
-#endif      
-            // 2 
-            // Need to decide which data of a single switch go through the upper part of BENES
-            // initially, pick the first unassigned switch & make the lower input go to the upper half of inner BENES
-            bool should_top = true; 
+            BENES_connection[i] = connection_ptr;
+        }
 
-            // 3
-            while(!data_stage[pair_idx][idx_in].is_config_gen){
-                /*
-                    1. [input stage] generate configuration for the switch, 
-                        (a) Let the lower input data of the switch go througth the upper part of BENES
-                            which means that let another input data of the same switch go through the lower part of BENES
-                        (b) update control var (should_top & next_served_data ) for controlling the output stages.
-                    2. [input stage] Set config_gen bit to true for data sharing the same input switch
-                    3. [input stage] Pass the data into the next stage.
-                    4. [outer loop iteration var] increase the num_processed to record 
-                        the number of data that have been served
-                    5. [output stage] find the index of served_data in the output stage
-                    6. [output stage] Set config_gen bit to true for data sharing the same output switch
-                    7. [output stage] Set corresponding connection in the output, the data going through upper half
-                                      in the input stage should also come from upper part of BENES in output stage. 
-                    8. [output stage] back trace the data into the previous stage.
-                    9. [output stage] Update next_served_data
-                */
-               
-                // 1 
-                if(should_top){
-                    should_top = false;
-                    if(idx_in & 0b1 == 0b1){
-                        config_stage[pair_idx][idx_in>>1] = OP_CROSS;
-                        next_served_data = data_stage[pair_idx][((idx_in>>1)<<1)].data;
-                    }
-                    else{    
-                        config_stage[pair_idx][idx_in>>1] = OP_PT;
-                        next_served_data = data_stage[pair_idx][((idx_in>>1)<<1)+1].data;
-                    }
-                }
-                else{
-                    should_top = true;
-                    if(idx_in & 0b1 == 0b1){
-                        config_stage[pair_idx][idx_in>>1] = OP_PT;
-                        next_served_data = data_stage[pair_idx][((idx_in>>1)<<1)].data;
-                    }
-                    else{    
-                        config_stage[pair_idx][idx_in>>1] = OP_CROSS;
-                        next_served_data = data_stage[pair_idx][((idx_in>>1)<<1)+1].data;
-                    }                
-                }
+        // 1 & 2
+        for(int i=0; i<sim_conf->num_in_data; i++){
+            data_stage[sim_conf->num_stage][i].data = data_stage[0][i].data;
+            data_stage[sim_conf->num_stage][i].target_data = data_stage[0][i].data;
+            data_stage[0][i].target_data = data_stage[0][i].data;
+            data_stage[0][i].data = i;
+            data_stage[sim_conf->num_stage][i].is_config_gen = false;
+        }
 
-                // 2 
-                data_stage[pair_idx][((idx_in>>1)<<1)].is_config_gen = true;
-                data_stage[pair_idx][((idx_in>>1)<<1)+1].is_config_gen = true;
+        for(int i=0; i< sim_conf->num_in_data; i++){
+            std::cout << data_stage[0][i].data << " ";
+        }
+        std::cout << std::endl;
 
-                // 3
-                if(config_stage[pair_idx][idx_in>>1] == OP_PT){
-                    data_stage[pair_idx+1][BENES_connection[pair_idx][((idx_in>>1)<<1)]].data = data_stage[pair_idx][((idx_in>>1)<<1)].data;
-                    data_stage[pair_idx+1][BENES_connection[pair_idx][((idx_in>>1)<<1)+1]].data = data_stage[pair_idx][((idx_in>>1)<<1)+1].data;
-                }
-                else{
-                    data_stage[pair_idx+1][BENES_connection[pair_idx][((idx_in>>1)<<1)]].data = data_stage[pair_idx][((idx_in>>1)<<1)+1].data;
-                    data_stage[pair_idx+1][BENES_connection[pair_idx][((idx_in>>1)<<1)+1]].data = data_stage[pair_idx][((idx_in>>1)<<1)].data;
-                }
+        for(int i=0; i< sim_conf->num_in_data; i++){
+            std::cout << data_stage[0][i].target_data << " ";
+        }
+        std::cout << std::endl;
 
-                // 4
-                num_processed+=1;
-
-                // 5
-                int idx_out = 0;
-                for(int j=0; j<sim_conf->num_in_data; j++){
-                    if(data_stage[sim_conf->num_stage - pair_idx][j].data == next_served_data){
-                        idx_out = j;
-                    }
-                }
-#ifdef DEBUG 
-                std::cout << "pair_idx = " << pair_idx << " idx_out = " << idx_out << " next_served_data = " << next_served_data << std::endl;
-#endif
-                // 5 
-                data_stage[sim_conf->num_stage - pair_idx][((idx_out>>1)<<1)].is_config_gen = true;
-                data_stage[sim_conf->num_stage - pair_idx][((idx_out>>1)<<1)+1].is_config_gen = true;
+        // 3
+        for(int stage_idx=0; stage_idx<sim_conf->num_stage; stage_idx++){
+            for (int sw_idx=0; sw_idx < sim_conf->num_in_switch; sw_idx++ ){
                 
-                // 6 & 7
-                if(should_top){
-                    should_top = false;
-                    if( idx_out & 0b1 == 0b1){
-                        config_stage[sim_conf->num_stage-1-pair_idx][idx_out>>1] = OP_CROSS;
-                        next_served_data = data_stage[sim_conf->num_stage - pair_idx][idx_out-1].data;
+                if(data_stage[stage_idx][sw_idx<<1].data !=  data_stage[stage_idx][sw_idx<<1].target_data && data_stage[stage_idx][(sw_idx<<1)+1].data ==  data_stage[stage_idx][sw_idx<<1].target_data )
+                    config_stage[stage_idx][sw_idx] = OP_MH;
+                else if(data_stage[stage_idx][(sw_idx<<1)+1].data !=  data_stage[stage_idx][(sw_idx<<1)+1].target_data && data_stage[stage_idx][sw_idx<<1].data ==  data_stage[stage_idx][(sw_idx<<1)+1].target_data )
+                    config_stage[stage_idx][sw_idx] = OP_ML;
+                else
+                    config_stage[stage_idx][sw_idx] = OP_PT;
+
+                if(stage_idx <sim_conf->num_stage-1){
+                    if(config_stage[stage_idx][sw_idx] == OP_MH){
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)]].data = data_stage[stage_idx][(sw_idx<<1)+1].data;
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)+1]].data = data_stage[stage_idx][(sw_idx<<1)+1].data;
+                        
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)]].target_data = data_stage[stage_idx][(sw_idx<<1)+1].target_data;
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)+1]].target_data = data_stage[stage_idx][(sw_idx<<1)+1].target_data;   
+                    }
+                    else if(config_stage[stage_idx][sw_idx] == OP_ML){
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)]].data = data_stage[stage_idx][(sw_idx<<1)].data;
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)+1]].data = data_stage[stage_idx][(sw_idx<<1)].data;
+
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)]].target_data = data_stage[stage_idx][(sw_idx<<1)].target_data;
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)+1]].target_data = data_stage[stage_idx][(sw_idx<<1)].target_data;   
                     }
                     else{
-                        config_stage[sim_conf->num_stage-1-pair_idx][idx_out>>1] = OP_PT;
-                        next_served_data = data_stage[sim_conf->num_stage - pair_idx][idx_out+1].data;
-                    }
-                }
-                else{
-                    should_top = true;
-                    if( idx_out & 0b1 == 0b1){
-                        config_stage[sim_conf->num_stage-1-pair_idx][idx_out>>1] = OP_PT;
-                        next_served_data = data_stage[sim_conf->num_stage - pair_idx][idx_out-1].data;
-                    }
-                    else{
-                        config_stage[sim_conf->num_stage-1-pair_idx][idx_out>>1] = OP_CROSS;
-                        next_served_data = data_stage[sim_conf->num_stage - pair_idx][idx_out+1].data;
-                    }           
-                }
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)]].data = data_stage[stage_idx][(sw_idx<<1)].data;
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)+1]].data = data_stage[stage_idx][(sw_idx<<1)+1].data;
 
-                // 8
-                if(config_stage[sim_conf->num_stage-1-pair_idx][idx_out>>1] == OP_PT){
-                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)].data;
-                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)+1]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)+1].data;
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)]].target_data = data_stage[stage_idx][(sw_idx<<1)].target_data;
+                        data_stage[stage_idx+1][BENES_connection[stage_idx][(sw_idx<<1)+1]].target_data = data_stage[stage_idx][(sw_idx<<1)+1].target_data;
+                    } 
                 }
-                else{
-                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)+1].data;
-                    data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)+1]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)].data;
-                }
-                
-                // 9 
-                for(int j=0; j<sim_conf->num_in_data; j++){
-                    if(data_stage[pair_idx][j].data == next_served_data){
-                        idx_in = j;
-                    }
-                }
-#ifdef DEBUG 
-                std::cout << "pair_idx = " << pair_idx << " idx_in = " << idx_in << " data = " << data_stage[pair_idx][idx_in].data << " next_served_data = " << next_served_data;
-                if( data_stage[pair_idx][idx_in].is_config_gen){
-                    std::cout << " is_config_gen == true" << std::endl << std::endl;
-                }
-                else{
-                    std::cout << " is_config_gen == false" << std::endl << std::endl;
-                }
-#endif
             }
         }
 
-        // the most inner stage
-        for(int i=0; i<sim_conf->num_stage; i++){
-            if(data_stage[sim_conf->num_half_stage-1][i<<1].data == data_stage[sim_conf->num_half_stage][i<<1].data)
-                config_stage[sim_conf->num_half_stage-1][i] = OP_PT;
-            else
-                config_stage[sim_conf->num_half_stage-1][i] = OP_CROSS;
+        
+    }
+    else{
+        /*
+            Var: the data_stage records the data where 
+            1. fill destination into the last stage of the BENES network.
+            2. generate the config for the external stagae of the BENES network.
+        */
+
+        // 1 
+        for(int i=0; i<sim_conf->num_in_data; i++){
+            data_stage[sim_conf->num_stage][i].data = i;
+            data_stage[sim_conf->num_stage][i].is_config_gen = false;
+        }
+
+#ifdef generate_config
+        // 2 
+        for(int pair_idx=0; pair_idx<sim_conf->num_half_stage-1; pair_idx++){
+            // loop for all pairs of external stages. 
+            int num_processed = 0;
+            int next_served_data = 0;
+            while(num_processed < sim_conf->num_in_switch){
+                /*
+                    1. find one and start there
+                    2. define destination half variable
+                    3. generate configuration until forming a loop
+                */
+
+                // 1 
+                int idx_in = 0;
+                for(int j=0; j<sim_conf->num_in_data; j++){
+                    if(data_stage[pair_idx][j].is_config_gen == false){
+                        next_served_data = data_stage[pair_idx][j].data;
+                        idx_in = j;
+                        break;
+                    }
+                }
+#ifdef DEBUG
+                std::cout << "first index in = " << idx_in << " next_served_data = " << next_served_data << std::endl;
+#endif      
+                // 2 
+                // Need to decide which data of a single switch go through the upper part of BENES
+                // initially, pick the first unassigned switch & make the lower input go to the upper half of inner BENES
+                bool should_top = true; 
+
+                // 3
+                while(!data_stage[pair_idx][idx_in].is_config_gen){
+                    /*
+                        1. [input stage] generate configuration for the switch, 
+                            (a) Let the lower input data of the switch go througth the upper part of BENES
+                                which means that let another input data of the same switch go through the lower part of BENES
+                            (b) update control var (should_top & next_served_data ) for controlling the output stages.
+                        2. [input stage] Set config_gen bit to true for data sharing the same input switch
+                        3. [input stage] Pass the data into the next stage.
+                        4. [outer loop iteration var] increase the num_processed to record 
+                            the number of data that have been served
+                        5. [output stage] find the index of served_data in the output stage
+                        6. [output stage] Set config_gen bit to true for data sharing the same output switch
+                        7. [output stage] Set corresponding connection in the output, the data going through upper half
+                                        in the input stage should also come from upper part of BENES in output stage. 
+                        8. [output stage] back trace the data into the previous stage.
+                        9. [output stage] Update next_served_data
+                    */
+                
+                    // 1 
+                    if(should_top){
+                        should_top = false;
+                        if(idx_in & 0b1 == 0b1){
+                            config_stage[pair_idx][idx_in>>1] = OP_CROSS;
+                            next_served_data = data_stage[pair_idx][((idx_in>>1)<<1)].data;
+                        }
+                        else{    
+                            config_stage[pair_idx][idx_in>>1] = OP_PT;
+                            next_served_data = data_stage[pair_idx][((idx_in>>1)<<1)+1].data;
+                        }
+                    }
+                    else{
+                        should_top = true;
+                        if(idx_in & 0b1 == 0b1){
+                            config_stage[pair_idx][idx_in>>1] = OP_PT;
+                            next_served_data = data_stage[pair_idx][((idx_in>>1)<<1)].data;
+                        }
+                        else{    
+                            config_stage[pair_idx][idx_in>>1] = OP_CROSS;
+                            next_served_data = data_stage[pair_idx][((idx_in>>1)<<1)+1].data;
+                        }                
+                    }
+
+                    // 2 
+                    data_stage[pair_idx][((idx_in>>1)<<1)].is_config_gen = true;
+                    data_stage[pair_idx][((idx_in>>1)<<1)+1].is_config_gen = true;
+
+                    // 3
+                    if(config_stage[pair_idx][idx_in>>1] == OP_PT){
+                        data_stage[pair_idx+1][BENES_connection[pair_idx][((idx_in>>1)<<1)]].data = data_stage[pair_idx][((idx_in>>1)<<1)].data;
+                        data_stage[pair_idx+1][BENES_connection[pair_idx][((idx_in>>1)<<1)+1]].data = data_stage[pair_idx][((idx_in>>1)<<1)+1].data;
+                    }
+                    else{
+                        data_stage[pair_idx+1][BENES_connection[pair_idx][((idx_in>>1)<<1)]].data = data_stage[pair_idx][((idx_in>>1)<<1)+1].data;
+                        data_stage[pair_idx+1][BENES_connection[pair_idx][((idx_in>>1)<<1)+1]].data = data_stage[pair_idx][((idx_in>>1)<<1)].data;
+                    }
+
+                    // 4
+                    num_processed+=1;
+
+                    // 5
+                    int idx_out = 0;
+                    for(int j=0; j<sim_conf->num_in_data; j++){
+                        if(data_stage[sim_conf->num_stage - pair_idx][j].data == next_served_data){
+                            idx_out = j;
+                        }
+                    }
+#ifdef DEBUG 
+                    std::cout << "pair_idx = " << pair_idx << " idx_out = " << idx_out << " next_served_data = " << next_served_data << std::endl;
+#endif
+                    // 5 
+                    data_stage[sim_conf->num_stage - pair_idx][((idx_out>>1)<<1)].is_config_gen = true;
+                    data_stage[sim_conf->num_stage - pair_idx][((idx_out>>1)<<1)+1].is_config_gen = true;
+                    
+                    // 6 & 7
+                    if(should_top){
+                        should_top = false;
+                        if( idx_out & 0b1 == 0b1){
+                            config_stage[sim_conf->num_stage-1-pair_idx][idx_out>>1] = OP_CROSS;
+                            next_served_data = data_stage[sim_conf->num_stage - pair_idx][idx_out-1].data;
+                        }
+                        else{
+                            config_stage[sim_conf->num_stage-1-pair_idx][idx_out>>1] = OP_PT;
+                            next_served_data = data_stage[sim_conf->num_stage - pair_idx][idx_out+1].data;
+                        }
+                    }
+                    else{
+                        should_top = true;
+                        if( idx_out & 0b1 == 0b1){
+                            config_stage[sim_conf->num_stage-1-pair_idx][idx_out>>1] = OP_PT;
+                            next_served_data = data_stage[sim_conf->num_stage - pair_idx][idx_out-1].data;
+                        }
+                        else{
+                            config_stage[sim_conf->num_stage-1-pair_idx][idx_out>>1] = OP_CROSS;
+                            next_served_data = data_stage[sim_conf->num_stage - pair_idx][idx_out+1].data;
+                        }           
+                    }
+
+                    // 8
+                    if(config_stage[sim_conf->num_stage-1-pair_idx][idx_out>>1] == OP_PT){
+                        data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)].data;
+                        data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)+1]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)+1].data;
+                    }
+                    else{
+                        data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)+1].data;
+                        data_stage[sim_conf->num_stage-pair_idx-1][BENES_connection[((sim_conf->num_half_stage-1)<<1)-1-pair_idx][((idx_out>>1)<<1)+1]].data = data_stage[sim_conf->num_stage-pair_idx][((idx_out>>1)<<1)].data;
+                    }
+                    
+                    // 9 
+                    for(int j=0; j<sim_conf->num_in_data; j++){
+                        if(data_stage[pair_idx][j].data == next_served_data){
+                            idx_in = j;
+                        }
+                    }
+#ifdef DEBUG 
+                    std::cout << "pair_idx = " << pair_idx << " idx_in = " << idx_in << " data = " << data_stage[pair_idx][idx_in].data << " next_served_data = " << next_served_data;
+                    if( data_stage[pair_idx][idx_in].is_config_gen){
+                        std::cout << " is_config_gen == true" << std::endl << std::endl;
+                    }
+                    else{
+                        std::cout << " is_config_gen == false" << std::endl << std::endl;
+                    }
+#endif
+                }
+            }
+
+            // the most inner stage
+            for(int i=0; i<sim_conf->num_stage; i++){
+                if(data_stage[sim_conf->num_half_stage-1][i<<1].data == data_stage[sim_conf->num_half_stage][i<<1].data)
+                    config_stage[sim_conf->num_half_stage-1][i] = OP_PT;
+                else
+                    config_stage[sim_conf->num_half_stage-1][i] = OP_CROSS;
+            }
         }
     }
 #endif
 }
-
 
 void test_config(const sim_config_t* sim_conf){
     /* 
@@ -388,9 +498,21 @@ void test_config(const sim_config_t* sim_conf){
             test_data_stage[1][i<<1] = test_data_stage[0][i<<1];
             test_data_stage[1][(i<<1)+1] = test_data_stage[0][(i<<1)+1];
         } 
-        else{
+        else if(config_stage[0][i] == OP_CROSS){
             test_data_stage[1][i<<1] = test_data_stage[0][(i<<1)+1];
             test_data_stage[1][(i<<1)+1] = test_data_stage[0][(i<<1)];
+        }
+        else if(config_stage[0][i] == OP_MH){
+            test_data_stage[1][i<<1] = test_data_stage[0][(i<<1)+1];
+            test_data_stage[1][(i<<1)+1] = test_data_stage[0][(i<<1)+1];
+        }
+        else if(config_stage[0][i] == OP_ML){
+            test_data_stage[1][i<<1] = test_data_stage[0][(i<<1)];
+            test_data_stage[1][(i<<1)+1] = test_data_stage[0][(i<<1)];
+        }
+        else{
+            test_data_stage[1][i<<1] = INVALID_DATA;
+            test_data_stage[1][(i<<1)+1] = INVALID_DATA;
         }
     }
 
@@ -566,7 +688,7 @@ int main(int argc, char *const argv[])
     sim_conf.num_stage = (uint64_t)(2*sim_conf.num_half_stage-1);
     sim_conf.num_in_switch = sim_conf.num_in_data >> 1;
 
-    for(int k=0; k<40319; k++){
+    for(int k=0; k<1; k++){
         setup_proc(&sim_conf);
         read_input(&sim_conf);
         run_proc(&sim_conf);
