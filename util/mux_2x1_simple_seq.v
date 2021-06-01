@@ -77,15 +77,15 @@ module mux_2x1_simple_seq#(
             end
             else
             begin
-                casex({i_cmd,i_valid_inner[1],i_valid_inner[0]})
-                    3'b0x1:
+                case({i_cmd,i_valid_inner[1],i_valid_inner[0]})
+                    3'b001,3'b011:
                     begin
                         begin
                             o_valid_inner <= 1'b1;
                             o_data_bus_inner <= i_data_bus[0 +:DATA_WIDTH];
                         end
                     end						
-                    3'b11x:
+                    3'b110,3'b111:
                     begin
                         o_valid_inner <= 1'b1;
                         o_data_bus_inner <= i_data_bus[DATA_WIDTH +:DATA_WIDTH];

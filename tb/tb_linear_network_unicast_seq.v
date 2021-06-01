@@ -38,7 +38,7 @@ module tb_linear_network_unicast_seq();
 
 
     // timing signals
-    reg                              clk;
+    reg                              CLK;
     reg                              rst;
 
     // data signals
@@ -57,7 +57,7 @@ module tb_linear_network_unicast_seq();
     // all cases for control
     initial 
     begin
-        clk = 1'b0;
+        CLK = 1'b0;
         rst = 1'b0;
         // not enable at start
         i_valid = 1'b0;
@@ -122,11 +122,11 @@ module tb_linear_network_unicast_seq();
 
 
     // instantiate DUT (device under test)
-    linear_network_unicast_seq #(
+    linear_network_unicast_seq_1_16 #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_NODE(NUM_NODE)
 	) dut(
-        .clk(clk),
+        .CLK(CLK),
         .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
@@ -136,6 +136,6 @@ module tb_linear_network_unicast_seq();
 		.i_cmd(i_cmd)
 	);
 
-    always#5 clk=~clk;
+    always#5 CLK=~CLK;
 
 endmodule

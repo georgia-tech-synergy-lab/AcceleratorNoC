@@ -42,6 +42,7 @@ module linear_network_unicast_seq#(
 	i_en,           // distribute switch enable
 	i_cmd           // command 
 );
+
 	//parameter
 	localparam COMMAND_WIDTH = $clog2(NUM_NODE);
 
@@ -58,8 +59,8 @@ module linear_network_unicast_seq#(
 	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // Node 0 output [0+:DATA_WIDTH]; Node max# output [(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH]
 
 	input                                        i_en;
-	input  [COMMAND_WIDTH-1:0]                  i_cmd;      // destination tag.
- 
+	input  [COMMAND_WIDTH-1:0]                   i_cmd;      // destination tag.
+
 	// inner logic
 	reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
 	reg    [NUM_NODE-1:0]                        o_valid_reg;

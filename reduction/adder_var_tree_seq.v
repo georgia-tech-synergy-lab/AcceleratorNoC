@@ -123,7 +123,7 @@ module adder_var_tree_seq#(
                     .i_data_bus({{(DATA_WIDTH+i){1'b0}}, wire_level[i].inner_wire_data[2*j]}),
                     .o_valid(wire_level[i+1].inner_wire_valid[j]),
                     .o_data_bus(wire_level[i+1].inner_wire_data[j]),
-                    .i_en(i_en)
+                    .i_en(i_en),
                 );
             end 
             else

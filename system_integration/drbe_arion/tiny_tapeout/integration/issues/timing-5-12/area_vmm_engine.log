@@ -1,0 +1,51 @@
+Warning: Design 'vmm_engine_part' has '2' unresolved references. For more detailed information, use the "link" command. (UID-341)
+ 
+****************************************
+Report : area
+Design : vmm_engine_part
+Version: J-2014.09-SP3
+Date   : Sat Jul 11 03:19:17 2020
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140tt0p8v25c (File: /home/green1/DKIT/tsmc_muse/IP/TSMC28_STD_CELLS/custom_utils_ck/tsmc_ip/tcbn28hpcplusbwp30p140/nldm/tcbn28hpcplusbwp30p140tt0p8v25c.db)
+
+Number of ports:                          484
+Number of nets:                           551
+Number of cells:                          203
+Number of combinational cells:             64
+Number of sequential cells:               136
+Number of macros/black boxes:               0
+Number of buf/inv:                         54
+Number of references:                      14
+
+Combinational area:                316.007999
+Buf/Inv area:                       68.796000
+Noncombinational area:             104.201999
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                   420.209998
+Total area:                 undefined
+
+Information: This design contains black box (unknown) components. (RPT-8)
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area          Local cell area
+                                  ------------------  --------------------------- 
+Hierarchical cell                 Absolute   Percent  Combi-    Noncombi-  Black-
+                                  Total      Total    national  national   boxes   Design
+--------------------------------  ---------  -------  --------  ---------  ------  -----------------
+vmm_engine_part                    420.2100    100.0   69.8040     0.0000  0.0000  vmm_engine_part
+dut_acc_mux                        220.2480     52.4    0.0000     0.0000  0.0000  accumulator_mux
+dut_acc_mux/dut_op_mux             220.2480     52.4  174.8880    45.3600  0.0000  mux_acc
+dut_add_gen                        110.8800     26.4   59.7240    43.5960  0.0000  address_generator
+dut_add_gen/DUT                      7.5600      1.8    7.5600     0.0000  0.0000  decoder_3_clked
+dut_buf_latch                       19.2780      4.6    4.0320    15.2460  0.0000  buffer_latch
+--------------------------------  ---------  -------  --------  ---------  ------  -----------------
+Total                                                 316.0080   104.2020  0.0000
+
+1

@@ -224,19 +224,19 @@ module distribute_2x2_simple_seq#(
 					case(i_valid_inner)
 						2'b11:
 						begin
-                    		o_data_bus_inner = i_data_bus;
+                    		o_data_bus_inner <= i_data_bus;
 						end
 						2'b10:
 						begin
-							o_data_bus_inner = {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
+							o_data_bus_inner <= {i_data_bus[DATA_WIDTH+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
 						end
 						2'b01:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus[0+:DATA_WIDTH]};
+							o_data_bus_inner <= {{DATA_WIDTH{1'b0}}, i_data_bus[0+:DATA_WIDTH]};
 						end
 						default:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
+							o_data_bus_inner <= {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
 						end
 					endcase
                 end	
@@ -245,39 +245,39 @@ module distribute_2x2_simple_seq#(
 					case(i_valid_inner)
 						2'b11:
 						begin
-                    		o_data_bus_inner = {i_data_bus[0+:DATA_WIDTH], i_data_bus[DATA_WIDTH+:DATA_WIDTH]};
+                    		o_data_bus_inner <= {i_data_bus[0+:DATA_WIDTH], i_data_bus[DATA_WIDTH+:DATA_WIDTH]};
 						end
 						2'b10:
 						begin
-							o_data_bus_inner = {i_data_bus[0+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
+							o_data_bus_inner <= {i_data_bus[0+:DATA_WIDTH], {DATA_WIDTH{1'b0}}};
 						end
 						2'b01:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus[DATA_WIDTH+:DATA_WIDTH]};
+							o_data_bus_inner <= {{DATA_WIDTH{1'b0}}, i_data_bus[DATA_WIDTH+:DATA_WIDTH]};
 						end
 						default:
 						begin
-							o_data_bus_inner = {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
+							o_data_bus_inner <= {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
 						end
 					endcase
-                end	
+                end
 				2'b11:
                 begin
-					o_data_bus_inner = (i_valid_inner[1])?{i_data_bus[DATA_WIDTH+:DATA_WIDTH],i_data_bus[DATA_WIDTH+:DATA_WIDTH]}: {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
+					o_data_bus_inner <= (i_valid_inner[1])?{i_data_bus[DATA_WIDTH+:DATA_WIDTH],i_data_bus[DATA_WIDTH+:DATA_WIDTH]}: {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
                 end	
 				2'b00:
                 begin
-					o_data_bus_inner = (i_valid_inner[0])?{i_data_bus[0+:DATA_WIDTH],i_data_bus[0+:DATA_WIDTH]}: {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
+					o_data_bus_inner <= (i_valid_inner[0])?{i_data_bus[0+:DATA_WIDTH],i_data_bus[0+:DATA_WIDTH]}: {{DATA_WIDTH{1'b0}}, {DATA_WIDTH{1'b0}}};
                 end
                 default:
                 begin
-                    o_data_bus_inner = {{DATA_WIDTH{1'b0}},{DATA_WIDTH{1'b0}}};
+                    o_data_bus_inner <= {{DATA_WIDTH{1'b0}},{DATA_WIDTH{1'b0}}};
                 end											
             endcase
         end
         else
         begin
-            o_data_bus_inner = {{DATA_WIDTH{1'b0}},{DATA_WIDTH{1'b0}}};
+            o_data_bus_inner <= {{DATA_WIDTH{1'b0}},{DATA_WIDTH{1'b0}}};
         end
     end
 
@@ -289,38 +289,38 @@ module distribute_2x2_simple_seq#(
             casex(i_cmd_inner)
 			 	2'b10:
                 begin
-					o_valid_inner = i_valid_inner;
+					o_valid_inner <= i_valid_inner;
                 end	
 				2'b11:
                 begin
-                    o_valid_inner = i_valid_inner[1]? 2'b11: 2'b00;
+                    o_valid_inner <= i_valid_inner[1]? 2'b11: 2'b00;
                 end	
 				2'b00:
                 begin
-                    o_valid_inner = i_valid_inner[0]? 2'b11: 2'b00;
+                    o_valid_inner <= i_valid_inner[0]? 2'b11: 2'b00;
                 end
                 2'b01:
                 begin
-                    o_valid_inner = {i_valid_inner[0], i_valid_inner[1]};
+                    o_valid_inner <= {i_valid_inner[0], i_valid_inner[1]};
                 end								
                 default:
                 begin
-                    o_valid_inner = 2'b00;
+                    o_valid_inner <= 2'b00;
                 end											
             endcase
         end
         else
         begin
-            o_valid_inner = 2'b00;
+            o_valid_inner <= 2'b00;
         end
     end
 
     assign o_data_bus = o_data_bus_inner;
     assign o_valid = o_valid_inner;
 
-
 endmodule
 `endif
+
 
 `ifdef UNICAST_ONLY_MODULAR
 module distribute_2x2_simple_seq#(

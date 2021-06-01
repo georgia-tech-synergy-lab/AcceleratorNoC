@@ -1,0 +1,47 @@
+../RTL/Auto_Tuning_IVR_v2.v:module Auto_Tuning_IVR_v2(err,err_2c,clk,reset,en,hyst_width_stable,b1_set,b2_set,
+../RTL/Auto_Tuning_IVR_v2.v:input clk,reset,en,Auto_Load_Jump_EN,Auto_Ref_Jump_EN;
+../RTL/Auto_Tuning_IVR_v2.v:always@(resetb)
+../RTL/Auto_Tuning_IVR_v2.v:	if (~resetb) begin
+../RTL/Auto_Tuning_IVR_v2.v:always @(posedge clk or negedge reset)
+../RTL/Auto_Tuning_IVR_v2.v:		b1_set<=6'b100110;b2_set<=6'b001101;	// set to const values(not vars w cont values) during reset to avoid FFGEN issues 
+../RTL/M_TRIMMER.v:module M_TRIMMER (clk_skewed, reset, sel_lfsr_clk, sel_trim, lfsr_en, clk_to_dpwm);
+../RTL/M_TRIMMER.v:input clk_skewed, reset, lfsr_en;
+../RTL/M_TRIMMER.v:		.reset(reset), 
+../RTL/compensator_fast.v:module compensator_fast(err,b1,b2,reset,n_width,clk, dpwm_p_high_lim,dpwm_p_low_lim,dpwm_n_high_lim,dpwm_inp_reg,dpwm_inp_n_reg, w_k, w_k_1, w_k_2, p_k_1, p_k_2, p_k_1_tr, p_k_2_tr, e_pid, e_pid_temp, dpwm_inp,dpwm_inp_signed,dpwm_inp_n_temp2,dpwm_inp_n_temp3, dpwm_inp_n_temp);
+../RTL/compensator_fast.v:input reset;		
+../RTL/compensator_fast.v:always @ (posedge clk or negedge reset) begin
+../RTL/compensator_fast.v:always @ (posedge clk or negedge reset) begin
+../RTL/compensator_top.v:module compensator_top(sel_adc_reso,err,b1_slow,b2_slow,b1_fast,b2_fast,reset,n_width,clk_slow,clk_fast, dpwm_p_high_lim,dpwm_p_low_lim,dpwm_n_high_lim,dpwm_inp_reg,dpwm_inp_n_reg,dpwm_inp,dpwm_inp_signed,dpwm_inp_n_temp2,dpwm_inp_n_temp3,dpwm_inp_n_temp);
+../RTL/compensator_top.v:input reset;
+../RTL/compensator_top.v:	.reset(reset),
+../RTL/compensator_top.v:	.reset(reset),
+../RTL/compensator_v3_updated.v:module compensator_v3_updated(err,b1,b2,reset,n_width,clk, dpwm_p_high_lim,dpwm_p_low_lim,dpwm_n_high_lim,dpwm_inp_reg,dpwm_inp_n_reg, w_k, w_k_1, w_k_2, p_k_1, p_k_2, p_k_1_tr, p_k_2_tr, e_pid, e_pid_temp, dpwm_inp,dpwm_inp_signed,dpwm_inp_n_temp2,dpwm_inp_n_temp3, dpwm_inp_n_temp);
+../RTL/compensator_v3_updated.v:input reset;
+../RTL/compensator_v3_updated.v:always @ (posedge clk or negedge reset) begin
+../RTL/compensator_v3_updated.v:always @ (posedge clk or negedge reset) begin
+../RTL/controller_top.v:module controller_top(clk_slow, clk_fast, reset, adc_out, sdi, sclk, ssb, rd_en, load_out, adc_tune_buf, sense_decode_out, dpwm_p_out, dpwm_n_out, sdo, clk_to_dpwm, temp7_c11, temp_c12, adaptCLK_lfsr_en, v_noise_lfsr_en, sel_adaptCLK_lfsr_clk, sel_v_noise_lfsr_clk, sel_design_clk, sel_v_noise, SEL_PA_M, SEL_PA_L, SEL_DM_M, SEL_DM_L, temp_config,adc_reso_sel_out,clk_select);
+../RTL/controller_top.v:input reset, clk_slow, clk_fast;
+../RTL/controller_top.v:M_TRIMMER u_trim_w_lfsr (.clk_skewed(mux_clk_new),.reset(reset), .sel_lfsr_clk(sel_lfsr_clk), .sel_trim(sel_trim),.lfsr_en(lfsr_en),.clk_to_dpwm(clk_to_dpwm));
+../RTL/controller_top.v:	.reset(reset),
+../RTL/lfsr_4.v:module lfsr_4 (clk_skewed, reset, sel_lfsr_clk, lfsr_out);
+../RTL/lfsr_4.v:input clk_skewed, reset;
+../RTL/lfsr_4.v:always @(posedge clk_skewed or negedge reset) begin
+../RTL/lfsr_4.v:always @(posedge DIV2 or negedge reset) begin
+../RTL/lfsr_4.v:always @(posedge DIV4 or negedge reset) begin
+../RTL/lfsr_4.v:always @(posedge lfsr_clk or negedge reset) begin
+../RTL/lfsr_4.v:always @(posedge clk_skewed or negedge reset) begin
+../RTL/top_level_controller_auto_tune.v:module top_level_controller_auto_tune(adc_out,vref,reset,clk_slow,clk_fast,dpwm_p_high_lim,dpwm_p_low_lim,dpwm_n_high_lim,Auto_tune_EN,Comp_EN,dpwm_p_const_user,dpwm_n_const_user,n_width_DCM,b1_user_inp_slow,b1_user_inp_fast,b2_user_inp_slow,b2_user_inp_fast,coeff_auto_select,adc_reso_auto_select,adc_tune,load_set,hyst_width_stable,hyst_width_driver,tran_th_1,sense_ctrl,dpwm_p_out,dpwm_n_out,b1_out_slow,b1_out_fast,b2_out_slow,b2_out_fast,stable_top,adc_tune_buf,load_out,sense_decode_out,write_SPI,low_load,const_dpwm_out,Auto_Load_Jump_EN,AE_weight,SE_weight,CT_weight,b1_low,b2_low,b1_up,b2_up,b1_base,b2_base,load_base_AT,load_high_AT,ref_base_AT,ref_high_AT,adc_reso_sel_out,mux_clk_new,flex_or);
+../RTL/top_level_controller_auto_tune.v:input reset,clk_slow,clk_fast,Auto_tune_EN,Comp_EN,Auto_Load_Jump_EN;
+../RTL/top_level_controller_auto_tune.v:always @(posedge clk_slow or negedge reset) begin
+../RTL/top_level_controller_auto_tune.v://Auto_Tuning_mod u_Auto_Tuning (.err(err_auto),.err_2c(err_2c_auto),.err_2c_curr(err_2c_curr),.err_2c_prev(err_2c_prev),.err_2c_prev2(err_2c_prev2),.err_2c_prev3(err_2c_prev3),.err_2c_prev4(err_2c_prev4),.err_2c_prev5(err_2c_prev5),.err_2c_prev6(err_2c_prev6),.err_2c_prev7(err_2c_prev7),.err_2c_prev8(err_2c_prev8),.err_2c_prev9(err_2c_prev9),.err_2c_prev10(err_2c_prev10),.clk(clk_auto),.reset(reset),.en(Auto_en),.hyst_width_stable(hyst_width_stable),.b1(b1_AT),.b2(b2_AT),.b1_min1(b1_min1_AT),.b2_min1(b2_min1_AT),.b1_min2(b1_min2_AT),.b2_min2(b2_min2_AT),.b1_min3(b1_min3_AT),.b2_min3(b2_min3_AT),.b1_min4(b1_min4_AT),.b2_min4(b2_min4_AT),.settle_flag(settle_flag_AT),.cnt_en(cnt_en_AT),.const_dpwm(const_dpwm_AT),.end_tuning(end_tuning_AT),.load_jump(load_jump_AT),.counter_top(counter_top_AT),.counter(counter_AT),.settling_time(settling_time_AT),.total_sum_temp(total_sum_temp_AT),.absolute_sum_temp(absolute_sum_temp_AT),.difference_sum_temp(difference_sum_temp_AT),.total_sum_2c(total_sum_2c_AT),.cost_temp1(cost_temp1_AT),.cost_temp(cost_temp_AT),.cost(cost_AT),.cost_min1(cost_min1_AT),.cost_min2(cost_min2_AT),.cost_min3(cost_min3_AT),.cost_min4(cost_min4_AT),.total_sum(total_sum_AT),.absolute_sum(absolute_sum_AT),.difference_sum(difference_sum_AT),.stable(stable_AT),.temp_carry(temp_carry_AT),.temp_carry_2(temp_carry_2_AT),.temp_carry_4(temp_carry_4_AT),.temp_carry_5(temp_carry_5_AT),.min_flag(min_flag_AT),.Auto_Load_Jump_EN(Auto_Load_Jump_EN));
+../RTL/top_level_controller_auto_tune.v:.err(err_auto),.err_2c(err_2c_auto),.clk(clk_auto),.reset(reset),
+../RTL/top_level_controller_auto_tune.v://compensator_v3_updated u_Compensator (.err(err),.b1(b1_out),.b2(b2_out),.reset(reset),.n_width(n_width_DCM),.clk(clk),.clk2(clk_skewed),.dpwm_p_high_lim(dpwm_p_high_lim),.dpwm_p_low_lim(dpwm_p_low_lim),.dpwm_n_high_lim(dpwm_n_high_lim),.dpwm_inp_reg(dpwm_p_comp),.dpwm_inp_n_reg(dpwm_n_comp), .w_k(w_k_RS), .w_k_1(w_k_1_RS), .w_k_2(w_k_2_RS), .p_k_1(p_k_1_RS), .p_k_2(p_k_2_RS), .p_k_1_tr(p_k_1_tr_RS), .p_k_2_tr(p_k_2_tr_RS), .e_pid(e_pid_RS), .e_pid_temp(e_pid_temp_RS), .dpwm_inp(dpwm_inp_RS), .dpwm_inp_signed(dpwm_inp_signed_RS), .dpwm_inp_n_temp2(dpwm_inp_n_temp2_RS), .dpwm_inp_n_temp3(dpwm_inp_n_temp3_RS), .dpwm_inp_n_temp(dpwm_inp_n_temp_RS));
+../RTL/top_level_controller_auto_tune.v:compensator_top u_Flex_Compensator (.sel_adc_reso(adc_reso_sel_out), .err(err),.b1_slow(b1_out_slow),.b2_slow(b2_out_slow),.b1_fast(b1_out_fast),.b2_fast(b2_out_fast),.reset(reset),.n_width(n_width_DCM),.clk_slow(test_slow_gated),.clk_fast(test_fast_gated),.dpwm_p_high_lim(dpwm_p_high_lim),.dpwm_p_low_lim(dpwm_p_low_lim),.dpwm_n_high_lim(dpwm_n_high_lim),.dpwm_inp_reg(dpwm_p_comp),.dpwm_inp_n_reg(dpwm_n_comp), .dpwm_inp(dpwm_inp_RS), .dpwm_inp_signed(dpwm_inp_signed_RS), .dpwm_inp_n_temp2(dpwm_inp_n_temp2_RS), .dpwm_inp_n_temp3(dpwm_inp_n_temp3_RS), .dpwm_inp_n_temp(dpwm_inp_n_temp_RS));
+../RTL/top_level_controller_auto_tune.v:always @ (posedge clk_auto or negedge reset) begin
+../RTL/top_level_controller_auto_tune.v:always @(posedge clk_slow or negedge reset) begin
+../RTL/top_level_controller_auto_tune.v:always @(posedge clk_slow or negedge reset) begin
+../RTL/top_level_controller_auto_tune.v:always @ (posedge clk_fast or negedge reset) begin
+../RTL/top_level_controller_auto_tune.v:always @ (negedge clk_fast or negedge reset) begin
+../RTL/top_level_controller_auto_tune.v://	if (reset) flex_en<=0;		//select slow clock
+../RTL/top_level_controller_auto_tune.v:always @ (posedge clk_slow or negedge reset) begin
+../RTL/top_level_controller_auto_tune.v:			0:begin // reset/default
