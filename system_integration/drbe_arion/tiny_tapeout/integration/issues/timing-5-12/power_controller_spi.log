@@ -1,0 +1,51 @@
+ 
+****************************************
+Report : power
+        -hier
+        -analysis_effort low
+Design : controller_spi
+Version: J-2014.09-SP3
+Date   : Sat Jul 11 03:29:29 2020
+****************************************
+
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140tt0p8v25c (File: /home/green1/DKIT/tsmc_muse/IP/TSMC28_STD_CELLS/custom_utils_ck/tsmc_ip/tcbn28hpcplusbwp30p140/nldm/tcbn28hpcplusbwp30p140tt0p8v25c.db)
+
+
+Operating Conditions: tt0p8v25c   Library: tcbn28hpcplusbwp30p140tt0p8v25c
+Wire Load Model Mode: segmented
+
+Design        Wire Load Model            Library
+------------------------------------------------
+controller_spi         ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+controller             ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+spi_flexpim            ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+fp_top                 ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+controller_sync        ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+fp_shift               ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+fp_mpr_shift           ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+
+
+Global Operating Voltage = 0.8  
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1nW
+
+
+--------------------------------------------------------------------------------
+                                       Switch   Int      Leak     Total
+Hierarchy                              Power    Power    Power    Power    %
+--------------------------------------------------------------------------------
+controller_spi                         4.28e-02    1.473 2.32e+04    1.539 100.0
+  DUT1 (spi_flexpim)                   1.67e-02 7.73e-02 4.65e+03 9.87e-02   6.4
+    DUT (controller_sync)                 0.000 2.49e-03   15.468 2.51e-03   0.2
+  DUT0 (controller)                    2.61e-02    1.396 1.86e+04    1.440  93.6
+    dut0 (fp_top)                      3.28e-07    0.393 3.45e+03    0.396  25.7
+      dut1 (fp_mpr_shift)              3.20e-07 4.02e-02  407.872 4.06e-02   2.6
+      dut0 (fp_shift)                     0.000    0.115 1.33e+03    0.116   7.5
+1

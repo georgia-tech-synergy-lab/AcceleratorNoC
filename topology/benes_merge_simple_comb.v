@@ -26,7 +26,7 @@
 // Control Signal
 //     i_valid[0]-->|¯¯¯|<--i_cmd[2:0] 
 //     i_valid[1]-->|___|
-//     
+//
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
@@ -48,6 +48,7 @@ module benes_merge_simple_comb#(
 	i_en,           // distribute switch enable
 	i_cmd           // command 
 );
+
 	//parameter
 	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 
@@ -74,7 +75,6 @@ module benes_merge_simple_comb#(
 									// 10 --> Pass Through
 									// 01 --> Pass Switch
 
-
 	// inner logic
 	wire   [DATA_WIDTH-1:0]                      connection[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
 	wire                                         connection_valid[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
@@ -99,7 +99,6 @@ module benes_merge_simple_comb#(
 				.i_cmd(i_cmd[i*COMMMAND_WIDTH+:COMMMAND_WIDTH])
 			);
 		end
-
 
 		// second stage -> middle stage 
 		// inverse shuffle function [loop right shift]:  output of i-th stage    -> input of (i+1)-th stage 
@@ -146,7 +145,6 @@ module benes_merge_simple_comb#(
 				end
 			end
 		end
-
 
 		// middle stage -> last stage 
 		// shuffle function         [loop left shift]:   output of i-th stage    -> input of (i+1)-th stage
@@ -223,7 +221,5 @@ module benes_merge_simple_comb#(
 		// end
 		
 	endgenerate
-
-
 endmodule
 

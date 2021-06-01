@@ -599,7 +599,6 @@ void test_config(const sim_config_t* sim_conf){
         delete [] test_BENES_connection[i];
     }
 
-
     if(!test_pass)
         exit(EXIT_FAILURE);
 

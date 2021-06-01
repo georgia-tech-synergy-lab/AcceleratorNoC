@@ -18,6 +18,7 @@
 //                              |                                             |	                                              |	  
 //                              v                                             v                                               v     
 //                        i_data_bus(low)                              i_data_bus(high)                                    Invalid
+//
 //       o_data_high = o_data_bus[2*DATA_WIDTH-1: DATA_WIDTH]
 //       o_data_low  = o_data_bus[DATA_WIDTH-1: 0]
 //       i_valid = 1'bx; where x indicates "don't care".
