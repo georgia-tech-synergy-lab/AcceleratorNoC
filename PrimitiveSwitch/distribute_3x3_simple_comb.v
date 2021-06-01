@@ -3,9 +3,7 @@
 // Top Module:  distribute_3x3_simple_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Sequential Logic
-// Reset:       Synchronized Reset [High Reset]
-// Latency:     2 cycle for Complex; 1 cycle for Simple
+// Timing:      Combinational Logic
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // Total two versions are supported here, including complex (9 functions[3 bit control]) and simple (4 functions + No Pass[2 bit control]) version
