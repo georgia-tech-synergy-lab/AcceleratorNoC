@@ -23,10 +23,9 @@
 /////////////////////////////////////////////////////////////
 `include "/home/jimmy/work/work_tushar/AcceleratorNoC/system_integration/drbe_arion/tiny_tapeout/integration/lib/lib.v"
 
-
 module linear_network_unicast_seq_1_16#(
-	parameter DATA_WIDTH = 25,     // could be arbitrary number
-	parameter NUM_NODE = 16        // could be arbitrary integer.
+	parameter DATA_WIDTH = 32,     // could be arbitrary number
+	parameter NUM_NODE = 4         // could be arbitrary integer.
 )(
 	// interface
 	CLK,

@@ -1,0 +1,43 @@
+ 
+****************************************
+Report : area
+Design : linear_network_unicast_seq_1_16
+Version: J-2014.09-SP3
+Date   : Tue Jun  1 21:52:16 2021
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140lvttt0p8v25c (File: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/unzipped/tcbn28hpcplusbwp30p140lvt_190a/tcbn28hpcplusbwp30p140lvt_180a_nldm/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp30p140lvt_180a/tcbn28hpcplusbwp30p140lvttt0p8v25c.db)
+
+Number of ports:                          449
+Number of nets:                          1801
+Number of cells:                         1768
+Number of combinational cells:            902
+Number of sequential cells:               866
+Number of macros/black boxes:               0
+Number of buf/inv:                          9
+Number of references:                      18
+
+Combinational area:                459.144007
+Buf/Inv area:                        2.772000
+Noncombinational area:            1793.987947
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                  2253.131954
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area          Local cell area
+                                  ------------------  --------------------------- 
+Hierarchical cell                 Absolute   Percent  Combi-    Noncombi-  Black-
+                                  Total      Total    national  national   boxes   Design
+--------------------------------  ---------  -------  --------  ---------  ------  ---------
+linear_network_unicast_seq_1_16   2253.1320    100.0  459.1440  1793.9879  0.0000  linear_network_unicast_seq_1_16
+--------------------------------  ---------  -------  --------  ---------  ------  ---------
+Total                                                 459.1440  1793.9879  0.0000
+
+1

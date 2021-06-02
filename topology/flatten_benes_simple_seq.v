@@ -12,7 +12,12 @@
 // Dummy Data:  {DATA_WIDTH{1'bz}}
 // 
 // Function:    Unicast  or  Multicast(Not arbitrary Multicast)
-//   
+//   The following diagram is a benes network, the flatten_BENES network 
+//   is a topology which encompass the **connection function** into the switch
+//   to trade the logic inside switch for long wire.
+//  
+//   Note: Please take a look at the slides of the repo to take a look at the flatten butterfly
+// 
 //     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-------->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-------->|¯¯¯|-->
 //     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\ /---->|___|--\ /-->|___|--\ /-->|___|----\ /->|___|-->
 //                                                     X              X            X              X
@@ -37,6 +42,7 @@
 
 // Note: use the SIMPLE_MODULAR version distribute_2x2_simple_seq.
 // Need to set "`define SIMPLE_MODULAR in distribute_2x2_simple_seq.v"
+
 module flatten_benes_simple_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
 	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
@@ -126,7 +132,7 @@ module flatten_benes_simple_seq#(
 		// first stage
 		for(i=0; i<NUM_SWITCH_IN; i=i+1)
 		begin:first_stage_switch
-			distribute_2x2_simple_seq #(
+			distribute_3x3_simple_seq #(
 				.DATA_WIDTH(DATA_WIDTH),
 				.COMMMAND_WIDTH(COMMMAND_WIDTH)
 			) first_stage(
