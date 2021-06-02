@@ -122,10 +122,12 @@ module tb_linear_network_unicast_seq();
 
 
     // instantiate DUT (device under test)
-    linear_network_unicast_seq_1_16 #(
-		.DATA_WIDTH(DATA_WIDTH),
-        .NUM_NODE(NUM_NODE)
-	) dut(
+    // linear_network_unicast_seq_1_16 #(
+	// 	.DATA_WIDTH(DATA_WIDTH),
+    //     .NUM_NODE(NUM_NODE)
+	// ) dut(
+
+    linear_network_unicast_seq_1_16 dut(
         .CLK(CLK),
         .rst(rst),
 		.i_valid(i_valid),
