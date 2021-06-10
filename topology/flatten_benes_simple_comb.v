@@ -4,10 +4,15 @@
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
-// Dummy Data:  {DATA_WIDTH{1'bz}}
+// Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // Function:    Unicast  or  Multicast(Not arbitrary Multicast)
-//   
+//   The following diagram is a benes network, the flatten_BENES network 
+//   is a topology which encompass the **connection function** into the switch
+//   to trade the logic inside switch for long wire.
+//  
+//   Note: Please take a look at the slides of the repo to take a look at the flatten butterfly
+// 
 //     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-------->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-------->|¯¯¯|-->
 //     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\ /---->|___|--\ /-->|___|--\ /-->|___|----\ /->|___|-->
 //                                                     X              X            X              X
@@ -31,10 +36,11 @@
 /////////////////////////////////////////////////////////////
 
 // Note: use the SIMPLE_MODULAR version distribute_2x2_simple_comb.
-// Need to set "`define in distribute_2x2_simple_comb.v"
+// Need to set "`define SIMPLE_MODULAR in distribute_2x2_simple_comb.v"
+
 module flatten_benes_simple_comb#(
-	parameter DATA_WIDTH = 32,     // could be arbitrary number
-	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
+	parameter DATA_WIDTH = 4,     // could be arbitrary number
+	parameter COMMMAND_WIDTH  = 5, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
 	parameter NUM_INPUT_DATA = 8    // multiple be 2^n
 )(
     // data signals
@@ -48,13 +54,16 @@ module flatten_benes_simple_comb#(
 	i_en,           // distribute switch enable
 	i_cmd           // command 
 );
+
 	//parameter
 	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 
 	localparam LEVEL = $clog2(NUM_INPUT_DATA);
 	localparam TOTAL_STAGE = 2*LEVEL-1;
+	localparam TOTAL_HALF_STAGE = LEVEL-1;
 
 	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	localparam NUM_FWD_LINK_PER_STAGE = NUM_INPUT_DATA>>1;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	
@@ -67,138 +76,252 @@ module flatten_benes_simple_comb#(
 
 	input                                        i_en;
 	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
-									// For each switch
 									// 11 --> Multicast_HighIn
 									// 00 --> Multicast_LowIn
 									// 10 --> Pass Through
 									// 01 --> Pass Switch
 
-
-	// inner logic
-	wire   [DATA_WIDTH-1:0]                      connection[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
-	wire                                         connection_valid[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
-
-	genvar i,k,s;
-	
+	genvar i,j,k,s,p;
 	generate
-		// first stage
+	// inner logic
+		wire   [DATA_WIDTH-1:0]                      connection[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
+		wire                                         connection_valid[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
+
+		wire   [DATA_WIDTH-1:0]                      fwd_connection_frist_half[0:TOTAL_HALF_STAGE-1][0:NUM_FWD_LINK_PER_STAGE-1];
+		wire                                         fwd_connection_valid_frist_half[0:TOTAL_HALF_STAGE-1][0:NUM_FWD_LINK_PER_STAGE-1];
+
+		wire   [DATA_WIDTH-1:0]                      fwd_connection_sec_half[0:TOTAL_HALF_STAGE-1][0:NUM_FWD_LINK_PER_STAGE-1];
+		wire                                         fwd_connection_valid_sec_half[0:TOTAL_HALF_STAGE-1][0:NUM_FWD_LINK_PER_STAGE-1];
+
+		// logic for control pipeline
+		for(i=0; i<TOTAL_STAGE-1;i=i+1)
+		begin:cmd_pipeline_stage
+			localparam NUM_STAGE = TOTAL_STAGE-i-1;
+			reg  [COMMMAND_WIDTH-1:0]            pipeline_i_cmd_reg[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.    
+		end
+		
+		for(i=0;i<TOTAL_STAGE-1;i=i+1)  // from second stage to the end;
+		begin
+			for(j=0;j<NUM_SWITCH_IN;j=j+1)
+			begin
+				always@(*)
+				begin
+					cmd_pipeline_stage[0].pipeline_i_cmd_reg[i][j] <= i_cmd[((i+1)*NUM_SWITCH_IN+j)*COMMMAND_WIDTH+:COMMMAND_WIDTH];
+				end
+			end
+		end
+		
+		for(p=0; p<TOTAL_STAGE-2;p=p+1)
+		begin
+			localparam NUM_STAGE_IN_PIPELINE = TOTAL_STAGE-p-1;
+			for(i=0;i<NUM_STAGE_IN_PIPELINE;i=i+1)  // from third stage to the end;
+			begin
+				for(j=0;j<NUM_SWITCH_IN;j=j+1)
+				begin
+					always@(*)
+					begin
+						cmd_pipeline_stage[p+1].pipeline_i_cmd_reg[i][j] <= cmd_pipeline_stage[p].pipeline_i_cmd_reg[i+1][j];
+					end
+				end
+			end
+		end
+
+
+		// first half
+		for(i=0; i< TOTAL_HALF_STAGE; i=i+1)
+		// for( i=0; i<1; i=i+1)
+		begin:first_half_stages
+			localparam HALF_GROUP_BASE = NUM_INPUT_DATA>>(2+i);
+			localparam GROUP_BASE = NUM_INPUT_DATA>>(1+i);
+			localparam NUM_GROUP = 1 << i;
+			for(j=0; j< NUM_GROUP;j=j+1)
+			begin:sw_group
+
+				// upper half of the group
+				for(k=0; k<HALF_GROUP_BASE; k=k+1)
+				begin:upper_group
+					
+					localparam in_top_group_base = 2*(j*GROUP_BASE + k);
+					localparam in_bottom_group_base = 2*(j*GROUP_BASE + HALF_GROUP_BASE + k);
+					
+					localparam top_group_base = j*GROUP_BASE + k;
+					localparam bottom_group_base = j*GROUP_BASE + HALF_GROUP_BASE + k;			
+					
+					if(i==0)
+					begin
+						distribute_3x3_simple_comb #(
+							.DATA_WIDTH(DATA_WIDTH),
+							.COMMMAND_WIDTH(COMMMAND_WIDTH)
+						) upper_sw_first_stage(
+							.i_valid(i_valid[in_top_group_base+:2]),
+							.i_data_bus(i_data_bus[in_top_group_base*DATA_WIDTH+:2*DATA_WIDTH]),
+							// .o_valid(o_valid[in_top_group_base*2+:2]),
+							// .o_data_bus(o_data_bus[in_top_group_base*2*DATA_WIDTH+:2*DATA_WIDTH]),
+							.o_valid({connection_valid[i][in_top_group_base+1], connection_valid[i][in_top_group_base]}),
+							.o_data_bus({connection[i][in_top_group_base+1], connection[i][in_top_group_base]}),
+							.i_en(i_en),
+							.i_cmd(i_cmd[top_group_base*COMMMAND_WIDTH+:COMMMAND_WIDTH]),
+							.i_fwd_valid(fwd_connection_valid_frist_half[i][top_group_base]),       // input forward valid
+							.i_fwd_data_bus(fwd_connection_frist_half[i][top_group_base]),          // input data
+							.o_fwd_valid(fwd_connection_valid_frist_half[i][bottom_group_base]),    // output forward valid
+							.o_fwd_data_bus(fwd_connection_frist_half[i][bottom_group_base])        // output data
+						);
+					end
+					else
+					begin
+						distribute_3x3_simple_comb #(
+							.DATA_WIDTH(DATA_WIDTH),
+							.COMMMAND_WIDTH(COMMMAND_WIDTH)
+						) upper_sw(
+							.i_valid({connection_valid[i-1][in_top_group_base+1], connection_valid[i-1][in_top_group_base]}),
+							.i_data_bus({connection[i-1][in_top_group_base+1], connection[i-1][in_top_group_base]}),
+							.o_valid({connection_valid[i][in_top_group_base+1], connection_valid[i][in_top_group_base]}),
+							.o_data_bus({connection[i][in_top_group_base+1], connection[i][in_top_group_base]}),
+							.i_en(i_en),
+							.i_cmd(cmd_pipeline_stage[i-1].pipeline_i_cmd_reg[0][top_group_base]),
+							.i_fwd_valid(fwd_connection_valid_frist_half[i][top_group_base]),       // input forward valid
+							.i_fwd_data_bus(fwd_connection_frist_half[i][top_group_base]),          // input data
+							.o_fwd_valid(fwd_connection_valid_frist_half[i][bottom_group_base]),    // output forward valid
+							.o_fwd_data_bus(fwd_connection_frist_half[i][bottom_group_base])        // output data
+						);
+					end
+				end
+
+				// bottom half of the group
+				for(k=0; k<HALF_GROUP_BASE; k=k+1)
+				begin:bottom_group
+					localparam in_top_group_base = 2*(j*GROUP_BASE + k);
+					localparam in_bottom_group_base = 2*(j*GROUP_BASE + HALF_GROUP_BASE + k);
+
+					localparam top_group_base = j*GROUP_BASE + k;
+					localparam bottom_group_base = j*GROUP_BASE + HALF_GROUP_BASE + k;
+
+					if(i==0)
+					begin
+						distribute_3x3_simple_comb #(
+							.DATA_WIDTH(DATA_WIDTH),
+							.COMMMAND_WIDTH(COMMMAND_WIDTH)
+						) bottom_sw_first_stage(
+							.i_valid(i_valid[in_bottom_group_base+:2]),
+							.i_data_bus(i_data_bus[in_bottom_group_base*DATA_WIDTH+:2*DATA_WIDTH]),
+							// .o_valid(o_valid[in_bottom_group_base+:2]),
+							// .o_data_bus(o_data_bus[in_bottom_group_base*DATA_WIDTH+:2*DATA_WIDTH]),
+							.o_valid({connection_valid[i][in_bottom_group_base+1], connection_valid[i][in_bottom_group_base]}),
+							.o_data_bus({connection[i][in_bottom_group_base+1], connection[i][in_bottom_group_base]}),
+							.i_en(i_en),
+							.i_cmd(i_cmd[bottom_group_base*COMMMAND_WIDTH+:COMMMAND_WIDTH]),
+							.i_fwd_valid(fwd_connection_valid_frist_half[i][bottom_group_base]),    // input forward valid
+							.i_fwd_data_bus(fwd_connection_frist_half[i][bottom_group_base]),       // input data
+							.o_fwd_valid(fwd_connection_valid_frist_half[i][top_group_base]),       // output forward valid
+							.o_fwd_data_bus(fwd_connection_frist_half[i][top_group_base])           // output data
+						);
+					end
+					else
+					begin
+						distribute_3x3_simple_comb #(
+							.DATA_WIDTH(DATA_WIDTH),
+							.COMMMAND_WIDTH(COMMMAND_WIDTH)
+						) bottom_sw(
+							.i_valid({connection_valid[i-1][in_bottom_group_base+1], connection_valid[i-1][in_bottom_group_base]}),
+							.i_data_bus({connection[i-1][in_bottom_group_base+1], connection[i-1][in_bottom_group_base]}),
+							.o_valid({connection_valid[i][in_bottom_group_base+1], connection_valid[i][in_bottom_group_base]}),
+							.o_data_bus({connection[i][in_bottom_group_base+1], connection[i][in_bottom_group_base]}),
+							.i_en(i_en),
+							.i_cmd(cmd_pipeline_stage[i-1].pipeline_i_cmd_reg[0][bottom_group_base]),
+							.i_fwd_valid(fwd_connection_valid_frist_half[i][bottom_group_base]),    // input forward valid
+							.i_fwd_data_bus(fwd_connection_frist_half[i][bottom_group_base]),       // input data
+							.o_fwd_valid(fwd_connection_valid_frist_half[i][top_group_base]),       // output forward valid
+							.o_fwd_data_bus(fwd_connection_frist_half[i][top_group_base])           // output data
+						);
+					end
+				end
+			end		
+		end
+
+		// middle stage
 		for(i=0; i<NUM_SWITCH_IN; i=i+1)
-		begin:first_stage_switch
+		begin:middle_stage
 			distribute_2x2_simple_comb #(
 				.DATA_WIDTH(DATA_WIDTH),
-				.COMMMAND_WIDTH(COMMMAND_WIDTH)
-			) first_stage(
-				.i_valid(i_valid[2*i+:2]),
-				.i_data_bus(i_data_bus[i*2*DATA_WIDTH+:2*DATA_WIDTH]),
-				.o_valid({connection_valid[0][2*i+1], connection_valid[0][2*i]}),
-				.o_data_bus({connection[0][2*i+1], connection[0][2*i]}),
+				.COMMMAND_WIDTH(COMMMAND_WIDTH-3)
+			) middle_stage(
+				.i_valid({connection_valid[TOTAL_HALF_STAGE-1][2*i+1], connection_valid[TOTAL_HALF_STAGE-1][2*i]}),
+				.i_data_bus({connection[TOTAL_HALF_STAGE-1][2*i+1], connection[TOTAL_HALF_STAGE-1][2*i]}),
+				.o_valid({connection_valid[TOTAL_HALF_STAGE][2*i+1], connection_valid[TOTAL_HALF_STAGE][2*i]}),
+				.o_data_bus({connection[TOTAL_HALF_STAGE][2*i+1], connection[TOTAL_HALF_STAGE][2*i]}),
 				.i_en(i_en),
-				.i_cmd(i_cmd[i*COMMMAND_WIDTH+:COMMMAND_WIDTH])
+				.i_cmd(cmd_pipeline_stage[TOTAL_HALF_STAGE-1].pipeline_i_cmd_reg[0][i])
 			);
 		end
 
-
-		// second stage -> middle stage 
-		// inverse shuffle function [loop right shift]:  output of i-th stage    -> input of (i+1)-th stage 
-		// shuffle function         [loop left shift]:   input of (i+1)-th stage -> output of i-th stage
-		for(s=0;s<LEVEL-1;s=s+1)
-		begin:first_half_stages
-			for(k=0;k<(1<<s);k=k+1)
-			begin:group
-				for(i=0;i<(NUM_SWITCH_IN>>s);i=i+1)
-				begin:switch
-					// For low input [Loop left Shift (2*i)]
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] idx = i[$clog2(NUM_INPUT_DATA)-1-s:0];
-					localparam [$clog2(NUM_INPUT_DATA)-1:0]   group_switch_offset = k*(NUM_SWITCH_IN>>s);
-					localparam [$clog2(NUM_INPUT_DATA)-1:0]   group_offset = k*(NUM_INPUT_DATA>>s);
-
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx = (idx << 1);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx_left_shift = (l_idx << 1);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx_MSB_1 = 1'b1 << ($clog2(NUM_INPUT_DATA)-1-s);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx_MSB_is_1 = l_idx&l_idx_MSB_1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx_MSB_loop_shift = l_idx_MSB_is_1 >> ($clog2(NUM_INPUT_DATA)-1-s);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx_loop_left_shift = l_idx_MSB_loop_shift + l_idx_left_shift;
-					localparam [$clog2(NUM_INPUT_DATA)-1:0]   l_idx_loop_left_shift_group = l_idx_loop_left_shift + group_offset;
-
-					// For high input [Loop left Shift (2*i+1)]
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx = (idx << 1) + 1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx_left_shift = h_idx << 1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx_MSB_1 = 1'b1 << ($clog2(NUM_INPUT_DATA)-1-s);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx_MSB_is_1 =  h_idx&h_idx_MSB_1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx_MSB_loop_shift = h_idx_MSB_is_1 >> ($clog2(NUM_INPUT_DATA)-1-s);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx_loop_left_shift = h_idx_MSB_loop_shift + h_idx_left_shift;
-					localparam [$clog2(NUM_INPUT_DATA)-1:0]   h_idx_loop_left_shift_group = h_idx_loop_left_shift + group_offset;
-
-					distribute_2x2_simple_comb #(
-						.DATA_WIDTH(DATA_WIDTH),
-						.COMMMAND_WIDTH(COMMMAND_WIDTH)
-					) third_stage(
-						.i_valid({connection_valid[s][h_idx_loop_left_shift_group], connection_valid[s][l_idx_loop_left_shift_group]}),
-						.i_data_bus({connection[s][h_idx_loop_left_shift_group], connection[s][l_idx_loop_left_shift_group]}),
-						.o_valid({connection_valid[s+1][2*(i+group_switch_offset)+1], connection_valid[s+1][2*(i+group_switch_offset)]}),
-						.o_data_bus({connection[s+1][2*(i+group_switch_offset)+1], connection[s+1][2*(i+group_switch_offset)]}),
-						.i_en(i_en),
-						.i_cmd(i_cmd[((s+1)*NUM_SWITCH_IN + group_switch_offset + i)*COMMMAND_WIDTH+:COMMMAND_WIDTH ])
-					);
-				end
-			end
-		end
-
-
-		// middle stage -> last stage 
-		// shuffle function         [loop left shift]:   output of i-th stage    -> input of (i+1)-th stage
-		// inverse shuffle function [loop right shift]:  input of (i+1)-th stage -> output of i-th stage 
-		for(s=(LEVEL-1);s<(TOTAL_STAGE-1);s=s+1)
+		// second half
+		for(i=TOTAL_HALF_STAGE+1; i<TOTAL_STAGE; i=i+1)
 		begin:second_half_stages
-			localparam [$clog2(NUM_INPUT_DATA):0] num_group = TOTAL_STAGE-2-s;
-			for(k=0;k<(1<<num_group);k=k+1)
-			begin:group
-				for(i=0;i<(NUM_SWITCH_IN>>num_group);i=i+1)
-				begin:switch
-					// For low input [Loop right Shift (2*i)]
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] idx = i[$clog2(NUM_INPUT_DATA)-1-num_group:0];
-					localparam [$clog2(NUM_INPUT_DATA)-1:0]           group_switch_offset = k*(NUM_SWITCH_IN>>num_group);
-					localparam [$clog2(NUM_INPUT_DATA)-1:0]           group_offset = k*(NUM_INPUT_DATA>>num_group);
+			localparam HALF_GROUP_BASE = 1<<(i-TOTAL_HALF_STAGE-1);
+			localparam GROUP_BASE = HALF_GROUP_BASE<<1;
+			localparam NUM_GROUP = NUM_INPUT_DATA >> (1+i-TOTAL_HALF_STAGE);
+			for(j=0; j< NUM_GROUP;j=j+1)
+			begin:sw_group
+
+				// upper half of the group
+				for(k=0; k<HALF_GROUP_BASE; k=k+1)
+				begin:upper_group
 					
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] l_idx = (idx << 1);
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] l_idx_right_shift = l_idx >> 1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] l_idx_LSB_is_1 = l_idx&1'b1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] l_idx_LSB_loop_shift = l_idx_LSB_is_1 <<  ($clog2(NUM_INPUT_DATA)-1-num_group);
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] l_idx_loop_right_shift = l_idx_LSB_loop_shift + l_idx_right_shift;
-					localparam [$clog2(NUM_INPUT_DATA)-1:0]           l_idx_loop_right_shift_group = l_idx_loop_right_shift + group_offset;
-
-					// For high input [Loop right Shift (2*i+1)]
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] h_idx = (idx << 1) + 1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] h_idx_right_shift = h_idx >> 1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] h_idx_LSB_is_1 = h_idx&1'b1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] h_idx_LSB_loop_shift = h_idx_LSB_is_1 <<  ($clog2(NUM_INPUT_DATA)-1-num_group);
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] h_idx_loop_right_shift = h_idx_LSB_loop_shift + h_idx_right_shift;
-					localparam [$clog2(NUM_INPUT_DATA)-1:0]           h_idx_loop_right_shift_group = h_idx_loop_right_shift + group_offset;
-
-					distribute_2x2_simple_comb #(
+					localparam in_top_group_base = 2*(j*GROUP_BASE + k);
+					localparam in_bottom_group_base = 2*(j*GROUP_BASE + HALF_GROUP_BASE + k);
+					
+					localparam top_group_base = j*GROUP_BASE + k;
+					localparam bottom_group_base = j*GROUP_BASE + HALF_GROUP_BASE + k;			
+					
+					distribute_3x3_simple_comb #(
 						.DATA_WIDTH(DATA_WIDTH),
 						.COMMMAND_WIDTH(COMMMAND_WIDTH)
-					) third_stage(
-						.i_valid({connection_valid[s][h_idx_loop_right_shift_group], connection_valid[s][l_idx_loop_right_shift_group]}),
-						.i_data_bus({connection[s][h_idx_loop_right_shift_group], connection[s][l_idx_loop_right_shift_group]}),
-						.o_valid({connection_valid[s+1][2*(i+group_switch_offset)+1], connection_valid[s+1][2*(i+group_switch_offset)]}),
-						.o_data_bus({connection[s+1][2*(i+group_switch_offset)+1], connection[s+1][2*(i+group_switch_offset)]}),
+					) upper_sw(
+						.i_valid({connection_valid[i-1][in_top_group_base+1], connection_valid[i-1][in_top_group_base]}),
+						.i_data_bus({connection[i-1][in_top_group_base+1], connection[i-1][in_top_group_base]}),
+						.o_valid({connection_valid[i][in_top_group_base+1], connection_valid[i][in_top_group_base]}),
+						.o_data_bus({connection[i][in_top_group_base+1], connection[i][in_top_group_base]}),
 						.i_en(i_en),
-						.i_cmd(i_cmd[((s+1)*NUM_SWITCH_IN + group_switch_offset + i)*COMMMAND_WIDTH+:COMMMAND_WIDTH ])
+						.i_cmd(cmd_pipeline_stage[i-1].pipeline_i_cmd_reg[0][top_group_base]),
+						.i_fwd_valid(fwd_connection_valid_sec_half[i-TOTAL_HALF_STAGE-1][top_group_base]),       // input forward valid
+						.i_fwd_data_bus(fwd_connection_sec_half[i-TOTAL_HALF_STAGE-1][top_group_base]),          // input data
+						.o_fwd_valid(fwd_connection_valid_sec_half[i-TOTAL_HALF_STAGE-1][bottom_group_base]),    // output forward valid
+						.o_fwd_data_bus(fwd_connection_sec_half[i-TOTAL_HALF_STAGE-1][bottom_group_base])        // output data
 					);
 				end
-			end
-		end
 
+				// bottom half of the group
+				for(k=0; k<HALF_GROUP_BASE; k=k+1)
+				begin:bottom_group
+					localparam in_top_group_base = 2*(j*GROUP_BASE + k);
+					localparam in_bottom_group_base = 2*(j*GROUP_BASE + HALF_GROUP_BASE + k);
+
+					localparam top_group_base = j*GROUP_BASE + k;
+					localparam bottom_group_base = j*GROUP_BASE + HALF_GROUP_BASE + k;
+
+					distribute_3x3_simple_comb #(
+						.DATA_WIDTH(DATA_WIDTH),
+						.COMMMAND_WIDTH(COMMMAND_WIDTH)
+					) bottom_sw(
+						.i_valid({connection_valid[i-1][in_bottom_group_base+1], connection_valid[i-1][in_bottom_group_base]}),
+						.i_data_bus({connection[i-1][in_bottom_group_base+1], connection[i-1][in_bottom_group_base]}),
+						.o_valid({connection_valid[i][in_bottom_group_base+1], connection_valid[i][in_bottom_group_base]}),
+						.o_data_bus({connection[i][in_bottom_group_base+1], connection[i][in_bottom_group_base]}),
+						.i_en(i_en),
+						.i_cmd(cmd_pipeline_stage[i-1].pipeline_i_cmd_reg[0][bottom_group_base]),
+						.i_fwd_valid(fwd_connection_valid_sec_half[i-TOTAL_HALF_STAGE-1][bottom_group_base]),    // input forward valid
+						.i_fwd_data_bus(fwd_connection_sec_half[i-TOTAL_HALF_STAGE-1][bottom_group_base]),       // input data
+						.o_fwd_valid(fwd_connection_valid_sec_half[i-TOTAL_HALF_STAGE-1][top_group_base]),       // output forward valid
+						.o_fwd_data_bus(fwd_connection_sec_half[i-TOTAL_HALF_STAGE-1][top_group_base])           // output data
+					);
+				end
+			end			
+		end
 
 		for(i=0;i<NUM_INPUT_DATA;i=i+1)
 		begin: output_data
 			assign o_data_bus[i*DATA_WIDTH+:DATA_WIDTH] = connection[TOTAL_STAGE-1][i];
 			assign o_valid[i+:1] = connection_valid[TOTAL_STAGE-1][i];
 		end
-		
 	endgenerate
-
-
 endmodule
-
