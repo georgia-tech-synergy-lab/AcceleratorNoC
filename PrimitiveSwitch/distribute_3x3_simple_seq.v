@@ -23,7 +23,7 @@
 //         the right bit of the first 2 bits determine the low output port
 //
 // Unicast Function:
-//                         Pass_Through                                              Pass_Swtich                          
+//                         Pass_Through                                              Pass_Switch                          
 //
 //       i_data_bus(high)          i_data_bus(low)                  i_data_bus(high)          i_data_bus(low)                  
 //    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]                [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]         
@@ -107,7 +107,7 @@
 
 module distribute_3x3_simple_seq#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 4
+	parameter COMMMAND_WIDTH  = 5
 )(
     // timeing signals
     clk,
@@ -232,7 +232,7 @@ module distribute_3x3_simple_seq#(
 	) o_data_high(
 		.clk(clk),
 		.rst(rst),
-		.i_valid({inner_valid[1], 1'b1}),
+		.i_valid({inner_valid[1], i_fwd_valid}),
 		.i_data_bus({inner_data_bus[DATA_WIDTH+:DATA_WIDTH], i_fwd_data_bus}),
 		.o_valid(o_valid[1]),
 		.o_data_bus(o_data_bus[DATA_WIDTH+:DATA_WIDTH]),
@@ -246,7 +246,7 @@ module distribute_3x3_simple_seq#(
 	) o_data_low(
 		.clk(clk),
 		.rst(rst),
-		.i_valid({inner_valid[0], 1'b1}),
+		.i_valid({inner_valid[0], i_fwd_valid}),
 		.i_data_bus({inner_data_bus[0+:DATA_WIDTH], i_fwd_data_bus}),
 		.o_valid(o_valid[0]),
 		.o_data_bus(o_data_bus[0+:DATA_WIDTH]),

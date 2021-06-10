@@ -105,7 +105,7 @@
 
 module distribute_3x3_simple_comb#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 4
+	parameter COMMMAND_WIDTH  = 5
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -213,7 +213,7 @@ module distribute_3x3_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
 		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
 	) o_data_high(
-		.i_valid({inner_valid[1], 1'b1}),
+		.i_valid({inner_valid[1], i_fwd_valid}),
 		.i_data_bus({inner_data_bus[DATA_WIDTH+:DATA_WIDTH], i_fwd_data_bus}),
 		.o_valid(o_valid[1]),
 		.o_data_bus(o_data_bus[DATA_WIDTH+:DATA_WIDTH]),
@@ -225,7 +225,7 @@ module distribute_3x3_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
 		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
 	) o_data_low(
-		.i_valid({inner_valid[0], 1'b1}),
+		.i_valid({inner_valid[0], i_fwd_valid}),
 		.i_data_bus({inner_data_bus[0+:DATA_WIDTH], i_fwd_data_bus}),
 		.o_valid(o_valid[0]),
 		.o_data_bus(o_data_bus[0+:DATA_WIDTH]),
