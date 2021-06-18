@@ -168,7 +168,7 @@
 `ifdef SIMPLE_FLATTEN
 module distribute_2x2_simple_seq#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 1
+	parameter COMMAND_WIDTH  = 1
 )(
     // timeing signals
     clk,
@@ -196,7 +196,7 @@ module distribute_2x2_simple_seq#(
 	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
 	    
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 		// 11 --> Multicast_HighIn
 		// 00 --> Multicast_LowIn
 		// 10 --> Pass Through
@@ -206,7 +206,7 @@ module distribute_2x2_simple_seq#(
     reg    [2*DATA_WIDTH-1:0]      o_data_bus_inner;
     reg    [1:0]                   o_valid_inner;
     reg    [1:0]                   i_valid_inner; 
-    reg    [COMMMAND_WIDTH-1:0]    i_cmd_inner; 
+    reg    [COMMAND_WIDTH-1:0]    i_cmd_inner; 
 
 	always @(*) begin
         i_valid_inner = i_valid;
@@ -325,7 +325,7 @@ endmodule
 `ifdef UNICAST_ONLY_MODULAR
 module distribute_2x2_simple_seq#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 1
+	parameter COMMAND_WIDTH  = 1
 )(
     // timeing signals
     clk,
@@ -353,7 +353,7 @@ module distribute_2x2_simple_seq#(
 	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
 	    
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 		// 11 --> Multicast_HighIn
 		// 00 --> Multicast_LowIn
 		// 10 --> Pass Through
@@ -362,7 +362,7 @@ module distribute_2x2_simple_seq#(
 	// merge level
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH)
+		.COMMAND_WIDTH(COMMAND_WIDTH)
 	)merge_i_data_high(
 		.clk(clk),
 		.rst(rst),
@@ -376,7 +376,7 @@ module distribute_2x2_simple_seq#(
 
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH)
+		.COMMAND_WIDTH(COMMAND_WIDTH)
 	)merge_i_data_low(
 		.clk(clk),
 		.rst(rst),
@@ -396,7 +396,7 @@ endmodule
 `ifdef SIMPLE_MODULAR
 module distribute_2x2_simple_seq#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 2
+	parameter COMMAND_WIDTH  = 2
 )(
     // timeing signals
     clk,
@@ -424,7 +424,7 @@ module distribute_2x2_simple_seq#(
 	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
 	    
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 		// 11 --> Multicast_HighIn
 		// 00 --> Multicast_LowIn
 		// 10 --> Pass Through
@@ -433,7 +433,7 @@ module distribute_2x2_simple_seq#(
 	// merge level
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	)merge_i_data_high(
 		.clk(clk),
 		.rst(rst),
@@ -447,7 +447,7 @@ module distribute_2x2_simple_seq#(
 
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	)merge_i_data_low(
 		.clk(clk),
 		.rst(rst),
@@ -466,7 +466,7 @@ endmodule
 `ifdef COMPLEX_MODULAR
 module distribute_2x2_simple_seq#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 3
+	parameter COMMAND_WIDTH  = 3
 )(
     // timeing signals
     clk,
@@ -494,7 +494,7 @@ module distribute_2x2_simple_seq#(
 	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
 	    
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 		// 000 --> Multicast HighIN
 		// 100 --> Multicast_LowIn
 		// 011 --> Pass Through
@@ -640,7 +640,7 @@ module distribute_2x2_simple_seq#(
 	// distribute level
 	distribute_1x2_simple_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	) dis_i_data_high(
 		.clk(clk),
 		.rst(rst),
@@ -654,7 +654,7 @@ module distribute_2x2_simple_seq#(
 
 	distribute_1x2_simple_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	)dis_i_data_low(
 		.clk(clk),
 		.rst(rst),
@@ -671,7 +671,7 @@ module distribute_2x2_simple_seq#(
 	// merge level
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-2)
+		.COMMAND_WIDTH(COMMAND_WIDTH-2)
 	)merge_i_data_high(
 		.clk(clk),
 		.rst(rst),
@@ -685,7 +685,7 @@ module distribute_2x2_simple_seq#(
 
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-2)
+		.COMMAND_WIDTH(COMMAND_WIDTH-2)
 	)merge_i_data_low(
 		.clk(clk),
 		.rst(rst),

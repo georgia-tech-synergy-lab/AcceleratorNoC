@@ -73,7 +73,7 @@ module tb_crossbar_one_hot_comb();
 	parameter NUM_OUTPUT_DATA  = 8; // must be power of 2.
 	parameter NUM_INPUT_DATA = 16;  
 
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
@@ -89,7 +89,7 @@ module tb_crossbar_one_hot_comb();
 	wire  [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; //{o_data_a, o_data_b}
 
 	reg                                         i_en;
-    reg   [TOTAL_COMMMAND-1:0]                  i_cmd;
+    reg   [TOTAL_COMMAND-1:0]                  i_cmd;
 
     initial begin
         i_en = 1'b1;
@@ -140,7 +140,7 @@ module tb_crossbar_one_hot_comb();
 	parameter NUM_OUTPUT_DATA  = 8; // must be power of 2.
 	parameter NUM_INPUT_DATA = 32;  
 
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
@@ -156,7 +156,7 @@ module tb_crossbar_one_hot_comb();
 	wire  [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; //{o_data_a, o_data_b}
 
 	reg                                         i_en;
-    reg   [TOTAL_COMMMAND-1:0]                  i_cmd;
+    reg   [TOTAL_COMMAND-1:0]                  i_cmd;
 
     initial begin
         i_en = 1'b1;
@@ -206,7 +206,7 @@ module tb_crossbar_one_hot_comb();
 	parameter NUM_OUTPUT_DATA  = 8; // must be power of 2.
 	parameter NUM_INPUT_DATA = 64;  
 
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
@@ -222,7 +222,7 @@ module tb_crossbar_one_hot_comb();
 	wire  [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; //{o_data_a, o_data_b}
 
 	reg                                         i_en;
-    reg   [TOTAL_COMMMAND-1:0]                  i_cmd;
+    reg   [TOTAL_COMMAND-1:0]                  i_cmd;
 
     initial begin
         i_en = 1'b1;

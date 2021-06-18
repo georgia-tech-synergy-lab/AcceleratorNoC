@@ -41,8 +41,8 @@
 module tb_butterfly_dst_tag_seq();
     parameter DATA_WIDTH = 4;
     parameter NUM_INPUT_DATA = 16;
-	parameter COMMMAND_WIDTH  = $clog2(NUM_INPUT_DATA);   // = length of index of destination in binary 
-    parameter DESTINATION_TAG_WIDTH = COMMMAND_WIDTH;     // destination tag, each level consumes 1 bit.
+	parameter COMMAND_WIDTH  = $clog2(NUM_INPUT_DATA);   // = length of index of destination in binary 
+    parameter DESTINATION_TAG_WIDTH = COMMAND_WIDTH;     // destination tag, each level consumes 1 bit.
 	
     // parameter
 	localparam  NUM_STAGE = $clog2(NUM_INPUT_DATA);
@@ -162,8 +162,8 @@ endmodule
 module tb_butterfly_dst_tag_seq();
     parameter DATA_WIDTH = 4;
     parameter NUM_INPUT_DATA = 8;
-	parameter COMMMAND_WIDTH  = $clog2(NUM_INPUT_DATA);   // = length of index of destination in binary 
-    parameter DESTINATION_TAG_WIDTH = COMMMAND_WIDTH;     // destination tag, each level consumes 1 bit.
+	parameter COMMAND_WIDTH  = $clog2(NUM_INPUT_DATA);   // = length of index of destination in binary 
+    parameter DESTINATION_TAG_WIDTH = COMMAND_WIDTH;     // destination tag, each level consumes 1 bit.
 	
     // parameter
 	localparam  NUM_STAGE = $clog2(NUM_INPUT_DATA);
@@ -282,8 +282,8 @@ endmodule
 module tb_butterfly_dst_tag_seq();
     parameter DATA_WIDTH = 4;
     parameter NUM_INPUT_DATA = 4;
-	parameter COMMMAND_WIDTH  = $clog2(NUM_INPUT_DATA);   // = length of index of destination in binary 
-    parameter DESTINATION_TAG_WIDTH = COMMMAND_WIDTH; // destination tag, each level consumes 1 bit.
+	parameter COMMAND_WIDTH  = $clog2(NUM_INPUT_DATA);   // = length of index of destination in binary 
+    parameter DESTINATION_TAG_WIDTH = COMMAND_WIDTH; // destination tag, each level consumes 1 bit.
 	
     // parameter
 	localparam  NUM_STAGE = $clog2(NUM_INPUT_DATA);

@@ -105,7 +105,7 @@
 
 module distribute_3x3_simple_comb#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 5
+	parameter COMMAND_WIDTH  = 5
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -139,7 +139,7 @@ module distribute_3x3_simple_comb#(
 	output [DATA_WIDTH-1:0]       o_fwd_data_bus; 
 
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 
 	// The first 2 bits
 		// 11 --> Multicast_HighIn
@@ -163,7 +163,7 @@ module distribute_3x3_simple_comb#(
 	// merge level
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) merge_i_data_high(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
@@ -175,7 +175,7 @@ module distribute_3x3_simple_comb#(
 
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) merge_i_data_low(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
@@ -187,7 +187,7 @@ module distribute_3x3_simple_comb#(
 
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) o_fwd(
 		.i_valid(inner_valid),
 		.i_data_bus(inner_data_bus),
@@ -199,7 +199,7 @@ module distribute_3x3_simple_comb#(
 
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) o_fwd_en(
 		.i_valid({1'b0, inner_fwd_valid}),
 		.i_data_bus({{DATA_WIDTH{1'b0}}, inner_fwd_data_bus}),
@@ -211,7 +211,7 @@ module distribute_3x3_simple_comb#(
 
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) o_data_high(
 		.i_valid({inner_valid[1], i_fwd_valid}),
 		.i_data_bus({inner_data_bus[DATA_WIDTH+:DATA_WIDTH], i_fwd_data_bus}),
@@ -223,7 +223,7 @@ module distribute_3x3_simple_comb#(
 
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) o_data_low(
 		.i_valid({inner_valid[0], i_fwd_valid}),
 		.i_data_bus({inner_data_bus[0+:DATA_WIDTH], i_fwd_data_bus}),

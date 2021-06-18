@@ -37,7 +37,7 @@
 module cube_simple_comb#(
 	parameter DATA_WIDTH = 32,       // could be arbitrary number
 	parameter NUM_INPUT_DATA = 8,    // multiple be 2^n
-    parameter COMMMAND_WIDTH = 1     // command width for inner distribute 2x2 switch
+    parameter COMMAND_WIDTH = 1     // command width for inner distribute 2x2 switch
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -63,7 +63,7 @@ module cube_simple_comb#(
 	output [WIDTH_INPUT_DATA-1:0]                              o_data_bus; //{o_data_a, o_data_b}
 
 	input                                                      i_en;
-	input  [NUM_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH-1:0]        i_cmd;
+	input  [NUM_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH-1:0]        i_cmd;
 									// For each switch
 									// 0 --> Pass Through
 									// 1 --> Pass Switch
@@ -94,7 +94,7 @@ module cube_simple_comb#(
 	end
 
 	// command generation
-	reg        [COMMMAND_WIDTH-1:0]                        reg_cmd_inner[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1];
+	reg        [COMMAND_WIDTH-1:0]                        reg_cmd_inner[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1];
 
 	for (s =0; s< NUM_STAGE; s=s+1)
     begin: command_define
@@ -102,7 +102,7 @@ module cube_simple_comb#(
 		begin
 			always@(*)
 			begin
-				reg_cmd_inner[s][i] = i_cmd[((s*NUM_SWITCH_IN + i)*COMMMAND_WIDTH)+:COMMMAND_WIDTH];
+				reg_cmd_inner[s][i] = i_cmd[((s*NUM_SWITCH_IN + i)*COMMAND_WIDTH)+:COMMAND_WIDTH];
 			end
 		end
 	end
@@ -112,7 +112,7 @@ module cube_simple_comb#(
 	begin:switch_first_stage			
 		distribute_2x2_simple_comb #(
 			.DATA_WIDTH(DATA_WIDTH),
-			.COMMMAND_WIDTH(COMMMAND_WIDTH)
+			.COMMAND_WIDTH(COMMAND_WIDTH)
 		) dis_2x2(
 			.i_valid({wire_valid_inner[0][2*i+1], wire_valid_inner[0][2*i]}),
 			.i_data_bus({wire_data_inner[0][2*i+1], wire_data_inner[0][2*i]}),
@@ -148,7 +148,7 @@ module cube_simple_comb#(
 				
 				distribute_2x2_simple_comb #(
 					.DATA_WIDTH(DATA_WIDTH),
-					.COMMMAND_WIDTH(COMMMAND_WIDTH)
+					.COMMAND_WIDTH(COMMAND_WIDTH)
 				) dis_2x2(
 					.i_valid({wire_valid_inner[s+1][HighDataInIdxMSBInverseOffset], wire_valid_inner[s+1][LowDataInIdxMSBInverseOffset]}),
 					.i_data_bus({wire_data_inner[s+1][HighDataInIdxMSBInverseOffset], wire_data_inner[s+1][LowDataInIdxMSBInverseOffset]}),

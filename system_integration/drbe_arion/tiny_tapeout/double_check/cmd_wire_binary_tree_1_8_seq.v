@@ -28,7 +28,7 @@ module cmd_wire_binary_tree_1_8_seq #(
 );
 
 	//parameter
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
@@ -38,7 +38,7 @@ module cmd_wire_binary_tree_1_8_seq #(
 	input                                        CLK;
 	input                                        rst;
 
-	input  [TOTAL_COMMMAND-1:0]                  i_cmd;  
+	input  [TOTAL_COMMAND-1:0]                  i_cmd;  
 
 	output                                       o_cmd_0;             
 	output                                       o_cmd_1;             

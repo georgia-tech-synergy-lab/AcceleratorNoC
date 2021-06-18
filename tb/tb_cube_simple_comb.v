@@ -40,7 +40,7 @@
 `ifdef TEST_8_cube
 module tb_cube_simple_comb();
     parameter DATA_WIDTH = 4;
-	parameter COMMMAND_WIDTH  = 1;
+	parameter COMMAND_WIDTH  = 1;
     parameter NUM_INPUT_DATA = 8;
 
 	//parameter
@@ -48,7 +48,7 @@ module tb_cube_simple_comb();
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
-	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	localparam TOTAL_COMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
@@ -62,7 +62,7 @@ module tb_cube_simple_comb();
 	wire [WIDTH_INPUT_DATA-1:0]                o_data_bus; //{o_data_a, o_data_b}
   
 	reg                                        i_en;
-	reg  [TOTAL_COMMMAND-1:0]                  i_cmd;
+	reg  [TOTAL_COMMAND-1:0]                  i_cmd;
 									// 0 --> Pass Through
 									// 1 --> Pass Switch
 
@@ -76,7 +76,7 @@ module tb_cube_simple_comb();
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b0;
-        i_cmd = {(TOTAL_COMMMAND){1'b1}};
+        i_cmd = {(TOTAL_COMMAND){1'b1}};
         
 
         // reg active -- Pass Through
@@ -84,42 +84,42 @@ module tb_cube_simple_comb();
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b0}};
+        i_cmd = {(TOTAL_COMMAND){1'b0}};
     
         // reg active -- Pass Switch
         #40
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b1}};
+        i_cmd = {(TOTAL_COMMAND){1'b1}};
                 
         // reg active -- No Pass
         #40
         i_valid = {NUM_INPUT_DATA{1'b0}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b1}};
+        i_cmd = {(TOTAL_COMMAND){1'b1}};
 
         // change data half way  -- Pass Through
         #40
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b0}};
+        i_cmd = {(TOTAL_COMMAND){1'b0}};
         
         // invalid high output -- Pass Through
         #40
         i_valid = {(NUM_INPUT_DATA>>1){2'b10}};
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b0}};
+        i_cmd = {(TOTAL_COMMAND){1'b0}};
        
         // invalid low output  -- Pass Through
         #40
         i_valid = {(NUM_INPUT_DATA>>1){2'b01}};
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b0}};
+        i_cmd = {(TOTAL_COMMAND){1'b0}};
         #40
         $stop;
     end
@@ -128,7 +128,7 @@ module tb_cube_simple_comb();
     cube_simple_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_INPUT_DATA(NUM_INPUT_DATA),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH)
+        .COMMAND_WIDTH(COMMAND_WIDTH)
       ) dut(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
@@ -149,7 +149,7 @@ endmodule
 `ifdef TEST_4_cube
 module tb_cube_simple_comb();
     parameter DATA_WIDTH = 4;
-	parameter COMMMAND_WIDTH  = 1;
+	parameter COMMAND_WIDTH  = 1;
     parameter NUM_INPUT_DATA = 4;
 
 	//parameter
@@ -157,7 +157,7 @@ module tb_cube_simple_comb();
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
-	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	localparam TOTAL_COMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
@@ -171,7 +171,7 @@ module tb_cube_simple_comb();
 	wire [WIDTH_INPUT_DATA-1:0]                o_data_bus; //{o_data_a, o_data_b}
   
 	reg                                        i_en;
-	reg  [TOTAL_COMMMAND-1:0]                  i_cmd;
+	reg  [TOTAL_COMMAND-1:0]                  i_cmd;
 									// 11 --> Multicast_HighIn
 									// 00 --> Multicast_LowIn
 									// 10 --> Pass Through
@@ -187,7 +187,7 @@ module tb_cube_simple_comb();
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b0;
-        i_cmd = {(TOTAL_COMMMAND){1'b1}};
+        i_cmd = {(TOTAL_COMMAND){1'b1}};
         
 
         // reg active -- Pass Through
@@ -195,42 +195,42 @@ module tb_cube_simple_comb();
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b0}};
+        i_cmd = {(TOTAL_COMMAND){1'b0}};
     
         // reg active -- Pass Switch
         #40
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b1}};
+        i_cmd = {(TOTAL_COMMAND){1'b1}};
                 
         // reg active -- No Pass
         #40
         i_valid = {NUM_INPUT_DATA{1'b0}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b1}};
+        i_cmd = {(TOTAL_COMMAND){1'b1}};
 
         // change data half way  -- Pass Through
         #40
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b0}};
+        i_cmd = {(TOTAL_COMMAND){1'b0}};
         
         // invalid high output -- Pass Through
         #40
         i_valid = {(NUM_INPUT_DATA>>1){2'b10}};
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b0}};
+        i_cmd = {(TOTAL_COMMAND){1'b0}};
        
         // invalid low output  -- Pass Through
         #40
         i_valid = {(NUM_INPUT_DATA>>1){2'b01}};
         i_data_bus = {{(DATA_WIDTH>>2){4'hb}},{(DATA_WIDTH>>2){4'ha}},{(DATA_WIDTH>>2){4'h9}},{(DATA_WIDTH>>2){4'h8}}};
         i_en = 1'b1;
-        i_cmd = {(TOTAL_COMMMAND){1'b0}};
+        i_cmd = {(TOTAL_COMMAND){1'b0}};
         #40
         $stop;
     end
@@ -239,7 +239,7 @@ module tb_cube_simple_comb();
     cube_simple_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
         .NUM_INPUT_DATA(NUM_INPUT_DATA),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH)
+        .COMMAND_WIDTH(COMMAND_WIDTH)
       ) dut(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),

@@ -44,7 +44,7 @@ module linear_network_multicast_seq#(
 	i_cmd           // command 
 );
 	//parameter
-	localparam COMMMAND_WIDTH = NUM_NODE;    // each node consume 1-bit command.
+	localparam COMMAND_WIDTH = NUM_NODE;    // each node consume 1-bit command.
 
 	localparam WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_NODE;
 	
@@ -59,7 +59,7 @@ module linear_network_multicast_seq#(
 	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // Node 0 output [0+:DATA_WIDTH]; Node max# output [(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH]
 
 	input                                        i_en;
-	input  [COMMMAND_WIDTH-1:0]                  i_cmd;
+	input  [COMMAND_WIDTH-1:0]                  i_cmd;
 									// For each switch
 									// 1 --> output to Node & Pass to the next node
 									// 0 --> Pass to the next node
@@ -72,7 +72,7 @@ module linear_network_multicast_seq#(
 	generate
 		for(i=0; i<NUM_NODE-1;i=i+1)
 		begin:connection_cmd
-			localparam CONNECTION_COMMAND_WIDTH = COMMMAND_WIDTH-i-1;
+			localparam CONNECTION_COMMAND_WIDTH = COMMAND_WIDTH-i-1;
 			wire  [CONNECTION_COMMAND_WIDTH-1:0] wire_cmd; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.    
 		end
 
@@ -80,7 +80,7 @@ module linear_network_multicast_seq#(
 		// first switch
 		distribute_1x2_one_hot_seq #(
 			.DATA_WIDTH(DATA_WIDTH),
-			.IN_COMMAND_WIDTH(COMMMAND_WIDTH)
+			.IN_COMMAND_WIDTH(COMMAND_WIDTH)
 		) first_switch(
 			.clk(clk),
 			.rst(rst),
@@ -98,7 +98,7 @@ module linear_network_multicast_seq#(
 		begin:middle_1x2_switch
 			distribute_1x2_one_hot_seq #(
 				.DATA_WIDTH(DATA_WIDTH),
-				.IN_COMMAND_WIDTH(COMMMAND_WIDTH-i)
+				.IN_COMMAND_WIDTH(COMMAND_WIDTH-i)
 			) network_swtich_per_node(
 				.clk(clk),
 				.rst(rst),
@@ -115,7 +115,7 @@ module linear_network_multicast_seq#(
 		// last switch
 		distribute_1x2_one_hot_seq #(
 			.DATA_WIDTH(DATA_WIDTH),
-			.IN_COMMAND_WIDTH(COMMMAND_WIDTH-(NUM_NODE-1))
+			.IN_COMMAND_WIDTH(COMMAND_WIDTH-(NUM_NODE-1))
 		) last_switch(
 			.clk(clk),
 			.rst(rst),

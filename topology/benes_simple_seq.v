@@ -42,9 +42,10 @@
 
 // Note: use the SIMPLE_MODULAR version distribute_2x2_simple_seq.
 // Need to set "`define SIMPLE_MODULAR in distribute_2x2_simple_seq.v"
+
 module benes_simple_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
-	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
+	parameter COMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
 	parameter NUM_INPUT_DATA = 8    // multiple be 2^n
 )(
     // timeing signals
@@ -68,7 +69,7 @@ module benes_simple_seq#(
 	localparam LEVEL = $clog2(NUM_INPUT_DATA);
 	localparam TOTAL_STAGE = 2*LEVEL-1;
 
-	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	localparam TOTAL_COMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	
@@ -83,12 +84,11 @@ module benes_simple_seq#(
 	output [WIDTH_INPUT_DATA-1:0]                o_data_bus; //{o_data_a, o_data_b}
 
 	input                                        i_en;
-	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+	input  [TOTAL_COMMAND-1:0]                  i_cmd;
 									// 11 --> Multicast_HighIn
 									// 00 --> Multicast_LowIn
 									// 10 --> Pass Through
 									// 01 --> Pass Switch
-
 
 	// inner logic
 	wire   [DATA_WIDTH-1:0]                      connection[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
@@ -101,27 +101,27 @@ module benes_simple_seq#(
 		for(i=0; i<TOTAL_STAGE-1;i=i+1)
 		begin:cmd_pipeline_stage
 			localparam NUM_STAGE = TOTAL_STAGE-i-1;
-			reg  [COMMMAND_WIDTH-1:0]                pipeline_i_cmd_reg[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.    
+			reg  [COMMAND_WIDTH-1:0]                pipeline_i_cmd_reg[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.    
 		end
 		
 		for(i=0;i<TOTAL_STAGE-1;i=i+1)  // from second stage to the end;
-		begin
+		begin:sec_to_end
 			for(j=0;j<NUM_SWITCH_IN;j=j+1)
-			begin
+			begin:loop_switch
 				always@(posedge clk)
 				begin
-					cmd_pipeline_stage[0].pipeline_i_cmd_reg[i][j] <= i_cmd[((i+1)*NUM_SWITCH_IN+j)*COMMMAND_WIDTH+:COMMMAND_WIDTH];
+					cmd_pipeline_stage[0].pipeline_i_cmd_reg[i][j] <= i_cmd[((i+1)*NUM_SWITCH_IN+j)*COMMAND_WIDTH+:COMMAND_WIDTH];
 				end
 			end
 		end
 		
 		for(p=0; p<TOTAL_STAGE-2;p=p+1)
-		begin
+		begin:third_to_end
 			localparam NUM_STAGE_IN_PIPELINE = TOTAL_STAGE-p-1;
 			for(i=0;i<NUM_STAGE_IN_PIPELINE;i=i+1)  // from second stage to the end;
-			begin
+			begin:loop_stage
 				for(j=0;j<NUM_SWITCH_IN;j=j+1)
-				begin
+				begin:loop_switch
 					always@(posedge clk)
 					begin
 						cmd_pipeline_stage[p+1].pipeline_i_cmd_reg[i][j] <= cmd_pipeline_stage[p].pipeline_i_cmd_reg[i+1][j];
@@ -135,7 +135,7 @@ module benes_simple_seq#(
 		begin:first_stage_switch
 			distribute_2x2_simple_seq #(
 				.DATA_WIDTH(DATA_WIDTH),
-				.COMMMAND_WIDTH(COMMMAND_WIDTH)
+				.COMMAND_WIDTH(COMMAND_WIDTH)
 			) first_stage(
 				.clk(clk),
 				.rst(rst),
@@ -144,7 +144,7 @@ module benes_simple_seq#(
 				.o_valid({connection_valid[0][2*i+1], connection_valid[0][2*i]}),
 				.o_data_bus({connection[0][2*i+1], connection[0][2*i]}),
 				.i_en(i_en),
-				.i_cmd(i_cmd[i*COMMMAND_WIDTH+:COMMMAND_WIDTH])
+				.i_cmd(i_cmd[i*COMMAND_WIDTH+:COMMAND_WIDTH])
 			);
 		end
 
@@ -153,38 +153,41 @@ module benes_simple_seq#(
 		// second stage -> middle stage 
 		// inverse shuffle function [loop right shift]:  output of i-th stage    -> input of (i+1)-th stage 
 		// shuffle function         [loop left shift]:   input of (i+1)-th stage -> output of i-th stage
-		for(s=0;s<LEVEL-1;s=s+1)
+		for(s=0;s<(LEVEL-1);s=s+1)
 		begin:first_half_stages
-			for(k=0;k<(1<<s);k=k+1)
-			begin:group
-				for(i=0;i<(NUM_SWITCH_IN>>s);i=i+1)
-				begin:switch
-					// For low input [Loop left Shift (2*i)]
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] idx = i[$clog2(NUM_INPUT_DATA)-1-s:0];
+			localparam NUM_GROUP = 1<<s;
+			localparam NUM_SWITCH_GROUP = NUM_SWITCH_IN>>s;
+			localparam LEN_GOURP = $clog2(NUM_INPUT_DATA)-1-s;
+			for(k=0;k<NUM_GROUP;k=k+1)
+			begin:group_first_half
+				for(i=0;i<NUM_SWITCH_GROUP;i=i+1)
+				begin:switch_first_half
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]   group_switch_offset = k*(NUM_SWITCH_IN>>s);
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]   group_offset = k*(NUM_INPUT_DATA>>s);
+					localparam                                MASK =  (1 << ($clog2(NUM_INPUT_DATA)-s)) - 1;
 
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx = (idx << 1);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx_left_shift = (l_idx << 1);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx_MSB_1 = 1'b1 << ($clog2(NUM_INPUT_DATA)-1-s);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx_MSB_is_1 = l_idx&l_idx_MSB_1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx_MSB_loop_shift = l_idx_MSB_is_1 >> ($clog2(NUM_INPUT_DATA)-1-s);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] l_idx_loop_left_shift = l_idx_MSB_loop_shift + l_idx_left_shift;
+					// For low input [Loop left Shift (2*i)]
+					localparam                                l_idx = (i << 1) & MASK;
+					localparam                                l_idx_left_shift = (l_idx << 1) & MASK;
+					localparam                                l_idx_MSB_1 = (1'b1 << LEN_GOURP) & MASK;
+					localparam                                l_idx_MSB_is_1 = l_idx & l_idx_MSB_1;
+					localparam                                l_idx_MSB_loop_shift = l_idx_MSB_is_1 >> LEN_GOURP;
+					localparam                                l_idx_loop_left_shift = l_idx_MSB_loop_shift + l_idx_left_shift;
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]   l_idx_loop_left_shift_group = l_idx_loop_left_shift + group_offset;
-
-					// For high input [Loop left Shift (2*i+1)]
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx = (idx << 1) + 1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx_left_shift = h_idx << 1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx_MSB_1 = 1'b1 << ($clog2(NUM_INPUT_DATA)-1-s);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx_MSB_is_1 =  h_idx&h_idx_MSB_1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx_MSB_loop_shift = h_idx_MSB_is_1 >> ($clog2(NUM_INPUT_DATA)-1-s);
-					localparam [$clog2(NUM_INPUT_DATA)-1-s:0] h_idx_loop_left_shift = h_idx_MSB_loop_shift + h_idx_left_shift;
+					
+					// For high input [Loop left Shift (2*i)+1]
+					localparam                                h_idx = ((i << 1) + 1) & MASK;
+					localparam                                h_idx_left_shift = (h_idx << 1) & MASK;
+					localparam                                h_idx_MSB_1 = (1'b1 << LEN_GOURP) & MASK;
+					localparam                                h_idx_MSB_is_1 =  h_idx&h_idx_MSB_1;
+					localparam                                h_idx_MSB_loop_shift = h_idx_MSB_is_1 >> LEN_GOURP;
+					localparam                                h_idx_loop_left_shift = h_idx_MSB_loop_shift + h_idx_left_shift;
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]   h_idx_loop_left_shift_group = h_idx_loop_left_shift + group_offset;
 
 					distribute_2x2_simple_seq #(
 						.DATA_WIDTH(DATA_WIDTH),
-						.COMMMAND_WIDTH(COMMMAND_WIDTH)
-					) third_stage(
+						.COMMAND_WIDTH(COMMAND_WIDTH)
+					) second_stage(
 						.clk(clk),
 						.rst(rst),
 						.i_valid({connection_valid[s][h_idx_loop_left_shift_group], connection_valid[s][l_idx_loop_left_shift_group]}),
@@ -205,33 +208,36 @@ module benes_simple_seq#(
 		for(s=(LEVEL-1);s<(TOTAL_STAGE-1);s=s+1)
 		begin:second_half_stages
 			localparam [$clog2(NUM_INPUT_DATA):0] num_group = TOTAL_STAGE-2-s;
-			for(k=0;k<(1<<num_group);k=k+1)
-			begin:group
-				for(i=0;i<(NUM_SWITCH_IN>>num_group);i=i+1)
-				begin:switch
+			localparam [$clog2(NUM_INPUT_DATA):0] NUM_GROUP_SEC_HALF = 1 << num_group;
+			for(k=0;k<NUM_GROUP_SEC_HALF;k=k+1)
+			begin:group_sec_half
+				localparam  NUM_SWITCH_IN_GROUP = NUM_SWITCH_IN>>num_group;
+				for(i=0;i<NUM_SWITCH_IN_GROUP;i=i+1)
+				begin:switch_sec_half
 					// For low input [Loop right Shift (2*i)]
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] idx = i[$clog2(NUM_INPUT_DATA)-1-num_group:0];
+					// localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] idx = i[$clog2(NUM_INPUT_DATA)-1-num_group:0];
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]           group_switch_offset = k*(NUM_SWITCH_IN>>num_group);
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]           group_offset = k*(NUM_INPUT_DATA>>num_group);
+					localparam                                        MASK =  (1 << ($clog2(NUM_INPUT_DATA)-num_group)) - 1;
 					
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] l_idx = (idx << 1);
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] l_idx_right_shift = l_idx >> 1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] l_idx_LSB_is_1 = l_idx&1'b1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] l_idx_LSB_loop_shift = l_idx_LSB_is_1 <<  ($clog2(NUM_INPUT_DATA)-1-num_group);
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] l_idx_loop_right_shift = l_idx_LSB_loop_shift + l_idx_right_shift;
+					localparam                                        l_idx = ( i << 1) & MASK;
+					localparam                                        l_idx_right_shift = (l_idx >> 1) & MASK;
+					localparam                                        l_idx_LSB_is_1 = l_idx&1'b1;
+					localparam                                        l_idx_LSB_loop_shift = l_idx_LSB_is_1 <<  ($clog2(NUM_INPUT_DATA)-1-num_group);
+					localparam                                        l_idx_loop_right_shift = l_idx_LSB_loop_shift + l_idx_right_shift;
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]           l_idx_loop_right_shift_group = l_idx_loop_right_shift + group_offset;
 
 					// For high input [Loop right Shift (2*i+1)]
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] h_idx = (idx << 1) + 1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] h_idx_right_shift = h_idx >> 1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] h_idx_LSB_is_1 = h_idx&1'b1;
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] h_idx_LSB_loop_shift = h_idx_LSB_is_1 <<  ($clog2(NUM_INPUT_DATA)-1-num_group);
-					localparam [$clog2(NUM_INPUT_DATA)-1-num_group:0] h_idx_loop_right_shift = h_idx_LSB_loop_shift + h_idx_right_shift;
+					localparam                                        h_idx = ((i << 1) + 1) & MASK;
+					localparam                                        h_idx_right_shift = (h_idx >> 1) & MASK;
+					localparam                                        h_idx_LSB_is_1 = h_idx&1'b1;
+					localparam                                        h_idx_LSB_loop_shift = h_idx_LSB_is_1 <<  ($clog2(NUM_INPUT_DATA)-1-num_group);
+					localparam                                        h_idx_loop_right_shift = h_idx_LSB_loop_shift + h_idx_right_shift;
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]           h_idx_loop_right_shift_group = h_idx_loop_right_shift + group_offset;
 
 					distribute_2x2_simple_seq #(
 						.DATA_WIDTH(DATA_WIDTH),
-						.COMMMAND_WIDTH(COMMMAND_WIDTH)
+						.COMMAND_WIDTH(COMMAND_WIDTH)
 					) third_stage(
 						.clk(clk),
 						.rst(rst),
@@ -268,7 +274,7 @@ endmodule
 // Need to set "`define SIMPLE_MODULAR in distribute_2x2_simple_seq.v"			   
 module benes_simple_seq#(
 	parameter DATA_WIDTH = 32,     // could be arbitrary number
-	parameter COMMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
+	parameter COMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
 	parameter NUM_INPUT_DATA = 8    // multiple be 2^n
 )(
     // timeing signals
@@ -293,7 +299,7 @@ module benes_simple_seq#(
 
 	localparam TOTAL_STAGE = 2*LEVEL-1;
 
-	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	localparam TOTAL_COMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
@@ -313,7 +319,7 @@ module benes_simple_seq#(
 	output [WIDTH_INPUT_DATA-1:0]                o_data_bus; //{o_data_a, o_data_b}
 
 	input                                        i_en;
-	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+	input  [TOTAL_COMMAND-1:0]                  i_cmd;
 									// 11 --> Multicast_HighIn
 									// 00 --> Multicast_LowIn
 									// 10 --> Pass Through
@@ -327,8 +333,8 @@ module benes_simple_seq#(
 	localparam NUM_SWITCH_IN_SECOND_PIPELINE_STAGE = NUM_SWITCH_IN * STAGE_NUM_IN_SECOND_PIPELINE;
 	localparam NUM_SWITCH_IN_FIRST_PIPELINE_STAGE = NUM_SWITCH_IN * STAGE_NUM_IN_FIRST_PIPELINE;
 
-	reg    [COMMMAND_WIDTH-1:0]                  first_pipeline_i_cmd_reg[0:TOTAL_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 0 at 2 pipeline stage code.
-	reg    [COMMMAND_WIDTH-1:0]                  second_pipeline_i_cmd_reg[0:NUM_SWITCH_IN_SECOND_PIPELINE_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 0 at 2 pipeline stage code.
+	reg    [COMMAND_WIDTH-1:0]                  first_pipeline_i_cmd_reg[0:TOTAL_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 0 at 2 pipeline stage code.
+	reg    [COMMAND_WIDTH-1:0]                  second_pipeline_i_cmd_reg[0:NUM_SWITCH_IN_SECOND_PIPELINE_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 0 at 2 pipeline stage code.
 	
 	reg    [DATA_WIDTH-1:0]                      pipeline_data_bus_reg[0:NUM_PIPELINE_STAGE-1][0:NUM_INPUT_DATA-1];
 	reg                                          pipeline_data_valid_reg[0:NUM_PIPELINE_STAGE-1][0:NUM_INPUT_DATA-1];
@@ -343,7 +349,7 @@ module benes_simple_seq#(
 			begin: initialization
 				initial
 				begin
-					first_pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
+					first_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'bz}};
 				end
 			end
 		end
@@ -354,7 +360,7 @@ module benes_simple_seq#(
 			begin: initialization
 				initial
 				begin
-					second_pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
+					second_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'bz}};
 				end
 			end
 		end
@@ -381,11 +387,11 @@ module benes_simple_seq#(
 				begin
 					if(i_en & (~rst))
 					begin
-						first_pipeline_i_cmd_reg[i][j] <= i_cmd[((i*NUM_SWITCH_IN + j)*COMMMAND_WIDTH) +: COMMMAND_WIDTH ];
+						first_pipeline_i_cmd_reg[i][j] <= i_cmd[((i*NUM_SWITCH_IN + j)*COMMAND_WIDTH) +: COMMAND_WIDTH ];
 					end
 					else
 					begin
-						first_pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
+						first_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'bz}};
 					end
 				end
 			end
@@ -430,7 +436,7 @@ module benes_simple_seq#(
 		begin:first_stage_switch
 			distribute_2x2_simple_comb #(
 				.DATA_WIDTH(DATA_WIDTH),
-				.COMMMAND_WIDTH(COMMMAND_WIDTH)
+				.COMMAND_WIDTH(COMMAND_WIDTH)
 			) first_stage(
 				.i_valid({connection_valid[0][2*i+1], connection_valid[0][2*i]}),
 				.i_data_bus({connection[0][2*i+1], connection[0][2*i]}),
@@ -475,7 +481,7 @@ module benes_simple_seq#(
 
 					distribute_2x2_simple_comb #(
 						.DATA_WIDTH(DATA_WIDTH),
-						.COMMMAND_WIDTH(COMMMAND_WIDTH)
+						.COMMAND_WIDTH(COMMAND_WIDTH)
 					) third_stage(
 						.i_valid({connection_valid[s+1][h_idx_loop_left_shift_group], connection_valid[s+1][l_idx_loop_left_shift_group]}),
 						.i_data_bus({connection[s+1][h_idx_loop_left_shift_group], connection[s+1][l_idx_loop_left_shift_group]}),
@@ -503,7 +509,7 @@ module benes_simple_seq#(
 					end
 					else
 					begin
-						second_pipeline_i_cmd_reg[i][j] <= {COMMMAND_WIDTH{1'bz}};
+						second_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'bz}};
 					end
 				end
 			end
@@ -567,7 +573,7 @@ module benes_simple_seq#(
 
 					distribute_2x2_simple_comb #(
 						.DATA_WIDTH(DATA_WIDTH),
-						.COMMMAND_WIDTH(COMMMAND_WIDTH)
+						.COMMAND_WIDTH(COMMAND_WIDTH)
 					) third_stage(
 						.i_valid({connection_valid[s+2][h_idx_loop_right_shift_group], connection_valid[s+2][l_idx_loop_right_shift_group]}),
 						.i_data_bus({connection[s+2][h_idx_loop_right_shift_group], connection[s+2][l_idx_loop_right_shift_group]}),

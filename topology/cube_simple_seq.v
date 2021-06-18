@@ -39,7 +39,7 @@
 module cube_simple_seq#(
 	parameter DATA_WIDTH = 32,      // could be arbitrary number
 	parameter NUM_INPUT_DATA = 8,   // multiple be 2^n
-    parameter COMMMAND_WIDTH = 1    // command width for inner distribute 2x2 switch
+    parameter COMMAND_WIDTH = 1    // command width for inner distribute 2x2 switch
 )(
     // timeing signals
     clk,
@@ -72,7 +72,7 @@ module cube_simple_seq#(
 	output [WIDTH_INPUT_DATA-1:0]                              o_data_bus; //{o_data_a, o_data_b}
 
 	input                                                      i_en;
-	input  [NUM_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH-1:0]        i_cmd;
+	input  [NUM_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH-1:0]        i_cmd;
 									// For each switch
 									// 0 --> Pass Through
 									// 1 --> Pass Switch
@@ -110,7 +110,7 @@ module cube_simple_seq#(
     begin: cmd_stage
 		localparam NUM_STAGE_CURR_AFTER = NUM_STAGE - s;
 		// only stored cmd of current stage the stages afterwards.
-		reg  [COMMMAND_WIDTH-1:0]      reg_cmd_inner[0:NUM_STAGE_CURR_AFTER-1][0:NUM_SWITCH_IN-1];	
+		reg  [COMMAND_WIDTH-1:0]      reg_cmd_inner[0:NUM_STAGE_CURR_AFTER-1][0:NUM_SWITCH_IN-1];	
 	end
 
 	// first stage cmd assignment
@@ -124,12 +124,12 @@ module cube_simple_seq#(
 				begin
 					if(rst)
 					begin
-						cmd_stage[0].reg_cmd_inner[s][i] <= {COMMMAND_WIDTH{1'bx}};
+						cmd_stage[0].reg_cmd_inner[s][i] <= {COMMAND_WIDTH{1'bx}};
 					end
 					else
 					begin
 						// only stored cmd of current stage the stages afterwards.
-						cmd_stage[0].reg_cmd_inner[s][i] <= i_cmd[(s*NUM_SWITCH_IN+i)*COMMMAND_WIDTH+:COMMMAND_WIDTH];
+						cmd_stage[0].reg_cmd_inner[s][i] <= i_cmd[(s*NUM_SWITCH_IN+i)*COMMAND_WIDTH+:COMMAND_WIDTH];
 					end
 				end
 			end
@@ -150,7 +150,7 @@ module cube_simple_seq#(
 					begin
 						if(rst)
 						begin
-							cmd_stage[s].reg_cmd_inner[s_ca][i] <= {COMMMAND_WIDTH{1'bx}};
+							cmd_stage[s].reg_cmd_inner[s_ca][i] <= {COMMAND_WIDTH{1'bx}};
 						end
 						else
 						begin
@@ -168,7 +168,7 @@ module cube_simple_seq#(
 	begin:switch_first_stage			
 		distribute_2x2_simple_seq #(
 			.DATA_WIDTH(DATA_WIDTH),
-			.COMMMAND_WIDTH(COMMMAND_WIDTH)
+			.COMMAND_WIDTH(COMMAND_WIDTH)
 		) dis_2x2(
 			.clk(clk),
 			.rst(rst),
@@ -206,7 +206,7 @@ module cube_simple_seq#(
 				
 				distribute_2x2_simple_seq #(
 					.DATA_WIDTH(DATA_WIDTH),
-					.COMMMAND_WIDTH(COMMMAND_WIDTH)
+					.COMMAND_WIDTH(COMMAND_WIDTH)
 				) dis_2x2(
 					.clk(clk),
 					.rst(rst),

@@ -107,7 +107,7 @@
 
 module distribute_3x3_simple_seq#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 5
+	parameter COMMAND_WIDTH  = 5
 )(
     // timeing signals
     clk,
@@ -148,7 +148,7 @@ module distribute_3x3_simple_seq#(
 	output [DATA_WIDTH-1:0]       o_fwd_data_bus; 
 
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 
 	// The first 2 bits
 		// 11 --> Multicast_HighIn
@@ -172,7 +172,7 @@ module distribute_3x3_simple_seq#(
 	// merge level
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) merge_i_data_high(
 		.clk(clk),
 		.rst(rst),
@@ -186,7 +186,7 @@ module distribute_3x3_simple_seq#(
 
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) merge_i_data_low(
 		.clk(clk),
 		.rst(rst),
@@ -200,7 +200,7 @@ module distribute_3x3_simple_seq#(
 
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) o_fwd(
 		.clk(clk),
 		.rst(rst),
@@ -214,7 +214,7 @@ module distribute_3x3_simple_seq#(
 
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) o_fwd_en(
 		.clk(clk),
 		.rst(rst),
@@ -228,7 +228,7 @@ module distribute_3x3_simple_seq#(
 
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) o_data_high(
 		.clk(clk),
 		.rst(rst),
@@ -242,7 +242,7 @@ module distribute_3x3_simple_seq#(
 
 	merge_2x1_simple_seq#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-4)
+		.COMMAND_WIDTH(COMMAND_WIDTH-4)
 	) o_data_low(
 		.clk(clk),
 		.rst(rst),

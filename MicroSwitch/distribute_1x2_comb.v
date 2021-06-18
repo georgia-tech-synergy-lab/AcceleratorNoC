@@ -29,7 +29,7 @@
 
 module distribute_1x2_comb#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 2
+	parameter COMMAND_WIDTH  = 2
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -51,7 +51,7 @@ module distribute_1x2_comb#(
 	output [2*DATA_WIDTH-1:0]   o_data_bus; //{o_data_a, o_data_b}
 	    
 	input                       i_en;
-	input  [COMMMAND_WIDTH-1:0] i_cmd;
+	input  [COMMAND_WIDTH-1:0] i_cmd;
 		// 00 --> NA
 		// 01 --> Branch_low
 		// 10 --> Branch_high
@@ -69,7 +69,7 @@ module distribute_1x2_comb#(
 
 	mux_2x1_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	) o_data_low_mux(
 		.i_valid({i_valid_inner,1'b0}),
 		.i_data_bus({i_data_bus, {DATA_WIDTH{1'b0}}}),
@@ -81,7 +81,7 @@ module distribute_1x2_comb#(
 
 	mux_2x1_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	) o_data_high_mux(
 		.i_valid({i_valid_inner,1'b0}),
 		.i_data_bus({i_data_bus, {DATA_WIDTH{1'b0}}}),

@@ -24,7 +24,7 @@
 module tb_mux_2x1_simple_comb();
 
 	parameter DATA_WIDTH  = 32;
-	parameter COMMMAND_WIDTH  = 1;
+	parameter COMMAND_WIDTH  = 1;
 
     // timing signals
     reg                            clk;
@@ -38,7 +38,7 @@ module tb_mux_2x1_simple_comb();
 
 	// control signals
 	reg                            i_en;           // mux enable
-	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // command 
+	reg    [COMMAND_WIDTH-1:0]    i_cmd;          // command 
                                 // 0 --> Branch Low
                                 // 1 --> Branch High
     
@@ -89,7 +89,7 @@ end
     // instantiate DUT (device under test)
     mux_2x1_simple_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH)
+        .COMMAND_WIDTH(COMMAND_WIDTH)
 	) dut(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),

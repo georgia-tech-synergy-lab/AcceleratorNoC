@@ -19,7 +19,7 @@ module crossbar_one_hot_seq#(
 	i_cmd           // the input should be one-hot encoded command 
 );
 	//parameter
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
@@ -37,7 +37,7 @@ module crossbar_one_hot_seq#(
 	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
 	input                                        i_en;
-	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+	input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -55,7 +55,7 @@ module crossbar_one_hot_seq#(
         for(k=0; k<2;k=k+1)
         begin:xbar_8_8
             localparam  NUM_HALF_INPUT_DATA = NUM_INPUT_DATA>>1;
-            localparam  NUM_HALF_COMMAND = TOTAL_COMMMAND>>1;
+            localparam  NUM_HALF_COMMAND = TOTAL_COMMAND>>1;
 
             crossbar_8_8_seq#(
                 .DATA_WIDTH(DATA_WIDTH),      // could be arbitrary number
@@ -159,7 +159,7 @@ module crossbar_8_8_seq#(
 );
 
 	//parameter
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
@@ -175,7 +175,7 @@ module crossbar_8_8_seq#(
 	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
 	input                                        i_en;
-	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+	input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
 
     // inner logic
@@ -281,7 +281,7 @@ module wire_binary_tree_1_8_seq #(
 );
 
 	//parameter
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
@@ -417,7 +417,7 @@ module cmd_wire_binary_tree_1_8_seq #(
 );
 
 	//parameter
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
@@ -427,7 +427,7 @@ module cmd_wire_binary_tree_1_8_seq #(
 	input                                        clk;
 	input                                        rst;
 
-	input  [TOTAL_COMMMAND-1:0]                  i_cmd;  
+	input  [TOTAL_COMMAND-1:0]                  i_cmd;  
 
 	output                                       o_cmd_0;             
 	output                                       o_cmd_1;             
@@ -526,7 +526,7 @@ module mux_tree_8_1_seq #(
 	i_cmd           // the input should be one-hot encoded command 
 );
 	//parameter
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
@@ -543,7 +543,7 @@ module mux_tree_8_1_seq #(
 	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
 	input                                        i_en;
-	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+	input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;

@@ -26,7 +26,7 @@
 module tb_distribute_1x2_simple_comb();
 
 	parameter DATA_WIDTH  = 32;
-	parameter COMMMAND_WIDTH  = 2;
+	parameter COMMAND_WIDTH  = 2;
 
     // timing signals
     reg                            clk;
@@ -40,7 +40,7 @@ module tb_distribute_1x2_simple_comb();
 
 	// control signals
 	reg                            i_en;           // mux enable
-	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // command 
+	reg    [COMMAND_WIDTH-1:0]    i_cmd;          // command 
                                     // 00 --> NA
                                     // 01 --> Branch_low
                                     // 10 --> Branch_high
@@ -127,7 +127,7 @@ end
     // instantiate DUT (device under test)
     distribute_1x2_simple_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH)
+        .COMMAND_WIDTH(COMMAND_WIDTH)
 	) dut(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),

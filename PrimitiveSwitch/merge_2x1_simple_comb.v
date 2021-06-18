@@ -27,7 +27,7 @@
 
 module merge_2x1_simple_comb#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH = 1 // todo 
+	parameter COMMAND_WIDTH = 1 // todo 
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -48,13 +48,13 @@ module merge_2x1_simple_comb#(
 	output [DATA_WIDTH-1:0]     o_data_bus;
 	    
 	input                       i_en;
-	input  [COMMMAND_WIDTH-1:0] i_cmd;
+	input  [COMMAND_WIDTH-1:0] i_cmd;
                                 // 0 --> Branch Low
                                 // 1 --> Branch High
 	
 	mux_2x1_simple_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH)
+		.COMMAND_WIDTH(COMMAND_WIDTH)
 	)data_mux(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),

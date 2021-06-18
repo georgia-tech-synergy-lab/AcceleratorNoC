@@ -102,5 +102,4 @@ module tb_adder_tree_seq();
 
     always #5 clk=~clk;
     
-
 endmodule
