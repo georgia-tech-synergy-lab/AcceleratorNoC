@@ -168,7 +168,7 @@
 module tb_distribute_2x2_simple_seq();
 
 	parameter DATA_WIDTH  = 32;
-	parameter COMMMAND_WIDTH  = 2;
+	parameter COMMAND_WIDTH  = 2;
 
     // timing signals
     reg                            clk;
@@ -183,7 +183,7 @@ module tb_distribute_2x2_simple_seq();
 
 	// control signals
 	reg                            i_en;           // mux enable
-	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // command 
+	reg    [COMMAND_WIDTH-1:0]    i_cmd;          // command 
                                     // 10 --> Multicast_HighIn
                                     // 01 --> Multicast_LowIn
                                     // 11 --> Pass Through
@@ -299,7 +299,7 @@ module tb_distribute_2x2_simple_seq();
     // instantiate DUT (device under test)
     distribute_2x2_simple_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH)
+        .COMMAND_WIDTH(COMMAND_WIDTH)
       ) dut(
 	    .clk(clk),
 	    .rst(rst),
@@ -323,7 +323,7 @@ endmodule
 module tb_distribute_2x2_simple_seq();
 
 	parameter DATA_WIDTH  = 32;
-	parameter COMMMAND_WIDTH  = 1;
+	parameter COMMAND_WIDTH  = 1;
 
     // timing signals
     reg                            clk;
@@ -338,7 +338,7 @@ module tb_distribute_2x2_simple_seq();
 
 	// control signals
 	reg                            i_en;           // mux enable
-	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // command 
+	reg    [COMMAND_WIDTH-1:0]    i_cmd;          // command 
                                     // 10 --> Multicast_HighIn
                                     // 01 --> Multicast_LowIn
                                     // 11 --> Pass Through
@@ -453,7 +453,7 @@ module tb_distribute_2x2_simple_seq();
     // instantiate DUT (device under test)
     distribute_2x2_simple_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH)
+        .COMMAND_WIDTH(COMMAND_WIDTH)
       ) dut(
 	    .clk(clk),
 	    .rst(rst),
@@ -475,7 +475,7 @@ endmodule
 module tb_distribute_2x2_simple_seq();
 
 	parameter DATA_WIDTH  = 32;
-	parameter COMMMAND_WIDTH  = 2;
+	parameter COMMAND_WIDTH  = 2;
 
     // timing signals
     reg                            clk;
@@ -490,7 +490,7 @@ module tb_distribute_2x2_simple_seq();
 
 	// control signals
 	reg                            i_en;           // mux enable
-	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // command 
+	reg    [COMMAND_WIDTH-1:0]    i_cmd;          // command 
                                     // 10 --> Multicast_HighIn
                                     // 01 --> Multicast_LowIn
                                     // 11 --> Pass Through
@@ -611,7 +611,7 @@ module tb_distribute_2x2_simple_seq();
     // instantiate DUT (device under test)
     distribute_2x2_simple_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH)
+        .COMMAND_WIDTH(COMMAND_WIDTH)
       ) dut(
 	    .clk(clk),
 	    .rst(rst),
@@ -632,7 +632,7 @@ endmodule
 module tb_distribute_2x2_simple_seq();
 
 	parameter DATA_WIDTH  = 32;
-	parameter COMMMAND_WIDTH  = 3;
+	parameter COMMAND_WIDTH  = 3;
 
     // timing signals
     reg                            clk;
@@ -647,7 +647,7 @@ module tb_distribute_2x2_simple_seq();
 
 	// control signals
 	reg                            i_en;           // mux enable
-	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // command 
+	reg    [COMMAND_WIDTH-1:0]    i_cmd;          // command 
                                     // 000 --> Multicast_HighIn
                                     // 100 --> Multicast_LowIn
                                     // 011 --> Pass Through
@@ -804,7 +804,7 @@ module tb_distribute_2x2_simple_seq();
     // instantiate DUT (device under test)
     distribute_2x2_simple_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH)
+        .COMMAND_WIDTH(COMMAND_WIDTH)
       ) dut(
 	    .clk(clk),
 	    .rst(rst),

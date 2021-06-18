@@ -24,7 +24,7 @@
 
 module mux_2x1_simple_seq#(
 	parameter DATA_WIDTH = 32,
-    parameter COMMMAND_WIDTH = 1
+    parameter COMMAND_WIDTH = 1
 )(
     // timeing signals
     CLK,

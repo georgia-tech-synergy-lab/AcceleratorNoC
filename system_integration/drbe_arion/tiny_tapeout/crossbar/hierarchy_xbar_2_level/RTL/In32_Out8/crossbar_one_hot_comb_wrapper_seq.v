@@ -84,7 +84,7 @@ module crossbar_one_hot_comb_wrapper_seq#(
 	i_cmd           // the input should be one-hot encoded command 
 );
 	//parameter
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
@@ -104,11 +104,11 @@ module crossbar_one_hot_comb_wrapper_seq#(
 	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
 	input                                        i_en;
-	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+	input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
 	reg    [NUM_INPUT_DATA-1:0]                  i_valid_reg;             
 	reg    [WIDTH_INPUT_DATA-1:0]                i_data_bus_reg;
-	reg    [TOTAL_COMMMAND-1:0]                  i_cmd_reg;
+	reg    [TOTAL_COMMAND-1:0]                  i_cmd_reg;
 
     wire   [NUM_OUTPUT_DATA-1:0]                 o_valid_wire;
     wire   [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_wire;

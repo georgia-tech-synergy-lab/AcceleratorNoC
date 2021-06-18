@@ -36,7 +36,7 @@
 `ifdef TEST_8_INPUT_FLATTEN_BENES
 module tb_flatten_benes_simple_comb();
     parameter DATA_WIDTH = 4;
-	parameter COMMMAND_WIDTH  = 5;
+	parameter COMMAND_WIDTH  = 5;
 	parameter NUM_INPUT_DATA = 8;
 
 	//parameter
@@ -44,7 +44,7 @@ module tb_flatten_benes_simple_comb();
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
-	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	localparam TOTAL_COMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH;
 
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
@@ -58,7 +58,7 @@ module tb_flatten_benes_simple_comb();
 	wire [WIDTH_INPUT_DATA-1:0]                o_data_bus; //{o_data_a, o_data_b}
   
 	reg                                        i_en;
-	reg  [TOTAL_COMMMAND-1:0]                  i_cmd;
+	reg  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     // Test case declaration
     // all cases for control
@@ -70,7 +70,7 @@ module tb_flatten_benes_simple_comb();
         i_valid = {NUM_INPUT_DATA{1'b1}};
         i_data_bus = {{(DATA_WIDTH>>2){4'h7}},{(DATA_WIDTH>>2){4'h6}},{(DATA_WIDTH>>2){4'h5}},{(DATA_WIDTH>>2){4'h4}},{(DATA_WIDTH>>2){4'h3}},{(DATA_WIDTH>>2){4'h2}},{(DATA_WIDTH>>2){4'h1}},{(DATA_WIDTH>>2){4'h0}}};
         i_en = 1'b1;
-        // i_cmd = TOTAL_COMMMAND'b10101_10101_10010_10010__10101_10010_10101_01010__10_10_10_10__10101_10010_10101_01101__10101_01010_10010_10010;
+        // i_cmd = TOTAL_COMMAND'b10101_10101_10010_10010__10101_10010_10101_01010__10_10_10_10__10101_10010_10101_01101__10101_01010_10010_10010;
         // i_cmd = 100'b10101_10101_10010_10010__10101_10010_10101_01010__10000_10000_10000_10000__10101_10010_10101_01101__10101_01010_10010_10010;
         i_cmd = 100'b10010_10010_01010_10101__01101_10101_10010_10101__00001_00010_00010_00010__01010_10101_10010_10101__10010_10010_10101_10101;
         
@@ -87,7 +87,7 @@ module tb_flatten_benes_simple_comb();
     // instantiate DUT (device under test)
     flatten_benes_simple_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH),
+        .COMMAND_WIDTH(COMMAND_WIDTH),
         .NUM_INPUT_DATA(NUM_INPUT_DATA)
       ) dut(
 		.i_valid(i_valid),

@@ -39,8 +39,8 @@
 module butterfly_dst_tag_seq#(
 	parameter DATA_WIDTH = 32,    // could be arbitrary number
 	parameter NUM_INPUT_DATA = 8, // multiple be 2^n
-    parameter COMMMAND_WIDTH = $clog2(NUM_INPUT_DATA), // destination tag, each level consumes 1 bit.
-    parameter DESTINATION_TAG_WIDTH = COMMMAND_WIDTH // destination tag, each level consumes 1 bit.
+    parameter COMMAND_WIDTH = $clog2(NUM_INPUT_DATA), // destination tag, each level consumes 1 bit.
+    parameter DESTINATION_TAG_WIDTH = COMMAND_WIDTH // destination tag, each level consumes 1 bit.
 )(
 	// timeing signals
     clk,

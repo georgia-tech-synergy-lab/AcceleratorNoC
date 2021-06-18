@@ -27,7 +27,7 @@
 module tb_merge_2x1_simple_seq();
 
 	parameter DATA_WIDTH  = 32;
-	parameter COMMMAND_WIDTH  = 2;
+	parameter COMMAND_WIDTH  = 2;
 
     // timing signals
     reg                            clk;
@@ -42,7 +42,7 @@ module tb_merge_2x1_simple_seq();
 
 	// control signals
 	reg                            i_en;           // mux enable
-	reg    [COMMMAND_WIDTH-1:0]    i_cmd;          // i_cmd here is of no use in this module, leave it here for keeping the consistency of the interface.
+	reg    [COMMAND_WIDTH-1:0]    i_cmd;          // i_cmd here is of no use in this module, leave it here for keeping the consistency of the interface.
     
     // Test case declaration
     // all cases for control
@@ -136,7 +136,7 @@ end
     // instantiate DUT (device under test)
     merge_2x1_simple_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
-        .COMMMAND_WIDTH(COMMMAND_WIDTH)
+        .COMMAND_WIDTH(COMMAND_WIDTH)
 	) dut(
 	    .clk(clk),
 	    .rst(rst),

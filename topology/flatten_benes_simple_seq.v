@@ -45,7 +45,7 @@
 
 module flatten_benes_simple_seq#(
 	parameter DATA_WIDTH = 4,     // could be arbitrary number
-	parameter COMMMAND_WIDTH  = 5, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
+	parameter COMMAND_WIDTH  = 5, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
 	parameter NUM_INPUT_DATA = 8    // multiple be 2^n
 )(
     // timeing signals
@@ -71,7 +71,7 @@ module flatten_benes_simple_seq#(
 	localparam TOTAL_STAGE = 2*LEVEL-1;
 	localparam TOTAL_HALF_STAGE = LEVEL-1;
 
-	localparam TOTAL_COMMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMMAND_WIDTH;
+	localparam TOTAL_COMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH;
 	localparam NUM_FWD_LINK_PER_STAGE = NUM_INPUT_DATA>>1;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
@@ -87,7 +87,7 @@ module flatten_benes_simple_seq#(
 	output [WIDTH_INPUT_DATA-1:0]                o_data_bus; //{o_data_a, o_data_b}
 
 	input                                        i_en;
-	input  [TOTAL_COMMMAND-1:0]                  i_cmd;
+	input  [TOTAL_COMMAND-1:0]                  i_cmd;
 									// 11 --> Multicast_HighIn
 									// 00 --> Multicast_LowIn
 									// 10 --> Pass Through
@@ -109,7 +109,7 @@ module flatten_benes_simple_seq#(
 		for(i=0; i<TOTAL_STAGE-1;i=i+1)
 		begin:cmd_pipeline_stage
 			localparam NUM_STAGE = TOTAL_STAGE-i-1;
-			reg  [COMMMAND_WIDTH-1:0]            pipeline_i_cmd_reg[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.    
+			reg  [COMMAND_WIDTH-1:0]            pipeline_i_cmd_reg[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.    
 		end
 		
 		for(i=0;i<TOTAL_STAGE-1;i=i+1)  // from second stage to the end;
@@ -118,7 +118,7 @@ module flatten_benes_simple_seq#(
 			begin
 				always@(posedge clk)
 				begin
-					cmd_pipeline_stage[0].pipeline_i_cmd_reg[i][j] <= i_cmd[((i+1)*NUM_SWITCH_IN+j)*COMMMAND_WIDTH+:COMMMAND_WIDTH];
+					cmd_pipeline_stage[0].pipeline_i_cmd_reg[i][j] <= i_cmd[((i+1)*NUM_SWITCH_IN+j)*COMMAND_WIDTH+:COMMAND_WIDTH];
 				end
 			end
 		end
@@ -163,7 +163,7 @@ module flatten_benes_simple_seq#(
 					begin
 						distribute_3x3_simple_seq #(
 							.DATA_WIDTH(DATA_WIDTH),
-							.COMMMAND_WIDTH(COMMMAND_WIDTH)
+							.COMMAND_WIDTH(COMMAND_WIDTH)
 						) upper_sw_first_stage(
 							.clk(clk),
 							.rst(rst),
@@ -174,7 +174,7 @@ module flatten_benes_simple_seq#(
 							.o_valid({connection_valid[i][in_top_group_base+1], connection_valid[i][in_top_group_base]}),
 							.o_data_bus({connection[i][in_top_group_base+1], connection[i][in_top_group_base]}),
 							.i_en(i_en),
-							.i_cmd(i_cmd[top_group_base*COMMMAND_WIDTH+:COMMMAND_WIDTH]),
+							.i_cmd(i_cmd[top_group_base*COMMAND_WIDTH+:COMMAND_WIDTH]),
 							.i_fwd_valid(fwd_connection_valid_frist_half[i][top_group_base]),       // input forward valid
 							.i_fwd_data_bus(fwd_connection_frist_half[i][top_group_base]),          // input data
 							.o_fwd_valid(fwd_connection_valid_frist_half[i][bottom_group_base]),    // output forward valid
@@ -185,7 +185,7 @@ module flatten_benes_simple_seq#(
 					begin
 						distribute_3x3_simple_seq #(
 							.DATA_WIDTH(DATA_WIDTH),
-							.COMMMAND_WIDTH(COMMMAND_WIDTH)
+							.COMMAND_WIDTH(COMMAND_WIDTH)
 						) upper_sw(
 							.clk(clk),
 							.rst(rst),
@@ -216,7 +216,7 @@ module flatten_benes_simple_seq#(
 					begin
 						distribute_3x3_simple_seq #(
 							.DATA_WIDTH(DATA_WIDTH),
-							.COMMMAND_WIDTH(COMMMAND_WIDTH)
+							.COMMAND_WIDTH(COMMAND_WIDTH)
 						) bottom_sw_first_stage(
 							.clk(clk),
 							.rst(rst),
@@ -227,7 +227,7 @@ module flatten_benes_simple_seq#(
 							.o_valid({connection_valid[i][in_bottom_group_base+1], connection_valid[i][in_bottom_group_base]}),
 							.o_data_bus({connection[i][in_bottom_group_base+1], connection[i][in_bottom_group_base]}),
 							.i_en(i_en),
-							.i_cmd(i_cmd[bottom_group_base*COMMMAND_WIDTH+:COMMMAND_WIDTH]),
+							.i_cmd(i_cmd[bottom_group_base*COMMAND_WIDTH+:COMMAND_WIDTH]),
 							.i_fwd_valid(fwd_connection_valid_frist_half[i][bottom_group_base]),    // input forward valid
 							.i_fwd_data_bus(fwd_connection_frist_half[i][bottom_group_base]),       // input data
 							.o_fwd_valid(fwd_connection_valid_frist_half[i][top_group_base]),       // output forward valid
@@ -238,7 +238,7 @@ module flatten_benes_simple_seq#(
 					begin
 						distribute_3x3_simple_seq #(
 							.DATA_WIDTH(DATA_WIDTH),
-							.COMMMAND_WIDTH(COMMMAND_WIDTH)
+							.COMMAND_WIDTH(COMMAND_WIDTH)
 						) bottom_sw(
 							.clk(clk),
 							.rst(rst),
@@ -258,12 +258,13 @@ module flatten_benes_simple_seq#(
 			end		
 		end
 
+	
 		// middle stage
 		for(i=0; i<NUM_SWITCH_IN; i=i+1)
 		begin:middle_stage
 			distribute_2x2_simple_seq #(
 				.DATA_WIDTH(DATA_WIDTH),
-				.COMMMAND_WIDTH(COMMMAND_WIDTH-3)
+				.COMMAND_WIDTH(COMMAND_WIDTH-3)
 			) middle_stage(
 				.clk(clk),
 				.rst(rst),
@@ -272,9 +273,10 @@ module flatten_benes_simple_seq#(
 				.o_valid({connection_valid[TOTAL_HALF_STAGE][2*i+1], connection_valid[TOTAL_HALF_STAGE][2*i]}),
 				.o_data_bus({connection[TOTAL_HALF_STAGE][2*i+1], connection[TOTAL_HALF_STAGE][2*i]}),
 				.i_en(i_en),
-				.i_cmd(cmd_pipeline_stage[TOTAL_HALF_STAGE-1].pipeline_i_cmd_reg[0][i])
+				.i_cmd( cmd_pipeline_stage[TOTAL_HALF_STAGE-1].pipeline_i_cmd_reg[0][i][0+:2])
 			);
 		end
+
 
 		// second half
 		for(i=TOTAL_HALF_STAGE+1; i<TOTAL_STAGE; i=i+1)
@@ -297,7 +299,7 @@ module flatten_benes_simple_seq#(
 					
 					distribute_3x3_simple_seq #(
 						.DATA_WIDTH(DATA_WIDTH),
-						.COMMMAND_WIDTH(COMMMAND_WIDTH)
+						.COMMAND_WIDTH(COMMAND_WIDTH)
 					) upper_sw(
 						.clk(clk),
 						.rst(rst),
@@ -325,7 +327,7 @@ module flatten_benes_simple_seq#(
 
 					distribute_3x3_simple_seq #(
 						.DATA_WIDTH(DATA_WIDTH),
-						.COMMMAND_WIDTH(COMMMAND_WIDTH)
+						.COMMAND_WIDTH(COMMAND_WIDTH)
 					) bottom_sw(
 						.clk(clk),
 						.rst(rst),

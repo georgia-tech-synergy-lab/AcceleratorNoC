@@ -24,7 +24,7 @@
 module tb_mux_2x1_simple_seq();
 
 	parameter DATA_WIDTH  = 32;
-	parameter COMMMAND_WIDTH  = 1;
+	parameter COMMAND_WIDTH  = 1;
 
     // timing signals
     reg                            clk;
@@ -90,7 +90,7 @@ end
     // instantiate DUT (device under test)
     // mux_2x1_simple_seq #(
 	// 	.DATA_WIDTH(DATA_WIDTH),
-    //     .COMMMAND_WIDTH(COMMMAND_WIDTH)
+    //     .COMMAND_WIDTH(COMMAND_WIDTH)
 	// ) dut(
     mux_2x1_simple_seq dut(
 	    .clk(clk),

@@ -1,0 +1,1299 @@
+ 
+****************************************
+Report : area
+Design : flatten_benes_simple_seq
+Version: J-2014.09-SP3
+Date   : Tue Jun 15 08:33:14 2021
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140lvttt0p8v25c (File: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/unzipped/tcbn28hpcplusbwp30p140lvt_190a/tcbn28hpcplusbwp30p140lvt_180a_nldm/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp30p140lvt_180a/tcbn28hpcplusbwp30p140lvttt0p8v25c.db)
+
+Number of ports:                         1339
+Number of nets:                          7367
+Number of cells:                         1356
+Number of combinational cells:            532
+Number of sequential cells:               768
+Number of macros/black boxes:               0
+Number of buf/inv:                        532
+Number of references:                      62
+
+Combinational area:               9846.018173
+Buf/Inv area:                      956.465975
+Noncombinational area:           20562.443820
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                 30408.461992
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area            Local cell area
+                                  -------------------  ----------------------------- 
+Hierarchical cell                 Absolute    Percent  Combi-     Noncombi-   Black-
+                                  Total       Total    national   national    boxes   Design
+--------------------------------  ----------  -------  ---------  ----------  ------  ---------------------------------------------------------
+flatten_benes_simple_seq          30408.4620    100.0   600.6420   1451.5200  0.0000  flatten_benes_simple_seq
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage
+                                    575.6940      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_44
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/merge_i_data_high
+                                     96.0120      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_264
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/merge_i_data_high/data_mux
+                                     96.0120      0.3    33.6420     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_264
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/merge_i_data_low
+                                     94.8780      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_263
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/merge_i_data_low/data_mux
+                                     94.8780      0.3    32.5080     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_263
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/o_data_high
+                                    103.4460      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_260
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/o_data_high/data_mux
+                                    103.4460      0.3    33.2640     70.1820  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_260
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/o_data_low
+                                     96.3900      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_259
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/o_data_low/data_mux
+                                     96.3900      0.3    34.0200     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_259
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/o_fwd
+                                    103.6980      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_262
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/o_fwd/data_mux
+                                    103.6980      0.3    33.2640     70.4340  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_262
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/o_fwd_en
+                                     80.5140      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_261
+first_half_stages_0__sw_group_0__bottom_group_0__genblk1_bottom_sw_first_stage/o_fwd_en/data_mux
+                                     80.2620      0.3    17.8920     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_261
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage
+                                    561.8340      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_43
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/merge_i_data_high
+                                     95.8860      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_258
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/merge_i_data_high/data_mux
+                                     95.8860      0.3    33.5160     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_258
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/merge_i_data_low
+                                     95.8860      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_257
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/merge_i_data_low/data_mux
+                                     95.8860      0.3    33.5160     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_257
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/o_data_high
+                                     96.3900      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_254
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/o_data_high/data_mux
+                                     96.3900      0.3    34.0200     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_254
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/o_data_low
+                                     96.3900      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_253
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/o_data_low/data_mux
+                                     96.3900      0.3    34.0200     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_253
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/o_fwd
+                                     95.8860      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_256
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/o_fwd/data_mux
+                                     95.8860      0.3    33.5160     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_256
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/o_fwd_en
+                                     80.6400      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_255
+first_half_stages_0__sw_group_0__bottom_group_1__genblk1_bottom_sw_first_stage/o_fwd_en/data_mux
+                                     80.3880      0.3    18.0180     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_255
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage
+                                    566.3700      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_42
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/merge_i_data_high
+                                     96.1380      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_252
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/merge_i_data_high/data_mux
+                                     96.1380      0.3    33.7680     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_252
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/merge_i_data_low
+                                     95.3820      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_251
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/merge_i_data_low/data_mux
+                                     95.3820      0.3    33.0120     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_251
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/o_data_high
+                                    103.1940      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_248
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/o_data_high/data_mux
+                                    103.1940      0.3    32.7600     70.4340  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_248
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/o_data_low
+                                     94.7520      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_247
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/o_data_low/data_mux
+                                     94.7520      0.3    32.3820     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_247
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/o_fwd
+                                     95.6340      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_250
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/o_fwd/data_mux
+                                     95.6340      0.3    33.2640     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_250
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/o_fwd_en
+                                     80.5140      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_249
+first_half_stages_0__sw_group_0__bottom_group_2__genblk1_bottom_sw_first_stage/o_fwd_en/data_mux
+                                     80.2620      0.3    17.8920     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_249
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage
+                                    568.3860      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_41
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/merge_i_data_high
+                                     96.2640      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_246
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/merge_i_data_high/data_mux
+                                     96.2640      0.3    33.8940     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_246
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/merge_i_data_low
+                                     95.7600      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_245
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/merge_i_data_low/data_mux
+                                     95.7600      0.3    33.3900     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_245
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/o_data_high
+                                     95.3820      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_242
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/o_data_high/data_mux
+                                     95.3820      0.3    33.0120     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_242
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/o_data_low
+                                    104.3280      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_241
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/o_data_low/data_mux
+                                    104.3280      0.3    33.8940     70.4340  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_241
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/o_fwd
+                                     95.3820      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_244
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/o_fwd/data_mux
+                                     95.3820      0.3    33.0120     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_244
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/o_fwd_en
+                                     80.5140      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_243
+first_half_stages_0__sw_group_0__bottom_group_3__genblk1_bottom_sw_first_stage/o_fwd_en/data_mux
+                                     80.2620      0.3    17.8920     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_243
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage
+                                    564.6060      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_0
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/merge_i_data_high
+                                     96.2640      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_0
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/merge_i_data_high/data_mux
+                                     96.2640      0.3    33.8940     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_0
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/merge_i_data_low
+                                     99.7920      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_287
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/merge_i_data_low/data_mux
+                                     99.7920      0.3    37.4220     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_287
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_high
+                                     95.7600      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_284
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_high/data_mux
+                                     95.7600      0.3    33.3900     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_284
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_low
+                                     95.8860      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_283
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_low/data_mux
+                                     95.8860      0.3    33.5160     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_283
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_fwd
+                                     95.6340      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_286
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_fwd/data_mux
+                                     95.6340      0.3    33.2640     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_286
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_fwd_en
+                                     80.5140      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_285
+first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_fwd_en/data_mux
+                                     80.2620      0.3    17.8920     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_285
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage
+                                    557.5500      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_47
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/merge_i_data_high
+                                     96.0120      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_282
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/merge_i_data_high/data_mux
+                                     96.0120      0.3    33.6420     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_282
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/merge_i_data_low
+                                     96.0120      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_281
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/merge_i_data_low/data_mux
+                                     96.0120      0.3    33.6420     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_281
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/o_data_high
+                                     94.7520      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_278
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/o_data_high/data_mux
+                                     94.7520      0.3    32.3820     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_278
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/o_data_low
+                                     94.7520      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_277
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/o_data_low/data_mux
+                                     94.7520      0.3    32.3820     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_277
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/o_fwd
+                                     94.7520      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_280
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/o_fwd/data_mux
+                                     94.7520      0.3    32.3820     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_280
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/o_fwd_en
+                                     80.5140      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_279
+first_half_stages_0__sw_group_0__upper_group_1__genblk1_upper_sw_first_stage/o_fwd_en/data_mux
+                                     80.2620      0.3    17.8920     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_279
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage
+                                    571.5360      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_46
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/merge_i_data_high
+                                     99.5400      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_276
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/merge_i_data_high/data_mux
+                                     99.5400      0.3    37.1700     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_276
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/merge_i_data_low
+                                     96.2640      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_275
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/merge_i_data_low/data_mux
+                                     96.2640      0.3    33.8940     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_275
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/o_data_high
+                                    103.1940      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_272
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/o_data_high/data_mux
+                                    103.1940      0.3    32.7600     70.4340  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_272
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/o_data_low
+                                     95.6340      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_271
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/o_data_low/data_mux
+                                     95.6340      0.3    33.2640     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_271
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/o_fwd
+                                     95.6340      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_274
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/o_fwd/data_mux
+                                     95.6340      0.3    33.2640     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_274
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/o_fwd_en
+                                     80.5140      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_273
+first_half_stages_0__sw_group_0__upper_group_2__genblk1_upper_sw_first_stage/o_fwd_en/data_mux
+                                     80.2620      0.3    17.8920     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_273
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage
+                                    575.6940      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_45
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/merge_i_data_high
+                                     96.0120      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_270
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/merge_i_data_high/data_mux
+                                     96.0120      0.3    33.6420     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_270
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/merge_i_data_low
+                                     95.8860      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_269
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/merge_i_data_low/data_mux
+                                     95.8860      0.3    33.5160     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_269
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/o_data_high
+                                     95.3820      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_266
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/o_data_high/data_mux
+                                     95.3820      0.3    33.0120     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_266
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/o_data_low
+                                    103.4460      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_265
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/o_data_low/data_mux
+                                    103.4460      0.3    33.2640     70.1820  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_265
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/o_fwd
+                                    103.6980      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_268
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/o_fwd/data_mux
+                                    103.6980      0.3    33.2640     70.4340  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_268
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/o_fwd_en
+                                     80.5140      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_267
+first_half_stages_0__sw_group_0__upper_group_3__genblk1_upper_sw_first_stage/o_fwd_en/data_mux
+                                     80.2620      0.3    17.8920     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_267
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw
+                                    553.2660      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_38
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_228
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_228
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_227
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_227
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_224
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_224
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_223
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_223
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_fwd
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_226
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_fwd/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_226
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_225
+first_half_stages_1__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_225
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw
+                                    550.9980      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_37
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_222
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_222
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_221
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_221
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_218
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_218
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_217
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_217
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_220
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_220
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_219
+first_half_stages_1__sw_group_0__bottom_group_1__genblk1_bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_219
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_40
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_240
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_240
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_239
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_239
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_236
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_236
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_235
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_235
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_238
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_238
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_237
+first_half_stages_1__sw_group_0__upper_group_0__genblk1_upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_237
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_39
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_234
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_234
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_233
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_233
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_230
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_230
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_229
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_229
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_232
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_232
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_231
+first_half_stages_1__sw_group_0__upper_group_1__genblk1_upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_231
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_34
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_204
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_204
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_203
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_203
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_200
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_200
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_199
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_199
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_202
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_202
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_201
+first_half_stages_1__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_201
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw
+                                    550.9980      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_33
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_198
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_198
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_197
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_197
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_194
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_194
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_193
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_193
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_196
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_196
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_195
+first_half_stages_1__sw_group_1__bottom_group_1__genblk1_bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_195
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_36
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_216
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_216
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_215
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_215
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_212
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_212
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_211
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_211
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_214
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_214
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_213
+first_half_stages_1__sw_group_1__upper_group_0__genblk1_upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_213
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw
+                                    550.9980      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_35
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_210
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_210
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_209
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_209
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_206
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_206
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_205
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_205
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_208
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_208
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_207
+first_half_stages_1__sw_group_1__upper_group_1__genblk1_upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_207
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_31
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_186
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_186
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_185
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_185
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_182
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_182
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_181
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_181
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_184
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_184
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_183
+first_half_stages_2__sw_group_0__bottom_group_0__genblk1_bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_183
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_32
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_192
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_192
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_191
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_191
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_188
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_188
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_187
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_187
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_190
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_190
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_189
+first_half_stages_2__sw_group_0__upper_group_0__genblk1_upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_189
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_29
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_174
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_174
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_173
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_173
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_170
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_170
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_169
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_169
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_172
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_172
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_171
+first_half_stages_2__sw_group_1__bottom_group_0__genblk1_bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_171
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_30
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_180
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_180
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_179
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_179
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_176
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_176
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_175
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_175
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_178
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_178
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_177
+first_half_stages_2__sw_group_1__upper_group_0__genblk1_upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_177
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw
+                                    550.9980      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_27
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_162
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_162
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_161
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_161
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_158
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_158
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_157
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_157
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_160
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_160
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_159
+first_half_stages_2__sw_group_2__bottom_group_0__genblk1_bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_159
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_28
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_168
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_168
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_167
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_167
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_164
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_164
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_163
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_163
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_166
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_166
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_165
+first_half_stages_2__sw_group_2__upper_group_0__genblk1_upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_165
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_25
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_150
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_150
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_149
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_149
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_146
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_146
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_145
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_145
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_148
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_148
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_147
+first_half_stages_2__sw_group_3__bottom_group_0__genblk1_bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_147
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_26
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_156
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_156
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_155
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_155
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_152
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_152
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_151
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_151
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_154
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_154
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_153
+first_half_stages_2__sw_group_3__upper_group_0__genblk1_upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_153
+middle_stage_0__middle_stage        189.3780      0.6    64.6380    124.7400  0.0000  distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_0
+middle_stage_1__middle_stage        189.3780      0.6    64.6380    124.7400  0.0000  distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_7
+middle_stage_2__middle_stage        189.3780      0.6    64.6380    124.7400  0.0000  distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_6
+middle_stage_3__middle_stage        189.3780      0.6    64.6380    124.7400  0.0000  distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_5
+middle_stage_4__middle_stage        189.3780      0.6    64.6380    124.7400  0.0000  distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_4
+middle_stage_5__middle_stage        189.3780      0.6    64.6380    124.7400  0.0000  distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_3
+middle_stage_6__middle_stage        189.3780      0.6    64.6380    124.7400  0.0000  distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_2
+middle_stage_7__middle_stage        189.3780      0.6    64.6380    124.7400  0.0000  distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_1
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw
+                                    550.2420      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_23
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_138
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_138
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_137
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_137
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_134
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_134
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_133
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_133
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_136
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_136
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_135
+second_half_stages_4__sw_group_0__bottom_group_0__bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_135
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw
+                                    553.2660      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_24
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_144
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_144
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_143
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_143
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_140
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_140
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_139
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_139
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/o_fwd
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_142
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/o_fwd/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_142
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_141
+second_half_stages_4__sw_group_0__upper_group_0__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_141
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw
+                                    551.5020      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_21
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/merge_i_data_high
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_126
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/merge_i_data_high/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_126
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/merge_i_data_low
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_125
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/merge_i_data_low/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_125
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_122
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_122
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_121
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_121
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/o_fwd
+                                     93.9960      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_124
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/o_fwd/data_mux
+                                     93.9960      0.3    31.6260     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_124
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_123
+second_half_stages_4__sw_group_1__bottom_group_0__bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_123
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw
+                                    553.2660      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_22
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_132
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_132
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_131
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_131
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_128
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_128
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_127
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_127
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/o_fwd
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_130
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/o_fwd/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_130
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_129
+second_half_stages_4__sw_group_1__upper_group_0__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_129
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw
+                                    596.7360      2.0     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_19
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/merge_i_data_high
+                                    105.3360      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_114
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/merge_i_data_high/data_mux
+                                    105.3360      0.3    31.3740     73.9620  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_114
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/merge_i_data_low
+                                    105.5880      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_113
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/merge_i_data_low/data_mux
+                                    105.5880      0.3    31.3740     74.2140  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_113
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/o_data_high
+                                    105.7140      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_110
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/o_data_high/data_mux
+                                    105.7140      0.3    31.6260     74.0880  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_110
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/o_data_low
+                                    105.5880      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_109
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/o_data_low/data_mux
+                                    105.5880      0.3    31.3740     74.2140  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_109
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_112
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_112
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_111
+second_half_stages_4__sw_group_2__bottom_group_0__bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_111
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw
+                                    552.8880      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_20
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_120
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_120
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_119
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_119
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_116
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_116
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_115
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_115
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/o_fwd
+                                     94.1220      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_118
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/o_fwd/data_mux
+                                     94.1220      0.3    31.7520     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_118
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_117
+second_half_stages_4__sw_group_2__upper_group_0__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_117
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw
+                                    550.3680      1.8     0.8820      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_17
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/merge_i_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_102
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/merge_i_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_102
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/merge_i_data_low
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_101
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/merge_i_data_low/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_101
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/o_data_high
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_98
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/o_data_high/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_98
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_97
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_97
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/o_fwd
+                                     93.7440      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_100
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/o_fwd/data_mux
+                                     93.7440      0.3    31.3740     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_100
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_99
+second_half_stages_4__sw_group_3__bottom_group_0__bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_99
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw
+                                    550.1160      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_18
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/merge_i_data_high
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_108
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/merge_i_data_high/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_108
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/merge_i_data_low
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_107
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/merge_i_data_low/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_107
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/o_data_high
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_104
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/o_data_high/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_104
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/o_data_low
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_103
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/o_data_low/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_103
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/o_fwd
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_106
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/o_fwd/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_106
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_105
+second_half_stages_4__sw_group_3__upper_group_0__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_105
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw
+                                    553.2660      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_14
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_84
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_84
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_83
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_83
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_80
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_80
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_79
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_79
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/o_fwd
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_82
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/o_fwd/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_82
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_81
+second_half_stages_5__sw_group_0__bottom_group_0__bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_81
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw
+                                    582.4980      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_13
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/merge_i_data_high
+                                    105.4620      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_78
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/merge_i_data_high/data_mux
+                                    105.4620      0.3    31.3740     74.0880  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_78
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/merge_i_data_low
+                                    105.3360      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_77
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/merge_i_data_low/data_mux
+                                    105.3360      0.3    31.3740     73.9620  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_77
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/o_data_high
+                                    101.8080      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_74
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/o_data_high/data_mux
+                                    101.8080      0.3    31.3740     70.4340  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_74
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_73
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_73
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/o_fwd
+                                     94.6260      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_76
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/o_fwd/data_mux
+                                     94.6260      0.3    32.2560     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_76
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_75
+second_half_stages_5__sw_group_0__bottom_group_1__bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_75
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw
+                                    556.4160      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_16
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/merge_i_data_high
+                                     94.7520      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_96
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/merge_i_data_high/data_mux
+                                     94.7520      0.3    32.3820     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_96
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/merge_i_data_low
+                                     94.7520      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_95
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/merge_i_data_low/data_mux
+                                     94.7520      0.3    32.3820     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_95
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_92
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_92
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_91
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_91
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/o_fwd
+                                     97.1460      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_94
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/o_fwd/data_mux
+                                     97.1460      0.3    34.7760     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_94
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_93
+second_half_stages_5__sw_group_0__upper_group_0__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_93
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw
+                                    550.1160      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_15
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/merge_i_data_high
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_90
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/merge_i_data_high/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_90
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/merge_i_data_low
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_89
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/merge_i_data_low/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_89
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/o_data_high
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_86
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/o_data_high/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_86
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/o_data_low
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_85
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/o_data_low/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_85
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/o_fwd
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_88
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/o_fwd/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_88
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_87
+second_half_stages_5__sw_group_0__upper_group_1__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_87
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw
+                                    553.0140      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_10
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_60
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_60
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_59
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_59
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_56
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_56
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_55
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_55
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/o_fwd
+                                     94.1220      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_58
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/o_fwd/data_mux
+                                     94.1220      0.3    31.7520     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_58
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/o_fwd_en
+                                     80.1360      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_57
+second_half_stages_5__sw_group_1__bottom_group_0__bottom_sw/o_fwd_en/data_mux
+                                     79.8840      0.3    17.5140     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_57
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw
+                                    584.6400      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_9
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/merge_i_data_high
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_54
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/merge_i_data_high/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_54
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/merge_i_data_low
+                                    104.5800      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_53
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/merge_i_data_low/data_mux
+                                    104.5800      0.3    42.2100     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_53
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/o_data_high
+                                    109.8720      0.4     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_50
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/o_data_high/data_mux
+                                    109.8720      0.4    47.5020     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_50
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/o_data_low
+                                    101.6820      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_49
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/o_data_low/data_mux
+                                    101.6820      0.3    39.3120     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_49
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/o_fwd
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_52
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/o_fwd/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_52
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_51
+second_half_stages_5__sw_group_1__bottom_group_1__bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_51
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw
+                                    568.1340      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_12
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/merge_i_data_high
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_72
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/merge_i_data_high/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_72
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/merge_i_data_low
+                                    111.8880      0.4     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_71
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/merge_i_data_low/data_mux
+                                    111.8880      0.4    49.5180     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_71
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/o_data_high
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_68
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/o_data_high/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_68
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/o_data_low
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_67
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/o_data_low/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_67
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/o_fwd
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_70
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/o_fwd/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_70
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_69
+second_half_stages_5__sw_group_1__upper_group_0__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_69
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw
+                                    553.2660      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_11
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_66
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_66
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_65
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_65
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/o_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_62
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/o_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_62
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/o_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_61
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/o_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_61
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/o_fwd
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_64
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/o_fwd/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_64
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_63
+second_half_stages_5__sw_group_1__upper_group_1__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_63
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw
+                                    561.8340      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_4
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_24
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_24
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_23
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_23
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/o_data_high
+                                     98.7840      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_20
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/o_data_high/data_mux
+                                     98.7840      0.3    36.4140     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_20
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/o_data_low
+                                     98.7840      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_19
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/o_data_low/data_mux
+                                     98.7840      0.3    36.4140     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_19
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/o_fwd
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_22
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/o_fwd/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_22
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_21
+second_half_stages_6__sw_group_0__bottom_group_0__bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_21
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw
+                                    576.3240      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_3
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/merge_i_data_high
+                                    101.8080      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_18
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/merge_i_data_high/data_mux
+                                    101.8080      0.3    31.3740     70.4340  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_18
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/merge_i_data_low
+                                    102.0600      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_17
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/merge_i_data_low/data_mux
+                                    102.0600      0.3    31.6260     70.4340  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_17
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/o_data_high
+                                     98.7840      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_14
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/o_data_high/data_mux
+                                     98.7840      0.3    36.4140     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_14
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/o_data_low
+                                     98.7840      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_13
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/o_data_low/data_mux
+                                     98.7840      0.3    36.4140     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_13
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/o_fwd
+                                     94.1220      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_16
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/o_fwd/data_mux
+                                     94.1220      0.3    31.7520     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_16
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_15
+second_half_stages_6__sw_group_0__bottom_group_1__bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_15
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw
+                                    568.6380      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_2
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/merge_i_data_high
+                                    101.9340      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_12
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/merge_i_data_high/data_mux
+                                    101.9340      0.3    39.5640     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_12
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/merge_i_data_low
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_11
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/merge_i_data_low/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_11
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/o_data_high
+                                     98.9100      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_8
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/o_data_high/data_mux
+                                     98.9100      0.3    36.5400     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_8
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/o_data_low
+                                     98.9100      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_7
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/o_data_low/data_mux
+                                     98.9100      0.3    36.5400     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_7
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/o_fwd
+                                     94.2480      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_10
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/o_fwd/data_mux
+                                     94.2480      0.3    31.8780     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_10
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_9
+second_half_stages_6__sw_group_0__bottom_group_2__bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_9
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw
+                                    562.0860      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_1
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_6
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_6
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_5
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_5
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/o_data_high
+                                     98.9100      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_2
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/o_data_high/data_mux
+                                     98.9100      0.3    36.5400     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_2
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/o_data_low
+                                     98.9100      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_1
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/o_data_low/data_mux
+                                     98.9100      0.3    36.5400     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_1
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/o_fwd
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_4
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/o_fwd/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_4
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_3
+second_half_stages_6__sw_group_0__bottom_group_3__bottom_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_3
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw
+                                    561.4560      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_8
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_48
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_48
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_47
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_47
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/o_data_high
+                                     98.7840      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_44
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/o_data_high/data_mux
+                                     98.7840      0.3    36.4140     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_44
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/o_data_low
+                                     98.7840      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_43
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/o_data_low/data_mux
+                                     98.7840      0.3    36.4140     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_43
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/o_fwd
+                                     94.1220      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_46
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/o_fwd/data_mux
+                                     94.1220      0.3    31.7520     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_46
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_45
+second_half_stages_6__sw_group_0__upper_group_0__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_45
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw
+                                    561.8340      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_7
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_42
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_42
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_41
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_41
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/o_data_high
+                                     98.7840      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_38
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/o_data_high/data_mux
+                                     98.7840      0.3    36.4140     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_38
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/o_data_low
+                                     98.7840      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_37
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/o_data_low/data_mux
+                                     98.7840      0.3    36.4140     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_37
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/o_fwd
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_40
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/o_fwd/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_40
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_39
+second_half_stages_6__sw_group_0__upper_group_1__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_39
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw
+                                    561.4560      1.8     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_6
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/merge_i_data_high
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_36
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/merge_i_data_high/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_36
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/merge_i_data_low
+                                     94.5000      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_35
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/merge_i_data_low/data_mux
+                                     94.5000      0.3    32.1300     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_35
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/o_data_high
+                                     98.7840      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_32
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/o_data_high/data_mux
+                                     98.7840      0.3    36.4140     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_32
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/o_data_low
+                                     98.7840      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_31
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/o_data_low/data_mux
+                                     98.7840      0.3    36.4140     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_31
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/o_fwd
+                                     94.1220      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_34
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/o_fwd/data_mux
+                                     94.1220      0.3    31.7520     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_34
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_33
+second_half_stages_6__sw_group_0__upper_group_2__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_33
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw
+                                    576.3240      1.9     0.7560      0.0000  0.0000  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_5
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/merge_i_data_high
+                                    101.9340      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_30
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/merge_i_data_high/data_mux
+                                    101.9340      0.3    39.5640     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_30
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/merge_i_data_low
+                                    101.9340      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_29
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/merge_i_data_low/data_mux
+                                    101.9340      0.3    39.5640     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_29
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/o_data_high
+                                     98.9100      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_26
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/o_data_high/data_mux
+                                     98.9100      0.3    36.5400     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_26
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/o_data_low
+                                     98.9100      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_25
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/o_data_low/data_mux
+                                     98.9100      0.3    36.5400     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_25
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/o_fwd
+                                     93.8700      0.3     0.0000      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_28
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/o_fwd/data_mux
+                                     93.8700      0.3    31.5000     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_28
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/o_fwd_en
+                                     80.0100      0.3     0.2520      0.0000  0.0000  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_27
+second_half_stages_6__sw_group_0__upper_group_3__upper_sw/o_fwd_en/data_mux
+                                     79.7580      0.3    17.3880     62.3700  0.0000  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_27
+--------------------------------  ----------  -------  ---------  ----------  ------  ---------------------------------------------------------
+Total                                                  9846.0182  20562.4438  0.0000
+
+1

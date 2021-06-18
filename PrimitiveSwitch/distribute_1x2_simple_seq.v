@@ -32,7 +32,7 @@
 `ifdef MODULAR
 module distribute_1x2_simple_seq#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 2
+	parameter COMMAND_WIDTH  = 2
 )(
     // timeing signals
     clk,
@@ -60,7 +60,7 @@ module distribute_1x2_simple_seq#(
 	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
 	    
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 		// 00 --> NA
 		// 01 --> Branch_low
 		// 10 --> Branch_high
@@ -80,7 +80,7 @@ module distribute_1x2_simple_seq#(
 
 	mux_2x1_simple_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	) o_data_low_mux(
 		.clk(clk),
 		.rst(rst),
@@ -94,7 +94,7 @@ module distribute_1x2_simple_seq#(
 
 	mux_2x1_simple_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	)o_data_high_mux(
 		.clk(clk),
 		.rst(rst),
@@ -121,7 +121,7 @@ endmodule
 `ifdef FLATTEN
 module distribute_1x2_simple_seq#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 2
+	parameter COMMAND_WIDTH  = 2
 )(
     // timeing signals
     clk,
@@ -149,7 +149,7 @@ module distribute_1x2_simple_seq#(
 	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
 	    
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 		// 00 --> NA
 		// 01 --> Branch_low
 		// 10 --> Branch_high

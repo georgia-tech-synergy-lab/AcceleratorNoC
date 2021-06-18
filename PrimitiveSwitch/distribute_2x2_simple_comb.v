@@ -128,7 +128,7 @@
 `ifdef SIMPLE_FLATTEN
 module distribute_2x2_simple_comb#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 2
+	parameter COMMAND_WIDTH  = 2
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -149,7 +149,7 @@ module distribute_2x2_simple_comb#(
 	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
 	    
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 		// 11 --> Multicast_HighIn
 		// 00 --> Multicast_LowIn
 		// 10 --> Pass Through
@@ -159,7 +159,7 @@ module distribute_2x2_simple_comb#(
     reg    [2*DATA_WIDTH-1:0]      o_data_bus_inner;
     reg    [1:0]                   o_valid_inner;
     reg    [1:0]                   i_valid_inner; 
-    reg    [COMMMAND_WIDTH-1:0]    i_cmd_inner; 
+    reg    [COMMAND_WIDTH-1:0]    i_cmd_inner; 
 
 	always @(*) begin
         i_valid_inner = i_valid;
@@ -277,7 +277,7 @@ endmodule
 `ifdef UNICAST_ONLY_MODULAR
 module distribute_2x2_simple_comb#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 1
+	parameter COMMAND_WIDTH  = 1
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -298,7 +298,7 @@ module distribute_2x2_simple_comb#(
 	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
 	    
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 		// 11 --> Multicast_HighIn
 		// 00 --> Multicast_LowIn
 		// 10 --> Pass Through
@@ -307,7 +307,7 @@ module distribute_2x2_simple_comb#(
 	// merge level
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH)
+		.COMMAND_WIDTH(COMMAND_WIDTH)
 	)merge_i_data_high(
 		.i_valid({i_valid[0], i_valid[1]}),
 		.i_data_bus({i_data_bus[0+:DATA_WIDTH], i_data_bus[DATA_WIDTH+:DATA_WIDTH]}),
@@ -319,7 +319,7 @@ module distribute_2x2_simple_comb#(
 
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH)
+		.COMMAND_WIDTH(COMMAND_WIDTH)
 	)merge_i_data_low(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
@@ -335,7 +335,7 @@ endmodule
 `ifdef SIMPLE_MODULAR
 module distribute_2x2_simple_comb#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 2
+	parameter COMMAND_WIDTH  = 2
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -356,7 +356,7 @@ module distribute_2x2_simple_comb#(
 	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
 	    
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 		// 11 --> Multicast_HighIn
 		// 00 --> Multicast_LowIn
 		// 10 --> Pass Through
@@ -365,7 +365,7 @@ module distribute_2x2_simple_comb#(
 	// merge level
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	)merge_i_data_high(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
@@ -377,7 +377,7 @@ module distribute_2x2_simple_comb#(
 
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	)merge_i_data_low(
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
@@ -392,7 +392,7 @@ endmodule
 `ifdef COMPLEX_MODULAR
 module distribute_2x2_simple_comb#(
 	parameter DATA_WIDTH = 32,
-	parameter COMMMAND_WIDTH  = 3
+	parameter COMMAND_WIDTH  = 3
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -413,7 +413,7 @@ module distribute_2x2_simple_comb#(
 	output [2*DATA_WIDTH-1:0]     o_data_bus; //{o_data_a, o_data_b}
 	    
 	input                         i_en;
-	input  [COMMMAND_WIDTH-1:0]   i_cmd;
+	input  [COMMAND_WIDTH-1:0]   i_cmd;
 		// 000 --> Multicast_HighIn
 		// 100 --> Multicast_LowIn
 		// 011 --> Pass Through
@@ -550,7 +550,7 @@ module distribute_2x2_simple_comb#(
 	// distribute level
 	distribute_1x2_simple_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	) dis_i_data_high(
 		.i_valid(i_valid_inner[1]),
 		.i_data_bus(i_data_bus[DATA_WIDTH+:DATA_WIDTH]),
@@ -562,7 +562,7 @@ module distribute_2x2_simple_comb#(
 
 	distribute_1x2_simple_comb #(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-1)
+		.COMMAND_WIDTH(COMMAND_WIDTH-1)
 	)dis_i_data_low(
 		.i_valid(i_valid_inner[0]),
 		.i_data_bus(i_data_bus[0+:DATA_WIDTH]),
@@ -577,7 +577,7 @@ module distribute_2x2_simple_comb#(
 	// merge level
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-2)
+		.COMMAND_WIDTH(COMMAND_WIDTH-2)
 	)merge_i_data_high(
 		.i_valid({dis_o_data_high_valid[1], dis_o_data_low_valid[1]}),
 		.i_data_bus({dis_o_data_high_data[DATA_WIDTH+:DATA_WIDTH],dis_o_data_low_data[DATA_WIDTH+:DATA_WIDTH]}),
@@ -589,7 +589,7 @@ module distribute_2x2_simple_comb#(
 
 	merge_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH),
-		.COMMMAND_WIDTH(COMMMAND_WIDTH-2)
+		.COMMAND_WIDTH(COMMAND_WIDTH-2)
 	)merge_i_data_low(
 		.i_valid({dis_o_data_high_valid[0], dis_o_data_low_valid[0]}),
 		.i_data_bus({dis_o_data_high_data[0+:DATA_WIDTH],dis_o_data_low_data[0+:DATA_WIDTH]}),

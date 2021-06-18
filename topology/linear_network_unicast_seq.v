@@ -43,7 +43,7 @@ module linear_network_unicast_seq#(
 	i_cmd           // command 
 );
 	//parameter
-	localparam COMMMAND_WIDTH = $clog2(NUM_NODE);
+	localparam COMMAND_WIDTH = $clog2(NUM_NODE);
 
 	localparam WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_NODE;
 
@@ -58,7 +58,7 @@ module linear_network_unicast_seq#(
 	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // Node 0 output [0+:DATA_WIDTH]; Node max# output [(NUM_NODE-1)*DATA_WIDTH+:DATA_WIDTH]
 
 	input                                        i_en;
-	input  [COMMMAND_WIDTH-1:0]                  i_cmd;      // destination tag.
+	input  [COMMAND_WIDTH-1:0]                  i_cmd;      // destination tag.
  
 	// inner logic
 	reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -68,7 +68,7 @@ module linear_network_unicast_seq#(
 	reg                                          o_valid_forward_reg[0:NUM_NODE-2];
 
 	// the first switch
-	reg [COMMMAND_WIDTH-1:0] node_id_reg_first;
+	reg [COMMAND_WIDTH-1:0] node_id_reg_first;
 
 	initial begin
 		node_id_reg_first = 0;
@@ -103,7 +103,7 @@ module linear_network_unicast_seq#(
 	generate
 		for(i=1; i<NUM_NODE-1;i=i+1)
 		begin: node
-			reg [COMMMAND_WIDTH-1:0] node_id_reg;
+			reg [COMMAND_WIDTH-1:0] node_id_reg;
 			initial begin
 				node_id_reg = i;
 			end
@@ -136,7 +136,7 @@ module linear_network_unicast_seq#(
 	endgenerate
 
 
-	reg [COMMMAND_WIDTH-1:0] node_id_reg_last;
+	reg [COMMAND_WIDTH-1:0] node_id_reg_last;
 
 	initial begin
 		node_id_reg_last = NUM_NODE-1;

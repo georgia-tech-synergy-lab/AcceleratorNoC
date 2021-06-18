@@ -1,0 +1,70 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : flatten_benes_simple_seq
+Version: J-2014.09-SP3
+Date   : Tue Jun 15 08:18:40 2021
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: tt0p8v25c   Library: tcbn28hpcplusbwp30p140lvttt0p8v25c
+Wire Load Model Mode: segmented
+
+  Startpoint: i_cmd[1] (input port clocked by clk)
+  Endpoint: first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_high/data_mux/o_data_bus_inner_reg_0_
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  flatten_benes_simple_seq
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_0
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_92
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_92
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.06       0.06 f
+  i_cmd[1] (in)                                           0.00       0.06 f
+  first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/i_cmd[1] (distribute_3x3_simple_seq_DATA_WIDTH32_COMMAND_WIDTH5_0)
+                                                          0.00       0.06 f
+  first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_high/i_cmd[0] (merge_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_92)
+                                                          0.00       0.06 f
+  first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_high/data_mux/i_cmd[0] (mux_2x1_simple_seq_DATA_WIDTH32_COMMAND_WIDTH1_92)
+                                                          0.00       0.06 f
+  first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_high/data_mux/U7/ZN (NR3D0P7BWP30P140LVT)
+                                                          0.01       0.08 r
+  first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_high/data_mux/U3/Z (BUFFD2BWP30P140LVT)
+                                                          0.04       0.11 r
+  first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_high/data_mux/U11/Z (AO22D1BWP30P140LVT)
+                                                          0.02       0.14 r
+  first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_high/data_mux/o_data_bus_inner_reg_0_/D (DFQD1BWP30P140LVT)
+                                                          0.00       0.14 r
+  data arrival time                                                  0.14
+
+  clock clk (rise edge)                                   0.30       0.30
+  clock network delay (ideal)                             0.00       0.30
+  clock uncertainty                                      -0.15       0.15
+  first_half_stages_0__sw_group_0__upper_group_0__genblk1_upper_sw_first_stage/o_data_high/data_mux/o_data_bus_inner_reg_0_/CP (DFQD1BWP30P140LVT)
+                                                          0.00       0.15 r
+  library setup time                                     -0.01       0.14
+  data required time                                                 0.14
+  --------------------------------------------------------------------------
+  data required time                                                 0.14
+  data arrival time                                                 -0.14
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+1

@@ -19,7 +19,7 @@ module wire_binary_tree_1_8_seq #(
 );
 
 	//parameter
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
@@ -203,7 +203,7 @@ module wire_binary_tree_1_8_seq #(
 );
 
 	//parameter
-	localparam TOTAL_COMMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
