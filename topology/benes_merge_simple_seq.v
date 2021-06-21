@@ -84,7 +84,6 @@ module benes_merge_simple_seq#(
 									// 10 --> Pass Through
 									// 01 --> Pass Switch
 
-
 	// inner logic
 	wire   [DATA_WIDTH-1:0]                      connection[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
 	wire                                         connection_valid[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
@@ -92,7 +91,6 @@ module benes_merge_simple_seq#(
 	// logic to connect BENES w/o last stage to merge tree
 	wire   [NUM_INPUT_DATA*DATA_WIDTH-1:0]       i_data_merge_tree_inner;
 	wire   [NUM_INPUT_DATA-1:0]                  i_data_valid_merge_tree_inner;
-
 
 	genvar i,j,k,s,p;
 	generate
@@ -147,8 +145,6 @@ module benes_merge_simple_seq#(
 			);
 		end
 
-
-
 		// second stage -> middle stage 
 		// inverse shuffle function [loop right shift]:  output of i-th stage    -> input of (i+1)-th stage 
 		// shuffle function         [loop left shift]:   input of (i+1)-th stage -> output of i-th stage
@@ -197,7 +193,6 @@ module benes_merge_simple_seq#(
 				end
 			end
 		end
-
 
 		// middle stage -> last stage 
 		// shuffle function         [loop left shift]:   output of i-th stage    -> input of (i+1)-th stage

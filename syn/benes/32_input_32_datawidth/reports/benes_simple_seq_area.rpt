@@ -1,0 +1,30 @@
+ 
+****************************************
+Report : area
+Design : benes_simple_seq
+Version: J-2014.09-SP3
+Date   : Sat Jun 19 04:05:15 2021
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140tt0p8v25c (File: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/custom_utils_ck/tsmc_ip/tcbn28hpcplusbwp30p140/nldm/tcbn28hpcplusbwp30p140tt0p8v25c.db)
+
+Number of ports:                         2403
+Number of nets:                         13585
+Number of cells:                         2878
+Number of combinational cells:           1582
+Number of sequential cells:              1152
+Number of macros/black boxes:               0
+Number of buf/inv:                       1582
+Number of references:                     152
+
+Combinational area:              13763.987933
+Buf/Inv area:                     5874.246039
+Noncombinational area:           20375.711786
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                 34139.699719
+Total area:                 undefined
+1

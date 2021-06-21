@@ -1,0 +1,96 @@
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+Warning: Design has unannotated primary inputs. (PWR-414)
+Warning: Design has unannotated sequential cell outputs. (PWR-415)
+ 
+****************************************
+Report : power
+        -analysis_effort low
+Design : benes_simple_seq
+Version: J-2014.09-SP3
+Date   : Sat Jun 19 03:59:10 2021
+****************************************
+
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp30p140tt0p8v25c (File: /usr/scratch/DRBE-shared/TSMC-library/IP/TSMC28_STD_CELLS/custom_utils_ck/tsmc_ip/tcbn28hpcplusbwp30p140/nldm/tcbn28hpcplusbwp30p140tt0p8v25c.db)
+
+
+Operating Conditions: tt0p8v25c   Library: tcbn28hpcplusbwp30p140tt0p8v25c
+Wire Load Model Mode: segmented
+
+Design        Wire Load Model            Library
+------------------------------------------------
+benes_simple_seq       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_0
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_1
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_2
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_3
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_4
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_5
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_6
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_7
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_8
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_9
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_10
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_11
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_12
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_13
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_14
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_15
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_16
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_17
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_18
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_19
+                       ZeroWireload      tcbn28hpcplusbwp30p140tt0p8v25c
+
+
+Global Operating Voltage = 0.8  
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1nW
+
+
+  Cell Internal Power  =  12.4160 mW   (94%)
+  Net Switching Power  = 748.4951 uW    (6%)
+                         ---------
+Total Dynamic Power    =  13.1645 mW  (100%)
+
+Cell Leakage Power     =  16.9658 uW
+
+
+                 Internal         Switching           Leakage            Total
+Power Group      Power            Power               Power              Power   (   %    )  Attrs
+--------------------------------------------------------------------------------------------------
+io_pad             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+memory             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+black_box          0.0000            0.0000            0.0000            0.0000  (   0.00%)
+clock_network      0.0000            0.0000            0.0000            0.0000  (   0.00%)
+register          12.1197        5.3133e-02        9.7012e+03           12.1825  (  92.42%)
+sequential         0.0000            0.0000            0.0000            0.0000  (   0.00%)
+combinational      0.2964            0.6954        7.2646e+03            0.9990  (   7.58%)
+--------------------------------------------------------------------------------------------------
+Total             12.4160 mW         0.7485 mW     1.6966e+04 nW        13.1815 mW
+1
