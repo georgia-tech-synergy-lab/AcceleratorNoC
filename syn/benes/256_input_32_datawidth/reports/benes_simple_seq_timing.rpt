@@ -1,0 +1,68 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : benes_simple_seq
+Version: J-2014.09-SP3
+Date   : Sat Jun 19 06:08:50 2021
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: tt0p8v25c   Library: tcbn28hpcplusbwp30p140tt0p8v25c
+Wire Load Model Mode: segmented
+
+  Startpoint: i_valid[51]
+              (input port clocked by clk)
+  Endpoint: first_stage_switch_25__first_stage/o_data_bus_inner_reg_17_
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  benes_simple_seq   ZeroWireload          tcbn28hpcplusbwp30p140tt0p8v25c
+  distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_1895
+                     ZeroWireload          tcbn28hpcplusbwp30p140tt0p8v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.06       0.06 r
+  i_valid[51] (in)                                        0.00       0.06 r
+  first_stage_switch_25__first_stage/i_valid[1] (distribute_2x2_simple_seq_DATA_WIDTH32_COMMAND_WIDTH2_1895)
+                                                          0.00       0.06 r
+  first_stage_switch_25__first_stage/U35/ZN (INVD4BWP30P140)
+                                                          0.01       0.07 f
+  first_stage_switch_25__first_stage/U128/ZN (MUX2NOPTD4BWP30P140)
+                                                          0.01       0.09 r
+  first_stage_switch_25__first_stage/U20/ZN (ND2OPTPAD4BWP30P140)
+                                                          0.01       0.10 f
+  first_stage_switch_25__first_stage/U21/ZN (INVD4BWP30P140)
+                                                          0.01       0.10 r
+  first_stage_switch_25__first_stage/U136/ZN (INVD2BWP30P140)
+                                                          0.01       0.12 f
+  first_stage_switch_25__first_stage/U142/ZN (OAI22D1BWP30P140)
+                                                          0.02       0.14 r
+  first_stage_switch_25__first_stage/o_data_bus_inner_reg_17_/D (DFQD1BWP30P140)
+                                                          0.00       0.14 r
+  data arrival time                                                  0.14
+
+  clock clk (rise edge)                                   0.30       0.30
+  clock network delay (ideal)                             0.00       0.30
+  clock uncertainty                                      -0.15       0.15
+  first_stage_switch_25__first_stage/o_data_bus_inner_reg_17_/CP (DFQD1BWP30P140)
+                                                          0.00       0.15 r
+  library setup time                                     -0.02       0.13
+  data required time                                                 0.13
+  --------------------------------------------------------------------------
+  data required time                                                 0.13
+  data arrival time                                                 -0.14
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.01
+
+
+1

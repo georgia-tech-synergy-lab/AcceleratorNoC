@@ -37,7 +37,7 @@ module crossbar_one_hot_seq#(
 	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
 	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+	input  [TOTAL_COMMAND-1:0]                   i_cmd;
 
 
     // inner logic
