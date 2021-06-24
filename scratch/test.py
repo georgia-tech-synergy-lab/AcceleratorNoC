@@ -23,3 +23,4 @@ if __name__ == "__main__":
         f.write("                        begin\n")
         f.write(f"                            o_valid_reg[i] <= (i_valid[{i}])?1'b1:1'b0;\n")
         f.write(f"                        end\n")
+  

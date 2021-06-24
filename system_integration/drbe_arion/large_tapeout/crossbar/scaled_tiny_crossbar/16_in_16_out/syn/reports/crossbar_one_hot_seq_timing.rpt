@@ -1,0 +1,169 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : crossbar_one_hot_seq
+Version: J-2014.09-SP3
+Date   : Mon Jun 21 06:21:13 2021
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: tt0p8v25c   Library: tcbn28hpcplusbwp30p140lvttt0p8v25c
+Wire Load Model Mode: segmented
+
+  Startpoint: i_cmd_id_10__cmd_pipeline/o_cmd_reg_reg_0_
+              (rising edge-triggered flip-flop clocked by CLK)
+  Endpoint: bottom_half_0__mux_tree/o_data_bus_reg_reg_13_
+            (rising edge-triggered flip-flop clocked by CLK)
+  Path Group: CLK
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_15
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_14
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_13
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_12
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_11
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_10
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_9
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_8
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_7
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_6
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_5
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_4
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_3
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_2
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_1
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_15
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_14
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_13
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_12
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_11
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_10
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_9
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_8
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_7
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_6
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_5
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_4
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_3
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_2
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_1
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_15
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_14
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_13
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_12
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_11
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_10
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_9
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_8
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_7
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_6
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_5
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_4
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_3
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_2
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_1
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_0
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_0
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  crossbar_one_hot_seq
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+  wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_0
+                     ZeroWireload          tcbn28hpcplusbwp30p140lvttt0p8v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  i_cmd_id_10__cmd_pipeline/o_cmd_reg_reg_0_/CP (DFQD4BWP30P140LVT)
+                                                          0.00 #     0.00 r
+  i_cmd_id_10__cmd_pipeline/o_cmd_reg_reg_0_/Q (DFQD4BWP30P140LVT)
+                                                          0.04       0.04 f
+  i_cmd_id_10__cmd_pipeline/o_cmd_0 (cmd_wire_binary_tree_1_16_seq_DATA_WIDTH32_NUM_OUTPUT_DATA16_NUM_INPUT_DATA1_6)
+                                                          0.00       0.04 f
+  bottom_half_0__mux_tree/i_cmd[10] (mux_tree_16_1_seq_DATA_WIDTH32_NUM_OUTPUT_DATA1_NUM_INPUT_DATA16_0)
+                                                          0.00       0.04 f
+  bottom_half_0__mux_tree/U28/ZN (NR3OPTPAD2BWP30P140LVT)
+                                                          0.01       0.05 r
+  bottom_half_0__mux_tree/U158/ZN (ND3OPTPAD2BWP30P140LVT)
+                                                          0.01       0.06 f
+  bottom_half_0__mux_tree/U159/ZN (INVD2BWP30P140LVT)     0.01       0.07 r
+  bottom_half_0__mux_tree/U160/ZN (ND2OPTIBD4BWP30P140LVT)
+                                                          0.01       0.07 f
+  bottom_half_0__mux_tree/U168/Z (OR2D4BWP30P140LVT)      0.02       0.09 f
+  bottom_half_0__mux_tree/U218/ZN (INVD4BWP30P140LVT)     0.01       0.10 r
+  bottom_half_0__mux_tree/U479/ZN (AOI22D1BWP30P140LVT)
+                                                          0.01       0.11 f
+  bottom_half_0__mux_tree/U480/ZN (ND4D1BWP30P140LVT)     0.01       0.12 r
+  bottom_half_0__mux_tree/U481/ZN (NR2D1BWP30P140LVT)     0.01       0.13 f
+  bottom_half_0__mux_tree/U13/ZN (INVD1BWP30P140LVT)      0.01       0.14 r
+  bottom_half_0__mux_tree/o_data_bus_reg_reg_13_/D (DFQD1BWP30P140LVT)
+                                                          0.00       0.14 r
+  data arrival time                                                  0.14
+
+  clock CLK (rise edge)                                   0.30       0.30
+  clock network delay (ideal)                             0.00       0.30
+  clock uncertainty                                      -0.15       0.15
+  bottom_half_0__mux_tree/o_data_bus_reg_reg_13_/CP (DFQD1BWP30P140LVT)
+                                                          0.00       0.15 r
+  library setup time                                     -0.01       0.14
+  data required time                                                 0.14
+  --------------------------------------------------------------------------
+  data required time                                                 0.14
+  data arrival time                                                 -0.14
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+1
