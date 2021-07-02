@@ -40,8 +40,10 @@
 /////////////////////////////////////////////////////////////
 
 module multiplier_seq#(
-	parameter DATA_WIDTH = 16,                        // could be arbitrary number
-	parameter COMMAND_WIDTH = 4 + $clog2(DATA_WIDTH)  // total input command bits.
+	parameter DATA_WIDTH = 16,                            // specify the datawidht of input data.
+	parameter COMMAND_WIDTH = 4 + $clog2(DATA_WIDTH) +1   // total input command bits. 
+						// 4 bits for functionality specification; 
+						// extra $clog2(DATA_WIDTH) + 1 bits are used for bit selection 
 )(
     // data signals
 	clk,
@@ -65,67 +67,69 @@ module multiplier_seq#(
 );
 
     // data signals
-	input                          clk;
-	input                          rst;
+	input                            clk;
+	input                            rst;
 	
-	input  [DATA_WIDTH-1:0]        i_data_bus;
-	input                          i_valid;             
+	input  [DATA_WIDTH-1:0]          i_data_bus;
+	input                            i_valid;             
 
-	input  [DATA_WIDTH-1:0]        i_fwd_bus;
-	input                          i_fwd_valid;
+	input  [DATA_WIDTH-1:0]          i_fwd_bus;
+	input                            i_fwd_valid;
 
-	output [DATA_WIDTH-1:0]        o_data_bus;
-	output                         o_valid;             
+	output [DATA_WIDTH-1:0]          o_data_bus;
+	output                           o_valid;             
 	
-	output [DATA_WIDTH-1:0]        o_fwd_bus;
-	output                         o_fwd_valid;     
+	output [DATA_WIDTH-1:0]          o_fwd_bus;
+	output                           o_fwd_valid;     
 	
-	input                          i_en;
-	input  [COMMAND_WIDTH-1:0]     i_cmd;
+	input                            i_en;
+	input  [COMMAND_WIDTH-1:0]       i_cmd;
 
 	/*
 	   first stage var definition
 	*/
 
 	// first stage latch (combinational assignment)
-	reg    [DATA_WIDTH-1:0]        i_data_fwd_latch;
-	reg    [DATA_WIDTH-1:0]        i_data_stream_latch;
-	reg    [DATA_WIDTH-1:0]        i_data_stationary_latch;
-
-	reg                            i_valid_fwd_latch;
-	reg                            i_valid_stream_latch;
-	reg                            i_valid_stationary_latch;
+	reg    [DATA_WIDTH-1:0]          i_data_fwd_latch;
+	reg    [DATA_WIDTH-1:0]          i_data_stream_latch;
+	reg    [DATA_WIDTH-1:0]          i_data_stationary_latch;
+  
+	reg                              i_valid_fwd_latch;
+	reg                              i_valid_stream_latch;
+	reg                              i_valid_stationary_latch;
 
 	// first stage reg (sequential assignment)
-	reg    [DATA_WIDTH-1:0]        data_stream_reg;
-	reg    [DATA_WIDTH-1:0]        data_stationary_reg;
+	reg    [DATA_WIDTH-1:0]          data_stream_reg;
+	reg    [DATA_WIDTH-1:0]          data_stationary_reg;
 
-	reg                            valid_stream_reg;
-	reg                            valid_stationary_reg;
+	reg                              valid_stream_reg;
+	reg                              valid_stationary_reg;
 
 	// first stage module output connection wire
-	wire   [DATA_WIDTH-1:0]        data_dynamic_wire;
-	wire                           valid_dynamic_wire;
+	wire   [DATA_WIDTH-1:0]          data_dynamic_wire;
+	wire                             valid_dynamic_wire;
 	
 	/*
 		second stage var definition
 	*/
 
 	// second stage latch (combinational assignment)
-	reg    [2*DATA_WIDTH-1:0]      o_data_full_latch;
-	reg                            o_valid_latch;	
+	reg    [2*DATA_WIDTH-1:0]        o_data_full_latch;
+	reg                              o_valid_latch;	
 	
 	// second stage reg (sequential assignment)
-	reg    [DATA_WIDTH-1:0]        o_fwd_bus_reg;
-	reg                            o_valid_fwd_reg;
+	reg    [DATA_WIDTH-1:0]          o_fwd_bus_reg;
+	reg                              o_valid_fwd_reg;
 
 	// stored control of first stages for usage in the second stage.
-	reg    [$clog2(DATA_WIDTH):0]  cmd_second_stage_reg; // $clog2(DATA_WIDTH) + 1 bits in total
+	reg    [$clog2(DATA_WIDTH)+1:0]  cmd_second_stage_reg;     // store 2 bits in the first stage for second stage usage &
+															   // ($clog2(DATA_WIDTH) + 1) bits for bit selection
+															   // ($clog2(DATA_WIDTH) + 2) in total
 
 	always @(posedge clk) begin
 		if(i_en & (~rst))
 		begin
-			cmd_second_stage_reg <= i_cmd[3 +: ($clog2(DATA_WIDTH)+1)];
+			cmd_second_stage_reg <= i_cmd[3 +: ($clog2(DATA_WIDTH)+2)];
 		end
 		else
 		begin
@@ -222,7 +226,7 @@ module multiplier_seq#(
 	always @(*) begin
 		if(i_en & ~rst)
 		begin
-			o_data_full_latch <= (valid_dynamic_wire & valid_stationary_reg)?(data_dynamic_wire * data_stationary_reg):{DATA_WIDTH{1'b0}};
+			o_data_full_latch <= ( valid_dynamic_wire & valid_stationary_reg)?(data_dynamic_wire * data_stationary_reg):{DATA_WIDTH{1'b0}};
 			o_valid_latch <= valid_dynamic_wire & valid_stationary_reg;
 		end
 		else
@@ -247,9 +251,9 @@ module multiplier_seq#(
 	end
 	
 	// perform bits selection on multiplcation results
- 	bit_selection_32x16_seq #(
+ 	bit_selection_16x8_seq #(
 		.DATA_WIDTH((DATA_WIDTH<<1)),
-        .COMMAND_WIDTH($clog2(DATA_WIDTH))
+        .COMMAND_WIDTH($clog2(DATA_WIDTH)+1)
 	) bit_selector(
         .clk(clk),
         .rst(rst),
@@ -258,7 +262,7 @@ module multiplier_seq#(
 		.o_valid(o_valid),
 		.o_data_bus(o_data_bus),
 		.i_en(i_en),
-		.i_cmd(cmd_second_stage_reg[1 +: $clog2(DATA_WIDTH)])
+		.i_cmd(cmd_second_stage_reg[1 +: ($clog2(DATA_WIDTH)+1)])
 	);
 
 	assign o_fwd_bus = o_fwd_bus_reg;

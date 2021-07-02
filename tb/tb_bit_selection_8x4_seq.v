@@ -1,22 +1,22 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_bit_selection_16x8_seq
+// Top Module:  tb_bit_selection_8x4_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic, one clock cycle latency
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// Function:    select 8 continous bits out of 16 bits --> total 8 cases (if need shift) -> 3-bit command.
+// Function:    select 4 continous bits out of 8 bits --> total 4 cases (if need shift) -> 2-bit command.
 //              extra 1 bit command to control whether shift is needed.
-//              So 4-bit command in total.
+//              So 3-bit command in total.
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module tb_bit_selection_16x8_seq();
+module tb_bit_selection_8x4_seq();
 	
-    parameter DATA_WIDTH = 16;                        // could only be 16
-	parameter COMMAND_WIDTH = $clog2(DATA_WIDTH);     // could only be 3+1 = 4
+    parameter DATA_WIDTH = 8;                         // could only be 8
+	parameter COMMAND_WIDTH = $clog2(DATA_WIDTH);     // could only be 2+1 = 3
 	parameter OUT_DATA_WIDTH = DATA_WIDTH >> 1;
     
     // interface
@@ -34,25 +34,19 @@ module tb_bit_selection_16x8_seq();
     
     /*
         expected output
-        # o_data_bus: 00
+        # o_data_bus: 0
         # 
-        # o_data_bus: 21
+        # o_data_bus: 0
         # 
-        # o_data_bus: 21
+        # o_data_bus: 8
         # 
-        # o_data_bus: 10
+        # o_data_bus: 8
         # 
-        # o_data_bus: 88
+        # o_data_bus: 6
         # 
-        # o_data_bus: 44
+        # o_data_bus: 4
         # 
-        # o_data_bus: 22
-        # 
-        # o_data_bus: 48
-        # 
-        # o_data_bus: a4
-        # 
-        # o_data_bus: 42
+        # o_data_bus: 5
         # 
     */
 
@@ -61,98 +55,63 @@ module tb_bit_selection_16x8_seq();
         // 1 not enable at start
         rst = 1'b1;
         i_valid = 2'b00;
-        i_data_bus = 16'b1010010001000010;
+        i_data_bus = {(DATA_WIDTH>>2){4'h0}};
         i_en = 1'b1;
-        i_cmd = 4'b1000;
+        i_cmd = 3'b100;
 
         // 2 rst active;
         #10
         $display("o_data_bus: %h\n", o_data_bus);
         rst = 1'b1;
         i_valid = 1'b1;
-        i_data_bus = 16'b1010010001000010;
+        i_data_bus = {(DATA_WIDTH>>2){4'h0}};
         i_en = 1'b1;
-        i_cmd = 4'b1001;
+        i_cmd = 3'b100;
         
         // 3 input active -- right shift 1 bit
         #10
         $display("o_data_bus: %h\n", o_data_bus);
         rst = 1'b0;
         i_valid = 1'b1;
-        i_data_bus = 16'b1010010001000010;
+        i_data_bus = {(DATA_WIDTH>>2){4'h1}};
         i_en = 1'b1;
-        i_cmd = 4'b1000;
+        i_cmd = 3'b100;
     
         // 4 input active -- right shift 2 bit
         #10
         $display("o_data_bus: %h\n", o_data_bus);
         rst = 1'b0;
         i_valid = 1'b1;
-        i_data_bus = 16'b1010010001000010;
+        i_data_bus = {(DATA_WIDTH>>2){4'h2}};
         i_en = 1'b1;
-        i_cmd = 4'b1001;
+        i_cmd = 3'b101;
         
         // 5 input active -- right shift 3 bit
         #10
         $display("o_data_bus: %h\n", o_data_bus);
         rst = 1'b0;
         i_valid = 1'b1;
-        i_data_bus = 16'b1010010001000010;
+        i_data_bus = {(DATA_WIDTH>>2){4'h3}};
         i_en = 1'b1;
-        i_cmd = 4'b1010;
+        i_cmd = 3'b110;
         
         // 6 input active -- right shift 4 bit
         #10
         $display("o_data_bus: %h\n", o_data_bus);
         rst = 1'b0;
         i_valid = 1'b1;
-        i_data_bus = 16'b1010010001000010;
+        i_data_bus = {(DATA_WIDTH>>2){4'h4}};
         i_en = 1'b1;
-        i_cmd = 4'b1011;
+        i_cmd = 3'b111;
         
-        // 7 input active -- right shift 5 bit
+        // 7 input active -- no right shift
         #10
         $display("o_data_bus: %h\n", o_data_bus);
         rst = 1'b0;
         i_valid = 1'b1;
-        i_data_bus = 16'b1010010001000010;
+        i_data_bus = {(DATA_WIDTH>>2){4'h5}};
         i_en = 1'b1;
-        i_cmd = 4'b1100;
-        
-        // 8 input active -- right shift 6 bit
-        #10
-        $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
-        i_valid = 1'b1;
-        i_data_bus = 16'b1010010001000010;
-        i_en = 1'b1;
-        i_cmd = 4'b1101;
-        
-        // 9 input active -- right shift 7 bit
-        #10
-        rst = 1'b0;
-        i_valid = 1'b1;
-        i_data_bus = 16'b1010010001000010;
-        i_en = 1'b1;
-        i_cmd = 4'b1110;
-
-        // 10 input active -- right shift 8 bit
-        #10
-        $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
-        i_valid = 1'b1;
-        i_data_bus = 16'b1010010001000010;
-        i_en = 1'b1;
-        i_cmd = 4'b1111;
-
-        // 11 input active -- no shift
-        #10
-        $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
-        i_valid = 1'b1;
-        i_data_bus = 16'b1010010001000010;
-        i_en = 1'b1;
-        i_cmd = 4'b0000;
+        i_cmd = 3'b000;
 
         #10
         $display("o_data_bus: %h\n", o_data_bus);
@@ -160,7 +119,7 @@ module tb_bit_selection_16x8_seq();
     end
 
     // instantiate DUT (device under test)
-    bit_selection_16x8_seq #(
+    bit_selection_8x4_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMAND_WIDTH(COMMAND_WIDTH)
       ) dut(

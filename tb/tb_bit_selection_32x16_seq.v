@@ -6,15 +6,17 @@
 // Timing:      Sequential Logic, one clock cycle latency
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// Function:    select 8 continous bits out of 16 bits --> total 8 cases (if need shift) -> 3-bit command.
-// 
+// Function:    select 16 continous bits out of 32 bits --> total 16 cases (if need shift) -> 4-bit command.
+//              extra 1 bit command to control whether shift is needed.
+//              So 5-bit command in total
+//
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
 module tb_bit_selection_32x16_seq();
 	
-    parameter DATA_WIDTH = 32;                        // could only be 16
-	parameter COMMAND_WIDTH = $clog2(DATA_WIDTH) -1;  // could only be 3 
+    parameter DATA_WIDTH = 32;                        // could only be 32
+	parameter COMMAND_WIDTH = $clog2(DATA_WIDTH);     // could only be 4+1 = 5 
 	parameter OUT_DATA_WIDTH = DATA_WIDTH >> 1;
     
     // interface
@@ -63,6 +65,8 @@ module tb_bit_selection_32x16_seq();
         # 
         # o_data_bus: a442
         # 
+        # o_data_bus: 0810
+        #
     */
 
     initial begin
@@ -72,7 +76,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 2'b00;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b0000;
+        i_cmd = 5'b10000;
 
         // 2 rst active;
         #10
@@ -81,7 +85,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b0000;
+        i_cmd = 5'b10000;
         
         // 3 input active -- right shift 1 bit
         #10
@@ -90,7 +94,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b0000;
+        i_cmd = 5'b10000;
     
         // 4 input active -- right shift 2 bit
         #10
@@ -99,7 +103,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b0001;
+        i_cmd = 5'b10001;
         
         // 5 input active -- right shift 3 bit
         #10
@@ -108,7 +112,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b0010;
+        i_cmd = 5'b10010;
         
         // 6 input active -- right shift 4 bit
         #10
@@ -117,7 +121,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b0011;
+        i_cmd = 5'b10011;
         
         // 7 input active -- right shift 5 bit
         #10
@@ -126,7 +130,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b0100;
+        i_cmd = 5'b10100;
         
         // 8 input active -- right shift 6 bit
         #10
@@ -135,7 +139,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b0101;
+        i_cmd = 5'b10101;
         
         // 9 input active -- right shift 7 bit
         #10
@@ -143,7 +147,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b0110;
+        i_cmd = 5'b10110;
 
         // 10 input active -- right shift 8 bit
         #10
@@ -152,7 +156,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b0111;
+        i_cmd = 5'b10111;
 
         // 11 input active -- right shift 9 bit
         #10
@@ -161,7 +165,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b1000;
+        i_cmd = 5'b11000;
     
                // 12 input active -- right shift 10 bit
         #10
@@ -170,7 +174,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b1001;
+        i_cmd = 5'b11001;
         
         // 13 input active -- right shift 11 bit
         #10
@@ -179,7 +183,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b1010;
+        i_cmd = 5'b11010;
         
         // 14 input active -- right shift 12 bit
         #10
@@ -188,7 +192,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b1011;
+        i_cmd = 5'b11011;
         
         // 15 input active -- right shift 13 bit
         #10
@@ -197,7 +201,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b1100;
+        i_cmd = 5'b11100;
         
         // 16 input active -- right shift 14 bit
         #10
@@ -206,7 +210,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b1101;
+        i_cmd = 5'b11101;
         
         // 17 input active -- right shift 15 bit
         #10
@@ -214,7 +218,7 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b1110;
+        i_cmd = 5'b11110;
 
         // 18 input active -- right shift 16 bit
         #10
@@ -223,7 +227,17 @@ module tb_bit_selection_32x16_seq();
         i_valid = 1'b1;
         i_data_bus = 32'b10100100010000100000100000010000;
         i_en = 1'b1;
-        i_cmd = 4'b1111;
+        i_cmd = 5'b11111;
+
+        // 19 input active -- no shift
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        rst = 1'b0;
+        i_valid = 1'b1;
+        i_data_bus = 32'b10100100010000100000100000010000;
+        i_en = 1'b1;
+        i_cmd = 5'b00000;
+
         #10
         $display("o_data_bus: %h\n", o_data_bus);
         $stop;

@@ -6,16 +6,16 @@
 // Timing:      Sequential Logic, one clock cycle latency
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// Function:    select 8 continous bits out of 16 bits --> total 8 cases (if need shift) -> 3-bit command.
+// Function:    select 4 continous bits out of 8 bits --> total 4 cases (if need shift) -> 2-bit command.
 //              extra 1 bit command to control whether shift is needed.
-//              So 4-bit command in total.
+//              So 3-bit command in total.
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module bit_selection_16x8_seq#(
-	parameter DATA_WIDTH = 16,                        // could only be 16
-	parameter COMMAND_WIDTH = $clog2(DATA_WIDTH)      // could only be 3+1 = 4
+module bit_selection_8x4_seq#(
+	parameter DATA_WIDTH = 8,                         // specify the datawidth of input data, could only be 8
+	parameter COMMAND_WIDTH = $clog2(DATA_WIDTH)      // could only be 2+1 = 3
 )(
     // data signals
 	clk,
@@ -72,37 +72,21 @@ module bit_selection_16x8_seq#(
 		if(i_en & (~rst) & i_valid)
 		begin
 			case(i_cmd[COMMAND_WIDTH-2:0])
-				3'h0:
+				2'h0:
 				begin
 					o_data_bus_reg <= i_data_bus[1+:OUT_DATA_WIDTH];
 				end
-				3'h1:
+				2'h1:
 				begin
 					o_data_bus_reg <= i_data_bus[2+:OUT_DATA_WIDTH];
 				end
-				3'h2:
+				2'h2:
 				begin
 					o_data_bus_reg <= i_data_bus[3+:OUT_DATA_WIDTH];
 				end
-				3'h3:
+				2'h3:
 				begin
 					o_data_bus_reg <= i_data_bus[4+:OUT_DATA_WIDTH];
-				end
-				3'h4:
-				begin
-					o_data_bus_reg <= i_data_bus[5+:OUT_DATA_WIDTH];
-				end
-				3'h5:
-				begin
-					o_data_bus_reg <= i_data_bus[6+:OUT_DATA_WIDTH];
-				end
-				3'h6:
-				begin
-					o_data_bus_reg <= i_data_bus[7+:OUT_DATA_WIDTH];
-				end
-				3'h7:
-				begin
-					o_data_bus_reg <= i_data_bus[8+:OUT_DATA_WIDTH];
 				end
 				default:
 				begin

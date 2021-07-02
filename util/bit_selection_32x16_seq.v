@@ -7,13 +7,15 @@
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // Function:    select 16 continous bits out of 32 bits --> total 16 cases (if need shift) -> 4-bit command.
-// 
+//              extra 1 bit command to control whether shift is needed.
+//              So 5-bit command in total
+//
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
 module bit_selection_32x16_seq#(
-	parameter DATA_WIDTH = 32,                        // could only be 16
-	parameter COMMAND_WIDTH = $clog2(DATA_WIDTH) -1   // could only be 3 
+	parameter DATA_WIDTH = 32,                        // could only be 32
+	parameter COMMAND_WIDTH = $clog2(DATA_WIDTH)      // could only be 4+1 = 5
 )(
     // data signals
 	clk,
@@ -47,12 +49,28 @@ module bit_selection_32x16_seq#(
 
 	reg    [OUT_DATA_WIDTH-1:0]    o_data_bus_reg;
 	reg                            o_valid_reg;
-    
+
+	reg    [OUT_DATA_WIDTH-1:0]    o_ori_data_bus_reg;
+	reg                            o_ori_valid_reg;
+
+	always @(posedge clk) begin
+		if(i_en & (~rst) & i_valid & (~i_cmd[COMMAND_WIDTH-1]))
+		begin
+			o_ori_data_bus_reg <= i_data_bus;
+			o_ori_valid_reg <= i_valid;
+		end
+		else
+		begin
+			o_ori_data_bus_reg <= {OUT_DATA_WIDTH{1'b0}};
+			o_ori_valid_reg <= 1'b0;
+		end
+	end
+
 	always@(posedge clk)
 	begin
 		if(i_en & (~rst) & i_valid)
 		begin
-			case(i_cmd)
+			case(i_cmd[COMMAND_WIDTH-2:0] )
 				4'h0:
 				begin
 					o_data_bus_reg <= i_data_bus[1+:OUT_DATA_WIDTH];
@@ -141,7 +159,7 @@ module bit_selection_32x16_seq#(
 		end
 	end
 	
-	assign o_data_bus = o_data_bus_reg;
-	assign o_valid = o_valid_reg;
+	assign o_data_bus = (i_cmd[COMMAND_WIDTH-1])?o_data_bus_reg:o_ori_data_bus_reg;
+	assign o_valid = (i_cmd[COMMAND_WIDTH-1])?o_valid_reg:o_ori_valid_reg;
 
 endmodule
