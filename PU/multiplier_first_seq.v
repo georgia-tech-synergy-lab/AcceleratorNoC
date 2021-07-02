@@ -38,8 +38,8 @@
 /////////////////////////////////////////////////////////////
 
 module multiplier_first_seq#(
-	parameter DATA_WIDTH = 16,                        // could be arbitrary number
-	parameter COMMAND_WIDTH = 4 + $clog2(DATA_WIDTH)  // total input command bits.
+	parameter DATA_WIDTH = 16,                          // could be 8,16,32
+	parameter COMMAND_WIDTH = 4 + $clog2(DATA_WIDTH) +1 // total input command bits.
 )(
     // data signals
 	clk,
@@ -104,11 +104,11 @@ module multiplier_first_seq#(
 	always @(posedge clk) begin
 		if(i_en & (~rst))
 		begin
-			cmd_second_stage_reg <= i_cmd[2 +: ($clog2(DATA_WIDTH)+1)];
+			cmd_second_stage_reg <= i_cmd[3 +: ($clog2(DATA_WIDTH)+2)];
 		end
 		else
 		begin
-			cmd_second_stage_reg <= {($clog2(DATA_WIDTH)+1){1'b0}};
+			cmd_second_stage_reg <= {($clog2(DATA_WIDTH)+2){1'b0}};
 		end
 	end
 
@@ -161,8 +161,8 @@ module multiplier_first_seq#(
 	always @(*) begin
 		if(i_en & ~rst)
 		begin
-			o_data_full_latch <= (cmd_second_stage_reg[0] & valid_dynamic_reg & valid_stationary_reg)?(data_dynamic_reg * data_stationary_reg):{DATA_WIDTH{1'b0}};
-			o_valid_latch <= cmd_second_stage_reg[0] & valid_dynamic_reg & valid_stationary_reg;
+			o_data_full_latch <= (valid_dynamic_reg & valid_stationary_reg)?(data_dynamic_reg * data_stationary_reg):{DATA_WIDTH{1'b0}};
+			o_valid_latch <= valid_dynamic_reg & valid_stationary_reg;
 		end
 		else
 		begin
@@ -175,8 +175,8 @@ module multiplier_first_seq#(
 	always @(posedge clk) begin
 		if(i_en & ~rst)
 		begin
-			o_fwd_bus_reg <= (cmd_second_stage_reg[1] & valid_dynamic_reg)?data_dynamic_reg:{DATA_WIDTH{1'b0}};
-			o_valid_fwd_reg <= cmd_second_stage_reg[1] & valid_dynamic_reg;
+			o_fwd_bus_reg <= (cmd_second_stage_reg[0] & valid_dynamic_reg)?data_dynamic_reg:{DATA_WIDTH{1'b0}};
+			o_valid_fwd_reg <= cmd_second_stage_reg[0] & valid_dynamic_reg;
 		end
 		else
 		begin
@@ -186,9 +186,9 @@ module multiplier_first_seq#(
 	end
 	
 	// perform bits selection on multiplcation results
- 	bit_selection_32x16_seq #(
+ 	bit_selection_16x8_seq #(
 		.DATA_WIDTH((DATA_WIDTH<<1)),
-        .COMMAND_WIDTH($clog2(DATA_WIDTH))
+        .COMMAND_WIDTH($clog2(DATA_WIDTH)+1)
 	) bit_selector(
         .clk(clk),
         .rst(rst),
@@ -197,7 +197,7 @@ module multiplier_first_seq#(
 		.o_valid(o_valid),
 		.o_data_bus(o_data_bus),
 		.i_en(i_en),
-		.i_cmd(cmd_second_stage_reg[2 +: $clog2(DATA_WIDTH)])
+		.i_cmd(cmd_second_stage_reg[1 +: ($clog2(DATA_WIDTH)+1)])
 	);
 
 	assign o_fwd_bus = o_fwd_bus_reg;

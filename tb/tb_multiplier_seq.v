@@ -130,8 +130,8 @@ module tb_multiplier_seq();
         // 5. cut LS 4 bits
         // observed reg: i_data_stationary_reg = i_data_bus
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 0
+        // output expect (appear 1 cycle later; used after 2 cycles):
+        // o_data_bus = 0 
         // o_valid = 0 
         // o_fwd_bus = 0
         // o_fwd_valid = 0 
@@ -158,7 +158,7 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
+        // output expect (appear 1 cycle later; used after 2 cycles):
         // o_data_bus = 2
         // o_valid = 1 
         // o_fwd_bus = 2
@@ -186,7 +186,7 @@ module tb_multiplier_seq();
         //               o_fwd valid
         //               o_data_bus valid
         // all other regs are invalid
-        // output expect (2 cycle later):
+        // output expect (appear 1 cycle later; used after 2 cycles):
         // o_data_bus = 3
         // o_valid = 1 
         // o_fwd_bus = 3
@@ -214,7 +214,7 @@ module tb_multiplier_seq();
         //               o_fwd valid
         //               o_data_bus valid
         // all other regs are invalid
-        // output expect (2 cycle later):
+        // output expect (appear 1 cycle later; used after 2 cycles):
         // o_data_bus = 4
         // o_valid = 1 
         // o_fwd_bus = 4
@@ -242,7 +242,7 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
+        // output expect (appear 1 cycle later; used after 2 cycles):
         // o_data_bus = C
         // o_valid = 1 
         // o_fwd_bus = C
@@ -270,7 +270,7 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
+        // output expect (appear 1 cycle later; used after 2 cycles):
         // o_data_bus = 6
         // o_valid = 1
         // o_fwd_bus = 0
@@ -298,7 +298,7 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
+        // output expect (appear 1 cycle later; used after 2 cycles):
         // o_data_bus = 7
         // o_valid = 1
         // o_fwd_bus = 0
@@ -326,7 +326,7 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
+        // output expect (appear 1 cycle later; used after 2 cycles):
         // o_data_bus = 7
         // o_valid = 1
         // o_fwd_bus = 0
@@ -477,7 +477,7 @@ module tb_multiplier_seq();
         // 5. cut LS 8 bits
         // observed reg: i_data_stationary_reg = i_data_bus
         // all other regs are invalid
-        // output expect (2 cycle later):
+        // output expect (appear 1 cycle later; used after 2 cycles):
         // o_data_bus = 0
         // o_valid = 0 
         // o_fwd_bus = 0
@@ -505,11 +505,7 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 2
-        // o_valid = 1 
-        // o_fwd_bus = 2
-        // o_fwd_valid = 1 
+        // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -533,7 +529,7 @@ module tb_multiplier_seq();
         //               o_fwd valid
         //               o_data_bus valid
         // all other regs are invalid
-        // output expect (2 cycle later):
+        // output expect (appear 1 cycle later; used after 2 cycles):
         // o_data_bus = 3
         // o_valid = 1 
         // o_fwd_bus = 3
@@ -561,11 +557,7 @@ module tb_multiplier_seq();
         //               o_fwd valid
         //               o_data_bus valid
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 4
-        // o_valid = 1 
-        // o_fwd_bus = 4
-        // o_fwd_valid = 1 
+        // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -589,11 +581,7 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = C
-        // o_valid = 1 
-        // o_fwd_bus = C
-        // o_fwd_valid = 1 
+        // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -617,11 +605,7 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 6
-        // o_valid = 1
-        // o_fwd_bus = 0
-        // o_fwd_valid = 0 
+        // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -645,11 +629,7 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 7
-        // o_valid = 1
-        // o_fwd_bus = 0
-        // o_fwd_valid = 0 
+        // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -673,11 +653,7 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 7
-        // o_valid = 1
-        // o_fwd_bus = 0
-        // o_fwd_valid = 0 
+        // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -824,11 +800,7 @@ module tb_multiplier_seq();
         // 5. cut LS 16 bits
         // observed reg: i_data_stationary_reg = i_data_bus
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 0
-        // o_valid = 0 
-        // o_fwd_bus = 0
-        // o_fwd_valid = 0 
+        // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -852,11 +824,7 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 2
-        // o_valid = 1 
-        // o_fwd_bus = 2
-        // o_fwd_valid = 1 
+        // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -880,11 +848,8 @@ module tb_multiplier_seq();
         //               o_fwd valid
         //               o_data_bus valid
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 3
-        // o_valid = 1 
-        // o_fwd_bus = 3
-        // o_fwd_valid = 1 
+        // output expect (appear 1 cycle later; used after 2 cycles):
+
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -908,11 +873,8 @@ module tb_multiplier_seq();
         //               o_fwd valid
         //               o_data_bus valid
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 4
-        // o_valid = 1 
-        // o_fwd_bus = 4
-        // o_fwd_valid = 1 
+        // output expect (appear 1 cycle later; used after 2 cycles):
+
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -936,11 +898,8 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = C
-        // o_valid = 1 
-        // o_fwd_bus = C
-        // o_fwd_valid = 1 
+        // output expect (appear 1 cycle later; used after 2 cycles):
+        
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -964,11 +923,8 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 6
-        // o_valid = 1
-        // o_fwd_bus = 0
-        // o_fwd_valid = 0 
+        // output expect (appear 1 cycle later; used after 2 cycles):
+        
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -992,11 +948,8 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 7
-        // o_valid = 1
-        // o_fwd_bus = 0
-        // o_fwd_valid = 0 
+        // output expect (appear 1 cycle later; used after 2 cycles):
+        
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;
@@ -1020,11 +973,8 @@ module tb_multiplier_seq();
         //               o_fwd valid  
         //               o_data_bus valid  
         // all other regs are invalid
-        // output expect (2 cycle later):
-        // o_data_bus = 7
-        // o_valid = 1
-        // o_fwd_bus = 0
-        // o_fwd_valid = 0 
+        // output expect (appear 1 cycle later; used after 2 cycles):
+        
         #10
         $display("o_fwd_bus: %h; o_data_bus: %h\n", o_fwd_bus, o_data_bus);
         rst = 1'b0;

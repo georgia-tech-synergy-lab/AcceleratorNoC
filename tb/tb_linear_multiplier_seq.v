@@ -42,12 +42,12 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 // `define base_testcase       // choose bit_selection_32x16_seq module in the linear_multiplier_seq module.
-`define multiplier_16_kernel_3 // choose bit_selection_16x8_seq module in the linear_multiplier_seq module.
+`define multiplier_16_kernel_3_datawidth_8 // choose bit_selection_16x8_seq module in the linear_multiplier_seq module.
 
-`ifdef base_testcase
+`ifdef multiplier_16_kernel_3_datawidth_8
 module tb_linear_multiplier_seq();
 
-	parameter DATA_WIDTH  = 16;
+	parameter DATA_WIDTH  = 8;
 	parameter NUM_NODE  = 4;
 	parameter COMMAND_WIDTH  = 4 + $clog2(DATA_WIDTH);
 

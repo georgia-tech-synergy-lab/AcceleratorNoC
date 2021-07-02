@@ -40,8 +40,8 @@
 /////////////////////////////////////////////////////////////
 
 module multiplier_last_seq#(
-	parameter DATA_WIDTH = 16,                        // could be arbitrary number
-	parameter COMMAND_WIDTH = 4 + $clog2(DATA_WIDTH)  // total input command bits.
+	parameter DATA_WIDTH = 16,                            // could be arbitrary number
+	parameter COMMAND_WIDTH = 4 + $clog2(DATA_WIDTH) + 1  // total input command bits.
 )(
     // data signals
 	clk,
@@ -110,16 +110,16 @@ module multiplier_last_seq#(
 	reg                            o_valid_latch;	
 	
 	// stored control of first stages for usage in the second stage.
-	reg    [$clog2(DATA_WIDTH):0]  cmd_second_stage_reg; // $clog2(DATA_WIDTH) + 1 bits in total
+	reg    [$clog2(DATA_WIDTH)+1:0]  cmd_second_stage_reg; // $clog2(DATA_WIDTH) + 1 bits in total
 
 	always @(posedge clk) begin
 		if(i_en & (~rst))
 		begin
-			cmd_second_stage_reg <= i_cmd[3 +: ($clog2(DATA_WIDTH)+1)];
+			cmd_second_stage_reg <= i_cmd[3 +: ($clog2(DATA_WIDTH)+2)];
 		end
 		else
 		begin
-			cmd_second_stage_reg <= {($clog2(DATA_WIDTH)+1){1'b0}};
+			cmd_second_stage_reg <= {($clog2(DATA_WIDTH)+2){1'b0}};
 		end
 	end
 
@@ -223,9 +223,9 @@ module multiplier_last_seq#(
 	end
 
 	// perform bits selection on multiplcation results
- 	bit_selection_32x16_seq #(
+ 	bit_selection_16x8_seq #(
 		.DATA_WIDTH((DATA_WIDTH<<1)),
-        .COMMAND_WIDTH($clog2(DATA_WIDTH))
+        .COMMAND_WIDTH($clog2(DATA_WIDTH)+1)
 	) bit_selector(
         .clk(clk),
         .rst(rst),
@@ -234,7 +234,7 @@ module multiplier_last_seq#(
 		.o_valid(o_valid),
 		.o_data_bus(o_data_bus),
 		.i_en(i_en),
-		.i_cmd(cmd_second_stage_reg[1 +: $clog2(DATA_WIDTH)])
+		.i_cmd(cmd_second_stage_reg[1 +: ($clog2(DATA_WIDTH)+1)])
 	);
 
 endmodule

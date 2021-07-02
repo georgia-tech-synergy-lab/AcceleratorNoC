@@ -133,7 +133,7 @@ module multiplier_seq#(
 		end
 		else
 		begin
-			cmd_second_stage_reg <= {($clog2(DATA_WIDTH)+1){1'b0}};
+			cmd_second_stage_reg <= {($clog2(DATA_WIDTH)+2){1'b0}};
 		end
 	end
 
