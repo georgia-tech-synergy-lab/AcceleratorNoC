@@ -3,24 +3,26 @@
 // Top Module:  multiplier_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Sequential Logic, each switch takes one clock cycle
+// Timing:      Sequential Logic, 
+//               multiplication results: three-cycle latency (if multiplication takes 1 cycle.)
+//               forward results: two-cycle latency
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // Function:    Multiplier with forwarding link for data local reuse
 // 
-//                             first clock posedge
-// 
-// 1'b0 & i_valid -> data_dynamic_wire = i_data_fwd_latch
-// 1'b1 & i_valid -> data_dynamic_wire = data_stream_reg                                    1'b1 & valid_dynamic_wire ->  o_fwd_bus = data_dynamic_wire
-//                       serve as the input selection --  i_cmd[2]                   i_cmd[3] -- serve as output fwd enable
-//                                                           |                          |  
-//                                 i_data_fwd_latch          |                          v  
-//                                   ______               |\ v                         ____
-//  i_fwd_bus & i_fwd_valid -------->_|_|_|-------------->| \                     |---|   |---> o_fwd_bus & o_fwd_valid
-//                              /|                        |  |                    |   |___|     
-//                             / |   ______               |  |     ______         |    ___
+//                             first cycle                                      |      second cycle
+//                                                                              |
+// 1'b0 & i_valid -> data_dynamic_wire = i_data_fwd_latch                       |
+// 1'b1 & i_valid -> data_dynamic_wire = data_stream_reg                        |     1'b1 & valid_dynamic_wire ->  o_fwd_bus = data_dynamic_wire
+//                       serve as the input selection --  i_cmd[2]              |     cmd_second_stage_reg[0](i_cmd[3]) -- serve as output fwd enable
+//                                                           |                  |        |  
+//                                 i_data_fwd_latch          |                  |        v  
+//                                   ______               |\ v                  |       ____
+//  i_fwd_bus & i_fwd_valid -------->_|_|_|-------------->| \                   |  |---|   |---> o_fwd_bus & o_fwd_valid (output port)
+//                              /|                        |  |                  |  |   |___|     
+//                             / |   ______               |  |     ______          |   ___
 //                            |  |-->_|_|_|-------------->|  |---->_|_|_|------------>|   | 
-//    i_data_bus & i_valid -->|  |  data_stream_latch     | /  data_dynamic_reg       | X |----> o_data_bus & o_valid
+//    i_data_bus & i_valid -->|  |  data_stream_latch     | /  data_dynamic_reg       | X |----> o_data_full_latch & o_valid_latch
 //                             \ |   ______               |/                          |   | 
 //                              \|-->_|_|_|------------------------------------------>|___|     
 //                              ^   data_stationary_reg
@@ -33,9 +35,33 @@
 //                                       1'b0 -> data_stationary_reg remain unchanged
 //                                       1'b0 -> data_stream_reg remain unchanged
 // 
+//                                                first stage                  |      second stage
+//                                                                             |
+//                                                                             |
+//                                                                             |
+//                                                           reg               |
+// 
+//                i_cmd[3 +: ($clog2(DATA_WIDTH)+2)] --> cmd_second_stage_reg ----> 
+// 
+// 
+//    ——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//                     
+//  second stage       |   third stage
+//       output        |   
+//                     |     
+//                     |      specify (DATA_WIDTH>>1) kinds of bit selections + non-shift.
+//                     |    cmd_second_stage_reg[1+:($clog2(DATA_WIDTH)+1)]
+//                     |      |
+//                     |     _v_
+//                          |   |
+//  o_data_full_latch ----> |   |  ---> o_data_bus & o_valid
+//                          |___|
+//                        bit_selection
+//
+//
+//
 // Note: there might be some demand for changing data_stream_reg & data_stationary_reg & data_dynamic_wire into FIFO
 // 1. pattern to remember the configurations: 1 is always used to select data_stream_reg e.g. i_cmd[1] & i_cmd[2]
-// 2. o_fwd_bus only has 1 cycle latency 
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
@@ -127,6 +153,12 @@ module multiplier_seq#(
 															   // ($clog2(DATA_WIDTH) + 1) bits for bit selection
 															   // ($clog2(DATA_WIDTH) + 2) in total
 
+
+	/*
+		first stage (1 cycle)
+	*/
+
+	// store cmd for second stage usage
 	always @(posedge clk) begin
 		if(i_en & (~rst))
 		begin
@@ -137,20 +169,26 @@ module multiplier_seq#(
 			cmd_second_stage_reg <= {($clog2(DATA_WIDTH)+2){1'b0}};
 		end
 	end
-
-	/*
-		first stage (1 cycle)
-	*/
-
+	
+	// initialize inner register
 	initial begin
 		i_data_fwd_latch <= {DATA_WIDTH{1'b0}};
+		i_data_stationary_latch <= {DATA_WIDTH{1'b0}};
+		i_data_stream_latch <= {DATA_WIDTH{1'b0}};
 		data_stationary_reg <= {DATA_WIDTH{1'b0}};
+		data_dynamic_reg <= {DATA_WIDTH{1'b0}};
 
 		i_valid_fwd_latch <= 1'b0;
+		i_valid_stationary_latch <= 1'b0;
+		i_valid_stream_latch <= 1'b0;
 		valid_stationary_reg <= 1'b0;
+		valid_dynamic_reg <= 1'b0;
 	end
 
-	// data_stationary_reg 
+
+	// i_data_stationary_latch
+	// --- change when input change (input in our design usually change at the posedge clk)
+	// --- and get registered at the next posedge clk -> from i_data_stationary_latch into i_data_stationary_reg  
 	always @(*) begin
 		if(i_en & ~rst)
 		begin
@@ -164,7 +202,7 @@ module multiplier_seq#(
 		end
 	end
 	
-	// data_stream_reg
+	// i_data_stream_latch
 	always @(*) begin
 		if(i_en & ~rst)
 		begin
@@ -180,11 +218,19 @@ module multiplier_seq#(
 
 	// i_data_fwd_latch
 	always @(*) begin
-		i_data_fwd_latch <= (i_fwd_valid)?i_fwd_bus:{DATA_WIDTH{1'b0}};
-		i_valid_fwd_latch <= i_fwd_valid;
+		if(i_en & ~rst)
+		begin
+			i_data_fwd_latch <= (i_fwd_valid)?i_fwd_bus:{DATA_WIDTH{1'b0}};
+			i_valid_fwd_latch <= i_fwd_valid;
+		end
+		else
+		begin
+			i_data_fwd_latch <= {DATA_WIDTH{1'b0}};
+			i_valid_fwd_latch <= 1'b0;			
+		end
 	end
 
-	// data_dynamic_wire
+	// data_dynamic_wire (connect to the inner latch of mux_2x1_simple_comb)
 	mux_2x1_simple_comb#(
 		.DATA_WIDTH(DATA_WIDTH)
 	) i_data_mux(
@@ -196,6 +242,7 @@ module multiplier_seq#(
 		.i_cmd(i_cmd[2])
 	);
 
+	// data dynamic register
 	always @(posedge clk)
 	begin
 		if(i_en & ~rst)
@@ -215,8 +262,15 @@ module multiplier_seq#(
 			valid_dynamic_reg <= 1'b0;
 		end
 	end
+	
+	/*
+		second stage
+	*/
 
 	// o_fwd_data
+	// Note: data_dynamic_wire changes after the posedge clk of the first stage.
+	// So at the posedge clk of the first stage, the o_fwd_bus_reg store non_valid data.
+	// It will only store valid data at the posedge clk of the second stage. 
 	always @(posedge clk) begin
 		if(i_en & ~rst)
 		begin
@@ -232,18 +286,15 @@ module multiplier_seq#(
 
 	assign o_fwd_bus = o_fwd_bus_reg;
 	assign o_fwd_valid = o_valid_fwd_reg;
-	
 
-	/*
-		second stage
-	*/
-
-	//  perform multiplication on two input data of the multiplier 
-	//  Note: there might need dedicated DSP to handle the operation of multiplier.
+	// perform multiplication on two input data of the multiplier 
+	// Note: there might need dedicated DSP to handle the operation of multiplier.
+	// Note2: data_dynamic_reg and data_station_reg are only valid after the posedge clk of the second stage.
+	// So the o_data_full_path could only get used at the posedge clk of the !third! stage.
 	always @(*) begin
 		if(i_en & ~rst)
 		begin
-			o_data_full_latch <= ( valid_dynamic_reg & valid_stationary_reg)?(data_dynamic_reg * data_stationary_reg):{DATA_WIDTH{1'b0}};
+			o_data_full_latch <= (valid_dynamic_reg & valid_stationary_reg)?(data_dynamic_reg * data_stationary_reg):{DATA_WIDTH{1'b0}};
 			o_valid_latch <= valid_dynamic_reg & valid_stationary_reg;
 		end
 		else
@@ -252,6 +303,10 @@ module multiplier_seq#(
 			o_valid_latch <= 1'b0;
 		end
 	end
+
+	/*
+		third stage
+	*/
 
 	// perform bits selection on multiplcation results
  	bit_selection_16x8_seq #(
@@ -267,6 +322,5 @@ module multiplier_seq#(
 		.i_en(i_en),
 		.i_cmd(cmd_second_stage_reg[1+:($clog2(DATA_WIDTH)+1)])
 	);
-
 
 endmodule
