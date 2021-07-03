@@ -45,9 +45,9 @@ In ```<control>```:
 
 **simple**: means *simple control*; only feed an individual switch with the command belonging to itself. Cannot feed redundent command.
 
-**dst_tag**: means *destination tag control* ; could feed an individual switch with longer command than it needs. It consumes the command it needs and output the remaining command for following switches. Only *unicast* is supported in this switch, including "Branch_high" and "Branch_Low". 
+**cmd_flow**: means *command flow control* ; could feed an individual switch with longer command than it needs. It consumes the command it needs and output the remaining command for following switches. Only *unicast* is supported in this switch, including "Branch_high" and "Branch_Low". 
 
-**dst_tag_multicast**: means *destination tag control with multicasting support*; add *multicast* to the **dst_tag**.
+**cmd_flow_multicast**: means *command flow with multicasting support*; add *multicast* to the **cmd_flow**.
 
 **one_hot**: means *one-hot encoded destination based control*; for linear network (1-D N node), feed a N-bit one-hot destination signal, the switch only consumes the MSB and pass remaining N-1 bits & input data to the next switch. 
 

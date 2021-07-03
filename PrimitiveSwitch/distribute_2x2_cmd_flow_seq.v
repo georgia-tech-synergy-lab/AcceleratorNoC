@@ -55,7 +55,12 @@
 //
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
-
+/*
+	parameter illustration:
+	1. DESTINATION_TAG_WIDTH means COMMAND_WIDTH for a single input data, so each switch need 2*DESTINATION_TAG_WIDTH because of two inputs.
+	2. IN_COMMAND_WIDTH means total length of command fed into the design. It is used to calculate the length of the output command.
+	3. DATA_WIDTH means the length of a single data, arbitrary number is supported in the design. 
+*/
 
 module distribute_2x2_cmd_flow_seq#(
 	parameter DATA_WIDTH = 32,
@@ -79,6 +84,7 @@ module distribute_2x2_cmd_flow_seq#(
 
 	o_cmd           // output destination tag 
 );
+
 	// localparam
 	parameter NUM_DATA_IN = 2;
 	parameter CONSUME_COMMAND_WIDTH = NUM_DATA_IN * DESTINATION_TAG_WIDTH;
