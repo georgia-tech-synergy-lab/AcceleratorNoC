@@ -11,31 +11,53 @@
 // 
 // Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 //   
-//     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-------->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-------->|¯¯¯|-->
-//     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\ /---->|___|--\ /-->|___|--\ /-->|___|----\ /->|___|-->
-//                                      ID:       0    X        4     X      8     X      12      X     16
-//     i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \/--->|¯¯¯|--/ \-->|¯¯¯|--/ \-->|¯¯¯|---\/ \->|¯¯¯|-->
-//     i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\ /\ /->|___|------->|___|------->|___|-\ /\ /->|___|-->
-//                                      ID:       1    X  X     5            9            13   X  X     17
-//     i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \/ \->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-/ \/ \->|¯¯¯|-->
-//     i_data_bus[5*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\ /\--->|___|--\ /-->|___|--\ /-->|___|---/\ /->|___|-->
-//                                      ID:       2    X        6     X      10    X      14      X     18
-//     i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \---->|¯¯¯|--/ \-->|¯¯¯|--/ \-->|¯¯¯|----/ \->|¯¯¯|-->
-//     i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|-->
-//                                      ID:       3             7            11           15            19
-//        CONNECTION FUNCTION                   INVERSE SHUFFLE      ,,         SHUFFLE       SHUFFLE
-//       CONNECTION GROUP SIZE                         8             4             4             8
+//         
+//              i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-------->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-------->|¯¯¯|-->
+//              i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\ /---->|___|--\ /-->|___|--\ /-->|___|----\ /->|___|-->
+//                                               ID:       0    X        4     X      8     X      12      X     16
+//              i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \/--->|¯¯¯|--/ \-->|¯¯¯|--/ \-->|¯¯¯|---\/ \->|¯¯¯|-->
+//              i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\ /\ /->|___|------->|___|------->|___|-\ /\ /->|___|-->
+//                                               ID:       1    X  X     5            9            13   X  X     17
+//              i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \/ \->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-/ \/ \->|¯¯¯|-->
+//              i_data_bus[5*DATA_WIDTH+:DATA_WIDTH]  -->|___|-\ /\--->|___|--\ /-->|___|--\ /-->|___|---/\ /->|___|-->
+//                                               ID:       2    X        6     X      10    X      14      X     18
+//              i_data_bus[6*DATA_WIDTH+:DATA_WIDTH]  -->|¯¯¯|-/ \---->|¯¯¯|--/ \-->|¯¯¯|--/ \-->|¯¯¯|----/ \->|¯¯¯|-->
+//              i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|-->
+//                                               ID:       3             7            11           15            19
+//                 CONNECTION FUNCTION                   INVERSE SHUFFLE      ,,         SHUFFLE       SHUFFLE
+//                CONNECTION GROUP SIZE                         8             4             4             8
 //        
-// 
-// Control Signal
-//     i_valid[0]-->|¯¯¯|<--i_cmd[2:0] 
-//     i_valid[1]-->|___|
+//                      2) for Configuration transmission 
+//              Note: (1) configurtion also traverse the BENES network to keep pace with data.
+//                    (2) This is for pre-generated configuration that are generated offline and used online,
+//                    (3) The o_cmd is for other design which is also configured in the cmd_flow manner.
+//			
+//           COMMAND_WIDTH is the command length for a single switch.
+//           ROW_COMMAND_WIDTH is specified by the input
+//           OUT_COMMAND_WIDTH = ROW_COMMAND_WIDTH - COMMAND_WIDTH * TOTAL_STAGE
 //
-//  The command lay out is shown below: Note: switch ID is specified in the diagram above.
-// 
-//  i_cmd: MSB [ ------------------------------------------------------------------------------------- ] LSB 
-//   cmd for   SW19 SW18 SW17 SW16 SW15 SW14 SW13 SW12 SW11 SW10 SW9 SW8 SW7 SW6 SW5 SW4 SW3 SW2 SW1 SW0                
-//
+//     i_cmd[0*ROW_COMMAND_WIDTH+:ROW_COMMAND_WIDTH]  -->|¯¯¯|-------->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-------->|¯¯¯|--> o_cmd[0*OUT_COMMAND_WIDTH+:OUT_COMMAND_WIDTH]   
+//     i_cmd[1*ROW_COMMAND_WIDTH+:ROW_COMMAND_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|--> o_cmd[1*OUT_COMMAND_WIDTH+:OUT_COMMAND_WIDTH]  
+//                                                         0             4            8            12            16     
+//     i_cmd[2*ROW_COMMAND_WIDTH+:ROW_COMMAND_WIDTH]  -->|¯¯¯|-------->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-------->|¯¯¯|--> o_cmd[2*OUT_COMMAND_WIDTH+:OUT_COMMAND_WIDTH]
+//     i_cmd[3*ROW_COMMAND_WIDTH+:ROW_COMMAND_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|--> o_cmd[3*OUT_COMMAND_WIDTH+:OUT_COMMAND_WIDTH]
+//                                                         1             5            9            13            17
+//     i_cmd[4*ROW_COMMAND_WIDTH+:ROW_COMMAND_WIDTH]  -->|¯¯¯|-------->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-------->|¯¯¯|--> o_cmd[4*OUT_COMMAND_WIDTH+:OUT_COMMAND_WIDTH]
+//     i_cmd[5*ROW_COMMAND_WIDTH+:ROW_COMMAND_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|--> o_cmd[5*OUT_COMMAND_WIDTH+:OUT_COMMAND_WIDTH]
+//                                                         2             6            10           14            18
+//     i_cmd[6*ROW_COMMAND_WIDTH+:ROW_COMMAND_WIDTH]  -->|¯¯¯|-------->|¯¯¯|------->|¯¯¯|------->|¯¯¯|-------->|¯¯¯|--> o_cmd[6*OUT_COMMAND_WIDTH+:OUT_COMMAND_WIDTH]
+//     i_cmd[7*ROW_COMMAND_WIDTH+:ROW_COMMAND_WIDTH]  -->|___|-------->|___|------->|___|------->|___|-------->|___|--> o_cmd[7*OUT_COMMAND_WIDTH+:OUT_COMMAND_WIDTH]
+//                                                         3             7            11           15            19
+// Configuration: 
+//      The command lay out is shown below: Note: switch ID is specified in the diagram above.
+//      !!!! Note: the command layout is different from BENES_simple.
+//    
+//      i_cmd: MSB [ ------------------------------------------------------------------------------------- ] LSB 
+//       cmd for   SW3 SW7 SW11 SW15 SW19|SW2 SW6 SW10 SW14 SW18|SW1 SW5 SW9 SW13 SW17|SW0 SW4 SW8 SW12 SW16                
+//                                       |                      |                     |
+//                          row4         |        row3          |        row2         |        row1
+//                                       |                      |                     |
+//   
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
