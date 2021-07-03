@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_distribute_1x2_dst_tag_multicast_comb
+// Top Module:  tb_distribute_1x2_cmd_flow_multicast_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Combinational Logic
+// Timing:      Sequential Logic
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
 // [2_BIT_CONTROL Version]
@@ -25,19 +25,16 @@
 /////////////////////////////////////////////////////////////
 
 
-`define MULTIPLE_STAGE_COMMAND_INPUT_TEST
-// `define LAST_STAGE_TEST
+
+// `define MULTIPLE_STAGE_COMMAND_INPUT_TEST
+`define LAST_STAGE_TEST
 
 
 `ifdef MULTIPLE_STAGE_COMMAND_INPUT_TEST
-
-module tb_distribute_1x2_dst_tag_multicast_comb();
+module tb_distribute_1x2_cmd_flow_multicast_seq();
 
 	parameter DATA_WIDTH  = 32;
 	parameter DESTINATION_TAG_WIDTH  = 2;
-
-    // variable parameter
-	// parameter IN_COMMAND_WIDTH = NUM_DATA_IN * DESTINATION_TAG_WIDTH;
 	parameter IN_COMMAND_WIDTH = 4;
 
 	// localparam
@@ -45,10 +42,9 @@ module tb_distribute_1x2_dst_tag_multicast_comb();
 	parameter NUM_DATA_OUT = 2;
 	parameter OUT_COMMAND_WIDTH = (IN_COMMAND_WIDTH>DESTINATION_TAG_WIDTH)?(NUM_DATA_OUT*(IN_COMMAND_WIDTH-DESTINATION_TAG_WIDTH)):DESTINATION_TAG_WIDTH;
 
-
-
     // timing signals
     reg                              clk;
+    reg                              rst;
 
     // data signals
 	reg                              i_valid;        // valid input data signal
@@ -74,14 +70,24 @@ module tb_distribute_1x2_dst_tag_multicast_comb();
     begin
         clk = 1'b0;
         // not enable at start
+        rst = 1'b1;
         i_valid = 1'b0;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b0;
         next_cmd = {(IN_COMMAND_WIDTH-DESTINATION_TAG_WIDTH){1'b1}};
         i_cmd = {2'b11, next_cmd};
-           
+
+        // reset
+        rst = 1'b1;
+        i_valid = 1'b0;
+        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_en = 1'b1;
+        next_cmd = {(IN_COMMAND_WIDTH-DESTINATION_TAG_WIDTH){1'b1}};
+        i_cmd = {2'b11, next_cmd};
+
         // input active --  Multicast 
         #20
+        rst = 1'b0;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
@@ -137,15 +143,17 @@ module tb_distribute_1x2_dst_tag_multicast_comb();
         i_cmd = {2'b10, next_cmd};
        
         $stop;
-end
+    end
 
 
     // instantiate DUT (device under test)
-    distribute_1x2_dst_tag_multicast_comb #(
+    distribute_1x2_cmd_flow_multicast_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
         .IN_COMMAND_WIDTH(IN_COMMAND_WIDTH)
 	) dut(
+        .clk(clk),
+        .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),
@@ -158,11 +166,13 @@ end
     always#5 clk=~clk;
 
 endmodule
-`endif 
+
+`endif
+
 
 
 `ifdef LAST_STAGE_TEST
-module tb_distribute_1x2_dst_tag_multicast_comb();
+module tb_distribute_1x2_cmd_flow_multicast_seq();
 
 	parameter DATA_WIDTH  = 32;
 	parameter DESTINATION_TAG_WIDTH  = 2;
@@ -180,6 +190,7 @@ module tb_distribute_1x2_dst_tag_multicast_comb();
 
     // timing signals
     reg                              clk;
+    reg                              rst;
 
     // data signals
 	reg                              i_valid;        // valid input data signal
@@ -204,13 +215,22 @@ module tb_distribute_1x2_dst_tag_multicast_comb();
     begin
         clk = 1'b0;
         // not enable at start
+        rst = 1'b1;
         i_valid = 1'b0;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b0;
         i_cmd = 2'b11;
-           
+
+        // reset
+        rst = 1'b1;
+        i_valid = 1'b0;
+        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_en = 1'b1;
+        i_cmd = 2'b11;
+
         // input active --  Multicast 
         #20
+        rst = 1'b0;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
@@ -263,11 +283,13 @@ end
 
 
     // instantiate DUT (device under test)
-    distribute_1x2_dst_tag_multicast_comb #(
+    distribute_1x2_cmd_flow_multicast_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
         .IN_COMMAND_WIDTH(IN_COMMAND_WIDTH)
 	) dut(
+        .clk(clk),
+        .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),

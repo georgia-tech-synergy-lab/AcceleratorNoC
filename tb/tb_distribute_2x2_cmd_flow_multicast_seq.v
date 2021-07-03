@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_distribute_2x2_dst_tag_seq
+// Top Module:  tb_distribute_2x2_cmd_flow_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
@@ -83,7 +83,7 @@
 
 `ifdef MULTIPLE_STAGE_COMMAND_INPUT_TEST
 
-module tb_distribute_2x2_dst_tag_multicast_seq();
+module tb_distribute_2x2_cmd_flow_multicast_seq();
 
 	parameter DATA_WIDTH  = 32;
 	parameter DESTINATION_TAG_WIDTH  = 2;
@@ -489,7 +489,7 @@ end
 
 
     // instantiate DUT (device under test)
-    distribute_2x2_dst_tag_multicast_seq #(
+    distribute_2x2_cmd_flow_multicast_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
         .IN_COMMAND_WIDTH(IN_COMMAND_WIDTH)
@@ -513,7 +513,7 @@ endmodule
 
 `ifdef LAST_STAGE_TEST
 
-module tb_distribute_2x2_dst_tag_multicast_seq();
+module tb_distribute_2x2_cmd_flow_multicast_seq();
 
 	parameter DATA_WIDTH  = 32;
 	parameter DESTINATION_TAG_WIDTH  = 2;
@@ -870,7 +870,7 @@ module tb_distribute_2x2_dst_tag_multicast_seq();
 
 
     // instantiate DUT (device under test)
-    distribute_2x2_dst_tag_multicast_seq #(
+    distribute_2x2_cmd_flow_multicast_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
         .IN_COMMAND_WIDTH(IN_COMMAND_WIDTH)

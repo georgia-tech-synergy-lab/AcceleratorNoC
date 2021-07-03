@@ -115,7 +115,7 @@ module butterfly_dst_tag_comb#(
 	// first stage
 	for(i=0; i< NUM_SWITCH_IN; i=i+1)
 	begin:switch_first_stage			
-		distribute_2x2_dst_tag_comb #(
+		distribute_2x2_cmd_flow_comb #(
 			.DATA_WIDTH(DATA_WIDTH),
 			.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH)
 		) dis_2x2(
@@ -155,7 +155,7 @@ module butterfly_dst_tag_comb#(
 				
 				if(s==(NUM_STAGE-2))
 				begin
-					distribute_2x2_dst_tag_comb #(
+					distribute_2x2_cmd_flow_comb #(
 						.DATA_WIDTH(DATA_WIDTH),
         				.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH - s - 1)
 					) dis_2x2(
@@ -170,7 +170,7 @@ module butterfly_dst_tag_comb#(
 				end
 				else
 				begin
-					distribute_2x2_dst_tag_comb #(
+					distribute_2x2_cmd_flow_comb #(
 						.DATA_WIDTH(DATA_WIDTH),
 						.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH - s - 1)
 					) dis_2x2(

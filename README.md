@@ -63,18 +63,22 @@ In ```<pipeline>```:
 
 
 ## topology (Topology directory)
+Lots of available designs are sitting ins the topology directory, user could take the one that they want. 
 
 name template is following:
 
 ```<type>_<control>_<pipeline>```
 
-```<type>```: **benes**, **benes_merge**, **butterfly**, **butterfly_merge**, **unfoldedbutterfly_merge** (i.e., William’s distribute NoC topology), **cube**
-**benes**: is the typical [BENES network](http://homepages.inf.ed.ac.uk/cgi/rni/comp-arch.pl?Networks/benes.html,Networks/benes-f.html,Networks/menu-dyn.html) enhanced with multicast control. The unicast control method could be found at to enhance BENES with multicast control could be found in [PIT](https://ieeexplore.ieee.org/abstract/document/9311185) paper and [COCOA](https://dl.acm.org/doi/abs/10.1145/3386263.3406924) paper.
+```<type>```: **benes**, **benes_merge**, **benes_cmd_flow**, **butterfly**, **butterfly_merge**, **unfoldedbutterfly_merge** (i.e., William’s distribute NoC topology), **cube**
+**benes**, **crossbar_one_hot**, **linear_network_unicast**, **linear_network_multicast**: is the typical [BENES network](http://homepages.inf.ed.ac.uk/cgi/rni/comp-arch.pl?Networks/benes.html,Networks/benes-f.html,Networks/menu-dyn.html) enhanced with multicast control. The unicast control method could be found at to enhance BENES with multicast control could be found in [PIT](https://ieeexplore.ieee.org/abstract/document/9311185) paper and [COCOA](https://dl.acm.org/doi/abs/10.1145/3386263.3406924) paper.
 **butterfly**: the typical Butterfly network, could be found in [On-chip Networks](https://ieeexplore.ieee.org/document/7987470) and [Principles and Practices of Interconnection Networks](https://books.google.com.hk/books?hl=zh-CN&lr=&id=Rz7pCY8gIq0C&oi=fnd&pg=PP2&dq=Principles+and+Practices+of+Interconnection+Networks&ots=9hyttbtQze&sig=n0bYVOHFq6juqcBMX_fEwGJc4-w&redir_esc=y#v=onepage&q=Principles%20and%20Practices%20of%20Interconnection%20Networks&f=false).
 
 **benes_merge**: add the merge network after BENES (with the last stage eliminated) to enhance BENES for the scenario where # input & # output are different, such as "8 input to 4 output". Note: input number and output number should be power of 2. ["#" stands for "number of"]
 
+**benes_simple_cmd_flow_seq**: In this design, we add another feature called "cmd_flow" to "benes_simple_seq" design. the Suffix "cmd_flow" is command flow, which indicates that command is flowed with data, as illustrated in the following lines. Backgroud: BENES is a multi-stage interconnection network. In the sequential design, each stage consumes one clock cycle. So it requires commands sent to the stage where data is currently arriving at, which requires hardware to register and store the command for future usage. Command flow means commands for all stages are fed into the input of the first stage together with data, but each stage only takes the part of commands that it use. And then send out the remaining commands to the output port together with data results, so that the next stage could also take the part of commands that it needs. So on and so forth, the last stage will consume the last part of commands and so none commands remained. 
+
 **butterfly_merge**: add the merge network after Butterfly (with the last stage eliminated). 
+
 
 **unfoldedbutterfly_merge**: the specifically designed topology for scenarios where # inputs and # outputs are different. The first stage of **butterfly_merge** is changed into *distribute_1x2 switch*.
 
@@ -83,6 +87,11 @@ name template is following:
 **linear_network_multicast**: refers to the topology where all N nodes are arranged as a 1-D array. The linear network only has 1 fixed data input port and N-bit one-hot destination input port. The i-th bit of the one-hot input signals indicates whether i-th node is the destination of input data. 
 
 **corssbar_one_hot**: refers to the crossbar topology with one-hot input command. Currently we only support 16 input -- 8 output crossbar instead of parameterizable. 
+
+**linear_network_multicast**: linear network indicates 1D NcC with only 1 input port and multiple output ports aranged in 1-D manner. suffix "multicast" indicates the one source could be deliveried to multiple destinations in a single pass through the 1D NoC. The destinations are controlled by the one-hot input command. Each bit of the one-hot command controls whether input will be delivered to each output port.  
+
+**linear_network_unicast**: suffix "unicast" indicates a single input data could only be delivered to a single destination in a single 1D NoC traverse. So in this design, input command is destination tag instead of one-hot. When the input data arrives at the destination, it will stop traversing the 1D NoC.
+
 
 
 ## Utility Module (Util directory)

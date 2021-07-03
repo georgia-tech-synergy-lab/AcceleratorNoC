@@ -44,8 +44,8 @@
 // Need to set "`define SIMPLE_MODULAR in distribute_2x2_simple_seq.v"
 
 module benes_simple_seq#(
-	parameter DATA_WIDTH = 32,     // could be arbitrary number
-	parameter COMMAND_WIDTH  = 2, // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
+	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter COMMAND_WIDTH  = 2,   // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
 	parameter NUM_INPUT_DATA = 8    // multiple be 2^n
 )(
     // timeing signals
@@ -147,7 +147,6 @@ module benes_simple_seq#(
 				.i_cmd(i_cmd[i*COMMAND_WIDTH+:COMMAND_WIDTH])
 			);
 		end
-
 
 
 		// second stage -> middle stage 
@@ -292,6 +291,7 @@ module benes_simple_seq#(
 	i_en,           // distribute switch enable
 	i_cmd           // command 
 );
+
 	//parameter
 	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 

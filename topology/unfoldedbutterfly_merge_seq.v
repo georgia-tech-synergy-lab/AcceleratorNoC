@@ -125,7 +125,7 @@ module unfoldedbutterfly_merge_seq#(
 	// first butterfly stage
 	for(i=0; i< NUM_INPUT_DATA; i=i+1)
 	begin:switch_first_stage			
-		distribute_1x2_dst_tag_multicast_seq #(
+		distribute_1x2_cmd_flow_multicast_seq #(
 			.DATA_WIDTH(DATA_WIDTH),
 			.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
 			.IN_COMMAND_WIDTH(IN_COMMAND_WIDTH_PER_DATA)
@@ -177,7 +177,7 @@ module unfoldedbutterfly_merge_seq#(
 				begin
 					if(s==(NUM_STAGE-2))
 					begin: last_stage_of_butterfly
-						distribute_2x2_dst_tag_multicast_seq #(
+						distribute_2x2_cmd_flow_multicast_seq #(
 							.DATA_WIDTH(DATA_WIDTH),
 							.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
 							.IN_COMMAND_WIDTH( (IN_COMMAND_WIDTH_PER_DATA - DESTINATION_TAG_WIDTH*(s+1))*2 )
@@ -195,7 +195,7 @@ module unfoldedbutterfly_merge_seq#(
 					end
 					else
 					begin: stage_of_butterfly
-						distribute_2x2_dst_tag_multicast_seq #(
+						distribute_2x2_cmd_flow_multicast_seq #(
 							.DATA_WIDTH(DATA_WIDTH),
 							.DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
 							.IN_COMMAND_WIDTH((IN_COMMAND_WIDTH_PER_DATA - DESTINATION_TAG_WIDTH*(s+1))*2 )

@@ -1,21 +1,21 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  distribute_1x2_dst_tag_comb
+// Top Module:  distribute_1x2_cmd_flow_multicast_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
 // Dummy Data:  {DATA_WIDTH{1'b0}}
 // 
-// [SINGLE_BIT_CONTROL Version]
-//  Function:         Branch_high                                      Branch_low
-//                    
-//                    i_data_bus                                       i_data_bus
-//                        |                                                |
-//                        v                                                v        
-//                      |¯¯¯| <--i_valid=1'b1                            |¯¯¯| <--i_valid=1'b1 
-//  o_cmd=(n-1)b'??? <--|___| <--i_cmd=n'b1???      o_cmd=(n-1)b'??? <-- |___| <--i_cmd=n'b0???    
-//                     /                                                      \  
-//            o_data_high                                         		 o_data_low
+// [2_BIT_CONTROL Version]
+// Function:          Multicast                                      Branch_high                                       Branch_low
+//                  
+//                    i_data_bus                                     i_data_bus                                        i_data_bus
+//                        |                                              |                                                 |
+//                        v                                              v                                                 v        
+//                      |¯¯¯| <--i_valid=1'b1                          |¯¯¯| <--i_valid=1'b1                             |¯¯¯| <--i_valid=1'b1 
+// o_cmd=(n-2)b'??? <-- |___| <--i_cmd=n'b11???    o_cmd=(n-2)b'??? <--|___| <--i_cmd=n'b10???     o_cmd=(n-2)b'???  <-- |___| <--i_cmd=n'b01???    
+//                     /     \                                        /                                                       \
+//             o_data_high  o_data_low                          o_data_high                                                o_data_low
 //
 //       o_data_high = o_data_bus[2*DATA_WIDTH-1: DATA_WIDTH]
 //       o_data_low  = o_data_bus[DATA_WIDTH-1: 0]
@@ -24,10 +24,10 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module distribute_1x2_dst_tag_comb#(
+module distribute_1x2_cmd_flow_multicast_comb#(
 	parameter DATA_WIDTH = 32,
-	parameter DESTINATION_TAG_WIDTH = 1,
-	parameter IN_COMMAND_WIDTH = 2
+	parameter DESTINATION_TAG_WIDTH = 2,
+	parameter IN_COMMAND_WIDTH = 4
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -78,15 +78,20 @@ module distribute_1x2_dst_tag_comb#(
 				o_cmd_inner = {(OUT_COMMAND_WIDTH){1'b0}};
 
 				case(i_cmd)
-					1'b1: // In chooses HighOut
+					2'b10: // In chooses HighOut
 					begin
 						o_data_bus_inner = {i_data_bus, {DATA_WIDTH{1'b0}}};
 						o_valid_inner = 2'b10;
 					end
-					1'b0: // In chooses LowOut
+					2'b01: // In chooses LowOut
 					begin
 						o_data_bus_inner= {{DATA_WIDTH{1'b0}}, i_data_bus};
 						o_valid_inner = 2'b01;
+					end
+					2'b11: // Mutlicast
+					begin
+						o_data_bus_inner = {i_data_bus, i_data_bus};
+						o_valid_inner = 2'b11;
 					end
 					default:
 					begin
@@ -112,20 +117,27 @@ module distribute_1x2_dst_tag_comb#(
 		begin
 			if(i_en && i_valid)
 			begin
-				case(i_cmd[IN_COMMAND_WIDTH-1])
-					1'b1: // In chooses HighOut
+				case(i_cmd[IN_COMMAND_WIDTH-1:IN_COMMAND_WIDTH-2])
+					2'b10: // In chooses HighOut
 					begin
 						o_data_bus_inner = {i_data_bus, {DATA_WIDTH{1'b0}}};
 						o_valid_inner = 2'b10;
 
 						o_cmd_inner = {i_cmd[OUT_COMMAND_WIDTH_PER_DATA-1:0], {(OUT_COMMAND_WIDTH_PER_DATA){1'b0}}};
 					end
-					1'b0: // In chooses LowOut
+					2'b01: // In chooses LowOut
 					begin
 						o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus};
 						o_valid_inner = 2'b01;
 
 						o_cmd_inner = { {(OUT_COMMAND_WIDTH_PER_DATA){1'b0}}, i_cmd[OUT_COMMAND_WIDTH_PER_DATA-1:0]};
+					end
+					2'b11: // Mutlicast
+					begin
+						o_data_bus_inner = {i_data_bus, i_data_bus};
+						o_valid_inner = 2'b11;
+						
+						o_cmd_inner = { i_cmd[OUT_COMMAND_WIDTH_PER_DATA-1:0], i_cmd[OUT_COMMAND_WIDTH_PER_DATA-1:0]};
 					end
 					default:
 					begin

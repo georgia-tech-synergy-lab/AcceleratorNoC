@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  distribute_1x2_dst_tag_seq
+// Top Module:  distribute_1x2_cmd_flow_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
@@ -25,7 +25,7 @@
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
-module distribute_1x2_dst_tag_seq#(
+module distribute_1x2_cmd_flow_seq#(
 	parameter DATA_WIDTH = 32,
 	parameter DESTINATION_TAG_WIDTH = 1,
 	parameter IN_COMMAND_WIDTH = 2

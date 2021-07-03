@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  distribute_1x2_dst_tag_multicast_seq
+// Top Module:  distribute_1x2_cmd_flow_multicast_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Sequential Logic
@@ -26,7 +26,7 @@
 /////////////////////////////////////////////////////////////
 
 
-module distribute_1x2_dst_tag_multicast_seq#(
+module distribute_1x2_cmd_flow_multicast_seq#(
 	parameter DATA_WIDTH = 32,
 	parameter DESTINATION_TAG_WIDTH = 2,
 	parameter IN_COMMAND_WIDTH = 4 

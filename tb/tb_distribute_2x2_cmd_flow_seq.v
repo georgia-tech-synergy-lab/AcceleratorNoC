@@ -1,11 +1,15 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  tb_distribute_2x2_dst_tag_comb
+// Top Module:  tb_distribute_2x2_cmd_flow_seq
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
-// Timing:      Combinational Logic
+// Timing:      Sequential Logic
+// Reset:       Synchronized Reset [High Reset]
+// Latency:     1 cycle for Simple
 // Dummy Data:  {DATA_WIDTH{1'b0}}
-// 
+// Note:        This distribute_2x2 switch is specially designed for
+//              destination-tag-based routing topology like cube_dst_tag
+//
 // ----------------------------------------------
 // DESTINATION_TAG verion: 1 bit control for each data.
 //
@@ -44,7 +48,7 @@
 //                        \     /                                                                  
 //                         v   v                             
 //                         |¯¯¯| <--i_valid=2'b00
-//    o_cmd=(n-2)b'???? <--|___| <--i_cmd=n'b????      
+//    o_cmd=(n-2)b'???? <--|___| <--i_cmd=n'b????     
 //                        /     \
 //                       v       v
 //                  Invalid  Invalid    
@@ -53,13 +57,13 @@
 /////////////////////////////////////////////////////////////
 
 
-`define MULTIPLE_STAGE_COMMAND_INPUT_TEST
-// `define LAST_STAGE_TEST
+// `define MULTIPLE_STAGE_COMMAND_INPUT_TEST
+`define LAST_STAGE_TEST
 
 
 `ifdef MULTIPLE_STAGE_COMMAND_INPUT_TEST
 
-module tb_distribute_2x2_dst_tag_comb();
+module tb_distribute_2x2_cmd_flow_seq();
 
 	parameter DATA_WIDTH  = 32;
 	parameter DESTINATION_TAG_WIDTH  = 1;
@@ -80,6 +84,7 @@ module tb_distribute_2x2_dst_tag_comb();
 
     // timing signals
     reg                              clk;
+    reg                              rst;
 
     // data signals
 	reg    [1:0]                     i_valid;        // valid input data signal
@@ -105,14 +110,25 @@ module tb_distribute_2x2_dst_tag_comb();
     begin
         clk = 1'b0;
         // not enable at start
+        rst = 1'b1;
         i_valid = 2'b11;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b0;
         next_cmd = {OUT_COMMAND_WIDTH_PER_DATA{1'b0}};
         i_cmd = {{1'b1, next_cmd}, {1'b1, next_cmd}};
-           
+
+        // reset
+        #20
+        rst = 1'b1;
+        i_valid = 2'b11;
+        i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
+        i_en = 1'b1;
+        next_cmd = {OUT_COMMAND_WIDTH_PER_DATA{1'b0}};
+        i_cmd = {{1'b1, next_cmd}, {1'b1, next_cmd}};
+
         // input active --  HighIn HighOut
         #20
+        rst = 1'b0;
         i_valid = 2'b11;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -228,11 +244,13 @@ module tb_distribute_2x2_dst_tag_comb();
 
 
     // instantiate DUT (device under test)
-    distribute_2x2_dst_tag_comb #(
+    distribute_2x2_cmd_flow_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
         .IN_COMMAND_WIDTH(IN_COMMAND_WIDTH)
 	) dut(
+        .clk(clk),
+        .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),
@@ -250,7 +268,7 @@ endmodule
 
 `ifdef LAST_STAGE_TEST
 
-module tb_distribute_2x2_dst_tag_comb();
+module tb_distribute_2x2_cmd_flow_seq();
 
 	parameter DATA_WIDTH  = 32;
 	parameter DESTINATION_TAG_WIDTH  = 2;
@@ -271,6 +289,7 @@ module tb_distribute_2x2_dst_tag_comb();
 
     // timing signals
     reg                              clk;
+    reg                              rst;
 
     // data signals
 	reg    [1:0]                     i_valid;        // valid input data signal
@@ -291,14 +310,23 @@ module tb_distribute_2x2_dst_tag_comb();
     begin
         clk = 1'b0;
         // not enable at start
-                // not enable at start
+        rst = 1'b1;
         i_valid = 2'b11;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b0;
         i_cmd = 2'b11;
-           
+                  
+        // reset
+        #20
+        rst = 1'b1;
+        i_valid = 2'b11;
+        i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
+        i_en = 1'b1;
+        i_cmd = 2'b11;
+
         // input active --  HighIn HighOut
         #20
+        rst = 1'b0;
         i_valid = 2'b11;
         i_data_bus = {{(DATA_WIDTH>>2){4'hA}},{(DATA_WIDTH>>2){4'hf}}};
         i_en = 1'b1;
@@ -400,11 +428,13 @@ module tb_distribute_2x2_dst_tag_comb();
 
 
     // instantiate DUT (device under test)
-    distribute_2x2_dst_tag_comb #(
+    distribute_2x2_cmd_flow_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .DESTINATION_TAG_WIDTH(DESTINATION_TAG_WIDTH),
         .IN_COMMAND_WIDTH(IN_COMMAND_WIDTH)
 	) dut(
+        .clk(clk),
+        .rst(rst),
 		.i_valid(i_valid),
 		.i_data_bus(i_data_bus),
 		.o_valid(o_valid),

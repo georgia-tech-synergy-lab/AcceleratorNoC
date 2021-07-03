@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 /////////////////////////////////////////////////////////////
-// Top Module:  distribute_2x2_dst_tag_multicast_comb
+// Top Module:  distribute_2x2_cmd_flow_multicast_comb
 // Data:        Only data width matters.
 // Format:      keeping the input format unchange
 // Timing:      Combinational Logic
@@ -76,7 +76,7 @@
 
 
 
-module distribute_2x2_dst_tag_multicast_comb#(
+module distribute_2x2_cmd_flow_multicast_comb#(
 	parameter DATA_WIDTH = 32,
 	parameter DESTINATION_TAG_WIDTH = 2,
 	parameter IN_COMMAND_WIDTH = 4
