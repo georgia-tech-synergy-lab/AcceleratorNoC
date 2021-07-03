@@ -20,7 +20,7 @@
 //                              /|                        |  |                    |   |___|     
 //                             / |   ______               |  |     ______         |    ___
 //                            |  |-->_|_|_|-------------->|  |---->_|_|_|------------>|   | 
-//    i_data_bus & i_valid -->|  |  data_stream_reg       | /  data_dynamic_wire      | X |----> o_data_bus & o_valid
+//    i_data_bus & i_valid -->|  |  data_stream_latch     | /  data_dynamic_reg       | X |----> o_data_bus & o_valid
 //                             \ |   ______               |/                          |   | 
 //                              \|-->_|_|_|------------------------------------------>|___|     
 //                              ^   data_stationary_reg
@@ -35,7 +35,8 @@
 // 
 // Note: there might be some demand for changing data_stream_reg & data_stationary_reg & data_dynamic_wire into FIFO
 // 1. pattern to remember the configurations: 1 is always used to select data_stream_reg e.g. i_cmd[1] & i_cmd[2]
-// 
+// 2. o_fwd_bus only has 1 cycle latency 
+//
 // Author:      Jianming Tong (jianming.tong@gatech.edu)
 /////////////////////////////////////////////////////////////
 
@@ -99,10 +100,10 @@ module multiplier_seq#(
 	reg                              i_valid_stationary_latch;
 
 	// first stage reg (sequential assignment)
-	reg    [DATA_WIDTH-1:0]          data_stream_reg;
+	reg    [DATA_WIDTH-1:0]          data_dynamic_reg;
 	reg    [DATA_WIDTH-1:0]          data_stationary_reg;
 
-	reg                              valid_stream_reg;
+	reg                              valid_dynamic_reg;
 	reg                              valid_stationary_reg;
 
 	// first stage module output connection wire
@@ -142,12 +143,10 @@ module multiplier_seq#(
 	*/
 
 	initial begin
-		data_stream_reg <= {DATA_WIDTH{1'b0}};
 		i_data_fwd_latch <= {DATA_WIDTH{1'b0}};
 		data_stationary_reg <= {DATA_WIDTH{1'b0}};
 
 		i_valid_fwd_latch <= 1'b0;
-		valid_stream_reg <= 1'b0;
 		valid_stationary_reg <= 1'b0;
 	end
 
@@ -169,8 +168,8 @@ module multiplier_seq#(
 	always @(*) begin
 		if(i_en & ~rst)
 		begin
-			i_data_stream_latch <= (i_cmd[0] & i_cmd[1] & i_valid)?i_data_bus:data_stream_reg;
-			i_valid_stream_latch <= (i_cmd[0] & i_cmd[1] & i_valid)?i_valid:valid_stream_reg;
+			i_data_stream_latch <= (i_cmd[0] & i_cmd[1] & i_valid)?i_data_bus:{DATA_WIDTH{1'b0}};
+			i_valid_stream_latch <= (i_cmd[0] & i_cmd[1] & i_valid)?i_valid:1'b0;
 		end
 		else
 		begin
@@ -204,35 +203,16 @@ module multiplier_seq#(
 			data_stationary_reg <= i_data_stationary_latch;
 			valid_stationary_reg <= i_valid_stationary_latch;
 			
-			data_stream_reg <= i_data_stream_latch;
-			valid_stream_reg <= i_valid_stream_latch;
+			data_dynamic_reg <= data_dynamic_wire;
+			valid_dynamic_reg <= valid_dynamic_wire;
 		end
 		else
 		begin
 			data_stationary_reg <= {DATA_WIDTH{1'b0}};
 			valid_stationary_reg <= 1'b0;
 			
-			data_stream_reg <= {DATA_WIDTH{1'b0}};
-			valid_stream_reg <= 1'b0;
-		end
-	end
-
-	/*
-		second stage
-	*/
-
-	//  perform multiplication on two input data of the multiplier 
-	//  Note: there might need dedicated DSP to handle the operation of multiplier.
-	always @(*) begin
-		if(i_en & ~rst)
-		begin
-			o_data_full_latch <= ( valid_dynamic_wire & valid_stationary_reg)?(data_dynamic_wire * data_stationary_reg):{DATA_WIDTH{1'b0}};
-			o_valid_latch <= valid_dynamic_wire & valid_stationary_reg;
-		end
-		else
-		begin
-			o_data_full_latch <= {DATA_WIDTH{1'b0}};
-			o_valid_latch <= 1'b0;
+			data_dynamic_reg <= {DATA_WIDTH{1'b0}};
+			valid_dynamic_reg <= 1'b0;
 		end
 	end
 
@@ -249,7 +229,30 @@ module multiplier_seq#(
 			o_valid_fwd_reg <= 1'b0;
 		end
 	end
+
+	assign o_fwd_bus = o_fwd_bus_reg;
+	assign o_fwd_valid = o_valid_fwd_reg;
 	
+
+	/*
+		second stage
+	*/
+
+	//  perform multiplication on two input data of the multiplier 
+	//  Note: there might need dedicated DSP to handle the operation of multiplier.
+	always @(*) begin
+		if(i_en & ~rst)
+		begin
+			o_data_full_latch <= ( valid_dynamic_reg & valid_stationary_reg)?(data_dynamic_reg * data_stationary_reg):{DATA_WIDTH{1'b0}};
+			o_valid_latch <= valid_dynamic_reg & valid_stationary_reg;
+		end
+		else
+		begin
+			o_data_full_latch <= {DATA_WIDTH{1'b0}};
+			o_valid_latch <= 1'b0;
+		end
+	end
+
 	// perform bits selection on multiplcation results
  	bit_selection_16x8_seq #(
 		.DATA_WIDTH((DATA_WIDTH<<1)),
@@ -262,10 +265,8 @@ module multiplier_seq#(
 		.o_valid(o_valid),
 		.o_data_bus(o_data_bus),
 		.i_en(i_en),
-		.i_cmd(cmd_second_stage_reg[1 +: ($clog2(DATA_WIDTH)+1)])
+		.i_cmd(cmd_second_stage_reg[1+:($clog2(DATA_WIDTH)+1)])
 	);
 
-	assign o_fwd_bus = o_fwd_bus_reg;
-	assign o_fwd_valid = o_valid_fwd_reg;
-	
+
 endmodule

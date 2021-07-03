@@ -30,9 +30,9 @@
 
 
 module linear_multiplier_seq#(
-	parameter DATA_WIDTH = 32,                           // could be arbitrary number
-	parameter NUM_NODE = 4,                              // could be arbitrary integer.
-	parameter COMMAND_WIDTH = 4 + $clog2(DATA_WIDTH)     // total number of bits for a single multiplier
+	parameter DATA_WIDTH = 8,                            // could be arbitrary number
+	parameter NUM_NODE = 16,                             // could be arbitrary integer.
+	parameter COMMAND_WIDTH = 4 + $clog2(DATA_WIDTH) + 1 // total number of bits for a single multiplier
 )(
     // data signals
 	clk,
@@ -78,7 +78,7 @@ module linear_multiplier_seq#(
 		begin:node_id
 			if(i==0)
 			begin:first_node
-				multiplier_first_seq#(
+				multiplier_seq#(
 					.DATA_WIDTH(DATA_WIDTH),                  // could be arbitrary number
 					.COMMAND_WIDTH(COMMAND_WIDTH)             // total input command bits.
 				) first_mul (
@@ -86,6 +86,8 @@ module linear_multiplier_seq#(
 					.rst(rst),
 					.i_valid(i_valid[0]),                     // valid input data signal
 					.i_data_bus(i_data_bus[0+:DATA_WIDTH]),   // input data
+					.i_fwd_valid(1'b0),                       // valid forward data signal
+					.i_fwd_bus({DATA_WIDTH{1'b0}}),           // data forward input from neighbor multiplier
 					.o_valid(o_valid[0]),                     // output valid
 					.o_data_bus(o_data_bus[0+:DATA_WIDTH]),   // output data 
 					.o_fwd_valid(fwd_valid_bus[0]),           // output valid forward data signal
@@ -134,8 +136,8 @@ module linear_multiplier_seq#(
 						.i_cmd(i_cmd[i*COMMAND_WIDTH+:COMMAND_WIDTH])          // command 
 					);
 				end
-			end	
-		end		
+			end
+		end
 	endgenerate
 
 endmodule

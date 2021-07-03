@@ -51,23 +51,18 @@ module mux_2x1_simple_comb#(
     // inner logic
     reg    [DATA_WIDTH-1:0]        o_data_bus_inner;
     reg                            o_valid_inner;
-    reg    [1:0]                   i_valid_inner; 
-
-    always @(*) begin
-        i_valid_inner = i_valid;
-    end
 
     always@(*)
     begin
         if(i_en)
         begin 
-            case({i_cmd,i_valid_inner[1],i_valid_inner[0]})
+            case({i_cmd,i_valid[1],i_valid[0]})
                 3'b001,3'b011:
                 begin
                     o_valid_inner = 1'b1;
                     o_data_bus_inner = i_data_bus[0 +:DATA_WIDTH];
                 end						
-                3'b11x,3'b111:
+                3'b110,3'b111:
                 begin
                     o_valid_inner = 1'b1;
                     o_data_bus_inner = i_data_bus[DATA_WIDTH +:DATA_WIDTH];

@@ -99,12 +99,12 @@ module multiplier_first_seq#(
 	reg                            o_valid_fwd_reg;
 
 	// stored control of first stages for usage in the second stage.
-	reg    [$clog2(DATA_WIDTH)+1:0]  cmd_second_stage_reg; // $clog2(DATA_WIDTH) + 1 bits in total
+	reg    [$clog2(DATA_WIDTH):0]  cmd_second_stage_reg; // $clog2(DATA_WIDTH) + 1 bits in total
 
 	always @(posedge clk) begin
 		if(i_en & (~rst))
 		begin
-			cmd_second_stage_reg <= i_cmd[3 +: ($clog2(DATA_WIDTH)+2)];
+			cmd_second_stage_reg <= i_cmd[4 +: ($clog2(DATA_WIDTH)+1)];
 		end
 		else
 		begin
@@ -175,8 +175,8 @@ module multiplier_first_seq#(
 	always @(posedge clk) begin
 		if(i_en & ~rst)
 		begin
-			o_fwd_bus_reg <= (cmd_second_stage_reg[0] & valid_dynamic_reg)?data_dynamic_reg:{DATA_WIDTH{1'b0}};
-			o_valid_fwd_reg <= cmd_second_stage_reg[0] & valid_dynamic_reg;
+			o_fwd_bus_reg <= (i_cmd[3] & valid_dynamic_reg)?data_dynamic_reg:{DATA_WIDTH{1'b0}};
+			o_valid_fwd_reg <= i_cmd[3] & valid_dynamic_reg;
 		end
 		else
 		begin
@@ -197,7 +197,7 @@ module multiplier_first_seq#(
 		.o_valid(o_valid),
 		.o_data_bus(o_data_bus),
 		.i_en(i_en),
-		.i_cmd(cmd_second_stage_reg[1 +: ($clog2(DATA_WIDTH)+1)])
+		.i_cmd(cmd_second_stage_reg)
 	);
 
 	assign o_fwd_bus = o_fwd_bus_reg;

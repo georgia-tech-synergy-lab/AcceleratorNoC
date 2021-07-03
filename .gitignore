@@ -1,0 +1,9 @@
+under_develop
+deprecated
+modelsim
+material
+*.g.v
+*.tar.gz
+syn
+scratch
+system_integration
