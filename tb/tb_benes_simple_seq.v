@@ -40,9 +40,9 @@
 /////////////////////////////////////////////////////////////
 
 // design the following testbench for 2^n inputs. n could be any integer.
-`define TEST_4_INPUT_BENES
+// `define TEST_4_INPUT_BENES
 // `define TEST_8_INPUT_BENES  //change #30 into #20
-// `define TEST_16_INPUT_BENES //change #30 into #40
+`define TEST_16_INPUT_BENES //change #30 into #40
 // `define TEST_32_INPUT_BENES //change #30 into #80
 // `define TEST_16_INPUT_BENES_PRE_INTEGRATION //change #30 into #40
 

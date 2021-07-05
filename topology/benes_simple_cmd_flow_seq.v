@@ -66,13 +66,19 @@
 /////////////////////////////////////////////////////////////
 
 
-// Note: use the SIMPLE_MODULAR version distribute_2x2_simple_seq.
-// Need to set "`define SIMPLE_MODULAR in distribute_2x2_simple_seq.v"
+// Note: use the SIMPLE_MODULAR version distribute_2x2_simple_cmd_flow_seq.
+// Need to set "`define SIMPLE_MODULAR in distribute_2x2_simple_cmd_flow_seq.v"
+
+/*
+	parameter description
+	1. IN_COMMAND_WIDTH means the 
+*/
 
 module benes_simple_cmd_flow_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
+	parameter DATA_WIDTH = 8,       // could be arbitrary number
 	parameter COMMAND_WIDTH  = 2,   // 2 when using simple distribute_2x2; 3 when using complex distribute_2x2;
-	parameter NUM_INPUT_DATA = 8    // multiple be 2^n
+	parameter NUM_INPUT_DATA = 16,  // multiple be 2^n
+	parameter IN_COMMAND_WIDTH = 30 //
 )(
     // timeing signals
     clk,
@@ -87,15 +93,21 @@ module benes_simple_cmd_flow_seq#(
 
 	// control signals
 	i_en,           // distribute switch enable
-	i_cmd           // command 
+	i_cmd,          // input command 
+	
+	o_cmd           // output command 
 );
+
 	//parameter
 	localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
 
 	localparam LEVEL = $clog2(NUM_INPUT_DATA);
 	localparam TOTAL_STAGE = 2*LEVEL-1;
 
-	localparam TOTAL_COMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH;
+	localparam TOTAL_COMMAND = NUM_SWITCH_IN*IN_COMMAND_WIDTH;
+
+	localparam OUT_COMMAND_WIDTH = IN_COMMAND_WIDTH - TOTAL_STAGE*COMMAND_WIDTH;
+	localparam TOTAL_OUTPUT_COMMAND = NUM_SWITCH_IN * OUT_COMMAND_WIDTH;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 	
@@ -115,53 +127,29 @@ module benes_simple_cmd_flow_seq#(
 									// 00 --> Multicast_LowIn
 									// 10 --> Pass Through
 									// 01 --> Pass Switch
+	output [TOTAL_OUTPUT_COMMAND-1:0]            o_cmd;
 
 	// inner logic
 	wire   [DATA_WIDTH-1:0]                      connection[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
 	wire                                         connection_valid[0:TOTAL_STAGE-1][0:NUM_INPUT_DATA-1];
-
+	
 	genvar i,j,k,s,p;
 	generate
 
-		// logic for control pipeline
-		for(i=0; i<TOTAL_STAGE-1;i=i+1)
-		begin:cmd_pipeline_stage
-			localparam NUM_STAGE = TOTAL_STAGE-i-1;
-			reg  [COMMAND_WIDTH-1:0]                pipeline_i_cmd_reg[0:NUM_STAGE-1][0:NUM_SWITCH_IN-1]; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.    
+		for(i=0; i<TOTAL_STAGE; i=i+1)
+		begin:cmd_stage
+			localparam IN_COMMAND_WIDTH_STAGE = IN_COMMAND_WIDTH - COMMAND_WIDTH*(i+1) ;
+			
+			wire [IN_COMMAND_WIDTH_STAGE-1:0]  inner_cmd_wire[0:NUM_SWITCH_IN];
 		end
-		
-		for(i=0;i<TOTAL_STAGE-1;i=i+1)  // from second stage to the end;
-		begin:sec_to_end
-			for(j=0;j<NUM_SWITCH_IN;j=j+1)
-			begin:loop_switch
-				always@(posedge clk)
-				begin
-					cmd_pipeline_stage[0].pipeline_i_cmd_reg[i][j] <= i_cmd[((i+1)*NUM_SWITCH_IN+j)*COMMAND_WIDTH+:COMMAND_WIDTH];
-				end
-			end
-		end
-		
-		for(p=0; p<TOTAL_STAGE-2;p=p+1)
-		begin:third_to_end
-			localparam NUM_STAGE_IN_PIPELINE = TOTAL_STAGE-p-1;
-			for(i=0;i<NUM_STAGE_IN_PIPELINE;i=i+1)  // from second stage to the end;
-			begin:loop_stage
-				for(j=0;j<NUM_SWITCH_IN;j=j+1)
-				begin:loop_switch
-					always@(posedge clk)
-					begin
-						cmd_pipeline_stage[p+1].pipeline_i_cmd_reg[i][j] <= cmd_pipeline_stage[p].pipeline_i_cmd_reg[i+1][j];
-					end
-				end
-			end
-		end
-		
+
 		// first stage
 		for(i=0; i<NUM_SWITCH_IN; i=i+1)
 		begin:first_stage_switch
-			distribute_2x2_simple_seq #(
+			distribute_2x2_simple_cmd_flow_seq #(
 				.DATA_WIDTH(DATA_WIDTH),
-				.COMMAND_WIDTH(COMMAND_WIDTH)
+				.COMMAND_WIDTH(COMMAND_WIDTH),
+				.IN_COMMAND_WIDTH(IN_COMMAND_WIDTH)
 			) first_stage(
 				.clk(clk),
 				.rst(rst),
@@ -170,19 +158,24 @@ module benes_simple_cmd_flow_seq#(
 				.o_valid({connection_valid[0][2*i+1], connection_valid[0][2*i]}),
 				.o_data_bus({connection[0][2*i+1], connection[0][2*i]}),
 				.i_en(i_en),
-				.i_cmd(i_cmd[i*COMMAND_WIDTH+:COMMAND_WIDTH])
+				.i_cmd(i_cmd[i*IN_COMMAND_WIDTH+:IN_COMMAND_WIDTH]),
+				.o_cmd(cmd_stage[0].inner_cmd_wire[i])
 			);
 		end
-
 
 		// second stage -> middle stage 
 		// inverse shuffle function [loop right shift]:  output of i-th stage    -> input of (i+1)-th stage 
 		// shuffle function         [loop left shift]:   input of (i+1)-th stage -> output of i-th stage
 		for(s=0;s<(LEVEL-1);s=s+1)
 		begin:first_half_stages
-			localparam NUM_GROUP = 1<<s;
-			localparam NUM_SWITCH_GROUP = NUM_SWITCH_IN>>s;
-			localparam LEN_GOURP = $clog2(NUM_INPUT_DATA)-1-s;
+			// iteration parameter
+			localparam                                NUM_GROUP = 1<<s;
+			localparam                                NUM_SWITCH_GROUP = NUM_SWITCH_IN>>s;
+			localparam                                LEN_GOURP = $clog2(NUM_INPUT_DATA)-1-s;
+			
+			// stage command width parameter
+			localparam                                IN_COMMAND_WIDTH_STAGE = IN_COMMAND_WIDTH - COMMAND_WIDTH*(s+1);
+
 			for(k=0;k<NUM_GROUP;k=k+1)
 			begin:group_first_half
 				for(i=0;i<NUM_SWITCH_GROUP;i=i+1)
@@ -209,9 +202,10 @@ module benes_simple_cmd_flow_seq#(
 					localparam                                h_idx_loop_left_shift = h_idx_MSB_loop_shift + h_idx_left_shift;
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]   h_idx_loop_left_shift_group = h_idx_loop_left_shift + group_offset;
 
-					distribute_2x2_simple_seq #(
+					distribute_2x2_simple_cmd_flow_seq #(
 						.DATA_WIDTH(DATA_WIDTH),
-						.COMMAND_WIDTH(COMMAND_WIDTH)
+						.COMMAND_WIDTH(COMMAND_WIDTH),
+						.IN_COMMAND_WIDTH(IN_COMMAND_WIDTH_STAGE)
 					) second_stage(
 						.clk(clk),
 						.rst(rst),
@@ -220,20 +214,25 @@ module benes_simple_cmd_flow_seq#(
 						.o_valid({connection_valid[s+1][2*(i+group_switch_offset)+1], connection_valid[s+1][2*(i+group_switch_offset)]}),
 						.o_data_bus({connection[s+1][2*(i+group_switch_offset)+1], connection[s+1][2*(i+group_switch_offset)]}),
 						.i_en(i_en),
-						.i_cmd(cmd_pipeline_stage[s].pipeline_i_cmd_reg[0][group_switch_offset + i])
+						.i_cmd(cmd_stage[s].inner_cmd_wire[k*NUM_SWITCH_GROUP+i]),
+						.o_cmd(cmd_stage[s+1].inner_cmd_wire[k*NUM_SWITCH_GROUP+i])
 					);
 				end
 			end
 		end
-
 
 		// middle stage -> last stage 
 		// shuffle function         [loop left shift]:   output of i-th stage    -> input of (i+1)-th stage
 		// inverse shuffle function [loop right shift]:  input of (i+1)-th stage -> output of i-th stage 
 		for(s=(LEVEL-1);s<(TOTAL_STAGE-1);s=s+1)
 		begin:second_half_stages
-			localparam [$clog2(NUM_INPUT_DATA):0] num_group = TOTAL_STAGE-2-s;
-			localparam [$clog2(NUM_INPUT_DATA):0] NUM_GROUP_SEC_HALF = 1 << num_group;
+			// iteration parameter
+			localparam [$clog2(NUM_INPUT_DATA):0]     num_group = TOTAL_STAGE-2-s;
+			localparam [$clog2(NUM_INPUT_DATA):0]     NUM_GROUP_SEC_HALF = 1 << num_group;
+			
+			// stage command width parameter
+			localparam                                IN_COMMAND_WIDTH_STAGE = IN_COMMAND_WIDTH - COMMAND_WIDTH*(s+1);
+
 			for(k=0;k<NUM_GROUP_SEC_HALF;k=k+1)
 			begin:group_sec_half
 				localparam  NUM_SWITCH_IN_GROUP = NUM_SWITCH_IN>>num_group;
@@ -260,9 +259,10 @@ module benes_simple_cmd_flow_seq#(
 					localparam                                        h_idx_loop_right_shift = h_idx_LSB_loop_shift + h_idx_right_shift;
 					localparam [$clog2(NUM_INPUT_DATA)-1:0]           h_idx_loop_right_shift_group = h_idx_loop_right_shift + group_offset;
 
-					distribute_2x2_simple_seq #(
+					distribute_2x2_simple_cmd_flow_seq #(
 						.DATA_WIDTH(DATA_WIDTH),
-						.COMMAND_WIDTH(COMMAND_WIDTH)
+						.COMMAND_WIDTH(COMMAND_WIDTH),
+						.IN_COMMAND_WIDTH(IN_COMMAND_WIDTH_STAGE)
 					) third_stage(
 						.clk(clk),
 						.rst(rst),
@@ -271,19 +271,24 @@ module benes_simple_cmd_flow_seq#(
 						.o_valid({connection_valid[s+1][2*(i+group_switch_offset)+1], connection_valid[s+1][2*(i+group_switch_offset)]}),
 						.o_data_bus({connection[s+1][2*(i+group_switch_offset)+1], connection[s+1][2*(i+group_switch_offset)]}),
 						.i_en(i_en),
-						.i_cmd(cmd_pipeline_stage[s].pipeline_i_cmd_reg[0][group_switch_offset + i])
+						.i_cmd(cmd_stage[s].inner_cmd_wire[k*NUM_SWITCH_IN_GROUP+i]),
+						.o_cmd(cmd_stage[s+1].inner_cmd_wire[k*NUM_SWITCH_IN_GROUP+i])
 					);
 				end
 			end
 		end
-
 
 		for(i=0;i<NUM_INPUT_DATA;i=i+1)
 		begin: output_data
 			assign o_data_bus[i*DATA_WIDTH+:DATA_WIDTH] = connection[TOTAL_STAGE-1][i];
 			assign o_valid[i+:1] = connection_valid[TOTAL_STAGE-1][i];
 		end
-		
+
+		for(i=0;i<NUM_SWITCH_IN;i=i+1)
+		begin: output_switch
+			assign o_cmd[i*OUT_COMMAND_WIDTH+:OUT_COMMAND_WIDTH] = cmd_stage[TOTAL_STAGE-1].inner_cmd_wire[i];
+		end
+
 	endgenerate
 
 endmodule

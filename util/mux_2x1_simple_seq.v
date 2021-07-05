@@ -24,7 +24,7 @@
 
 module mux_2x1_simple_seq#(
 	parameter DATA_WIDTH = 32,
-    parameter COMMMAND_WIDTH = 1
+    parameter COMMAND_WIDTH = 1
 )(
     // timeing signals
     clk,
@@ -53,7 +53,7 @@ module mux_2x1_simple_seq#(
 	output                         o_valid;             
 	    
 	input                          i_en;
-	input  [COMMMAND_WIDTH-1:0]    i_cmd;
+	input  [COMMAND_WIDTH-1:0]    i_cmd;
                                 // 0 --> Branch Low
                                 // 1 --> Branch High
 	

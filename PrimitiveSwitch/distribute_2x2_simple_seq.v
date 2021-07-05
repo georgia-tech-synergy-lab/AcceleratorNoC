@@ -160,10 +160,10 @@
 /////////////////////////////////////////////////////////////
 
 // `define COMPLEX_MODULAR         // 3 bit command
-// `define SIMPLE_MODULAR          // 2 bit command
+`define SIMPLE_MODULAR          // 2 bit command
 // `define UNICAST_ONLY_MODULAR    // 1 bit command
 
-`define SIMPLE_FLATTEN     	  // 2 bit command
+// `define SIMPLE_FLATTEN     	  // 2 bit command
 
 `ifdef SIMPLE_FLATTEN
 module distribute_2x2_simple_seq#(

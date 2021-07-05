@@ -274,9 +274,9 @@ module multiplier_seq#(
 	always @(posedge clk) begin
 		if(i_en & ~rst)
 		begin
-			o_fwd_bus_reg <= (cmd_second_stage_reg[0] & valid_dynamic_wire)?data_dynamic_wire:{DATA_WIDTH{1'b0}};
-			o_valid_fwd_reg <= cmd_second_stage_reg[0] & valid_dynamic_wire;
-		end
+			o_fwd_bus_reg <= (i_cmd[3] & valid_dynamic_wire)?data_dynamic_wire:{DATA_WIDTH{1'b0}};
+			o_valid_fwd_reg <= i_cmd[3] & valid_dynamic_wire;
+		   end
 		else
 		begin
 			o_fwd_bus_reg <= {DATA_WIDTH{1'b0}};

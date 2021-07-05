@@ -74,7 +74,7 @@ module tb_linear_multiplier_seq();
     initial 
     begin
         // disable
-        clk = 1'b1;
+        clk = 1'b0;
         rst = 1'b0;
         i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00}};
         i_valid = 4'hf;
@@ -319,7 +319,7 @@ module tb_linear_multiplier_seq();
     initial 
     begin
         // disable
-        clk = 1'b1;
+        clk = 1'b0;
         rst = 1'b0;
         i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h06},{8'h07},{8'h02},{8'h03},{8'h04},{8'h05},{8'h00},{8'h01},{8'h02}};
         i_valid = 16'h01ff;
@@ -341,6 +341,8 @@ module tb_linear_multiplier_seq();
         // cycle 0
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);
         rst = 1'b0;
         i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h06},{8'h07},{8'h02},{8'h03},{8'h04},{8'h05},{8'h00},{8'h01},{8'h02}};
         i_valid = 16'h01ff;
@@ -350,6 +352,8 @@ module tb_linear_multiplier_seq();
         // cycle 1  
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);
         rst = 1'b0;
         i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h15},{8'h16},{8'h17},{8'h0F},{8'h10},{8'h11},{8'h09},{8'h0A},{8'h0B}};
         i_valid = 16'h01ff;
@@ -359,8 +363,11 @@ module tb_linear_multiplier_seq();
         // cycle 2
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);
         rst = 1'b0;
-        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h16},{8'h17},{8'h18},{8'h10},{8'h11},{8'h12},{8'h0A},{8'h0B},{8'h0C}};
+        // i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h16},{8'h17},{8'h18},{8'h10},{8'h11},{8'h12},{8'h0A},{8'h0B},{8'h0C}};
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h18},{8'h00},{8'h00},{8'h12},{8'h00},{8'h00},{8'h0C}};
         i_valid = 16'h0049;
         i_en = 1'b1;
         i_cmd = {{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110000},{8'b01111000},{8'b01111111},{8'b01110000},{8'b01111000},{8'b01111111},{8'b01110000},{8'b01111000},{8'b01111111}};
@@ -368,8 +375,11 @@ module tb_linear_multiplier_seq();
         // cycle 3
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);
         rst = 1'b0;
-        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h17},{8'h18},{8'h19},{8'h11},{8'h12},{8'h13},{8'h0B},{8'h0C},{8'h0D}};
+        // i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h17},{8'h18},{8'h19},{8'h11},{8'h12},{8'h13},{8'h0B},{8'h0C},{8'h0D}};
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h19},{8'h00},{8'h00},{8'h13},{8'h00},{8'h00},{8'h0D}};
         i_valid = 16'h0049;
         i_en = 1'b1;
         i_cmd = {{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110000},{8'b01111000},{8'b01111111},{8'b01110000},{8'b01111000},{8'b01111111},{8'b01110000},{8'b01111000},{8'b01111111}};
@@ -377,8 +387,11 @@ module tb_linear_multiplier_seq();
         // cycle 4
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);        
         rst = 1'b0;
-        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h18},{8'h19},{8'h1A},{8'h12},{8'h13},{8'h14},{8'h0C},{8'h0D},{8'h0E}};
+        // i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h18},{8'h19},{8'h1A},{8'h12},{8'h13},{8'h14},{8'h0C},{8'h0D},{8'h0E}};
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1A},{8'h00},{8'h00},{8'h14},{8'h00},{8'h00},{8'h0E}};
         i_valid = 16'h0049;
         i_en = 1'b1;
         i_cmd = {{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110000},{8'b01110000},{8'b01110111},{8'b01110000},{8'b01110000},{8'b01110111},{8'b01110000},{8'b01110000},{8'b01110111}};
@@ -386,6 +399,8 @@ module tb_linear_multiplier_seq();
         // cycle 5 
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);        
         i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1B},{8'h1C},{8'h1D},{8'h15},{8'h16},{8'h17},{8'h0F},{8'h10},{8'h11}};
         rst = 1'b0;
         i_cmd = {{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110111},{8'b01111111},{8'b01111111},{8'b01110111},{8'b01111111},{8'b01111111},{8'b01110111},{8'b01111111},{8'b01111111}};
@@ -395,8 +410,11 @@ module tb_linear_multiplier_seq();
         // cycle 6
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);        
         rst = 1'b0;
-        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1C},{8'h1D},{8'h1E},{8'h16},{8'h17},{8'h18},{8'h10},{8'h11},{8'h12}};
+        // i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1C},{8'h1D},{8'h1E},{8'h16},{8'h17},{8'h18},{8'h10},{8'h11},{8'h12}};
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1E},{8'h00},{8'h00},{8'h18},{8'h00},{8'h00},{8'h12}};
         i_cmd = {{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110000},{8'b01111000},{8'b01111111},{8'b01110000},{8'b01111000},{8'b01111111},{8'b01110000},{8'b01111000},{8'b01111111}};
         i_valid = 16'h0049;
         i_en = 1'b1;
@@ -404,8 +422,11 @@ module tb_linear_multiplier_seq();
         // cycle 7
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);        
         rst = 1'b0;
-        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1D},{8'h1E},{8'h1F},{8'h17},{8'h18},{8'h19},{8'h11},{8'h12},{8'h13}};
+        // i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1D},{8'h1E},{8'h1F},{8'h17},{8'h18},{8'h19},{8'h11},{8'h12},{8'h13}};
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1F},{8'h00},{8'h00},{8'h19},{8'h00},{8'h00},{8'h13}};
         i_cmd = {{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110000},{8'b01111000},{8'b01111111},{8'b01110000},{8'b01111000},{8'b01111111},{8'b01110000},{8'b01111000},{8'b01111111}};
         i_valid = 16'h0049;
         i_en = 1'b1;
@@ -413,8 +434,11 @@ module tb_linear_multiplier_seq();
         // cycle 8
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);        
         rst = 1'b0;
-        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1E},{8'h1F},{8'h20},{8'h18},{8'h19},{8'h1A},{8'h12},{8'h13},{8'h14}};
+        // i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1E},{8'h1F},{8'h20},{8'h18},{8'h19},{8'h1A},{8'h12},{8'h13},{8'h14}};
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h20},{8'h00},{8'h00},{8'h1A},{8'h00},{8'h00},{8'h14}};
         i_cmd = {{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110101},{8'b01110000},{8'b01110000},{8'b01110111},{8'b01110000},{8'b01110000},{8'b01110111},{8'b01110000},{8'b01110000},{8'b01110111}};
         i_valid = 16'h0049;
         i_en = 1'b1;
@@ -422,6 +446,8 @@ module tb_linear_multiplier_seq();
         // cycle 9 -- no valid input
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);        
         rst = 1'b0;
         i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h06},{8'h07},{8'h02},{8'h03},{8'h04},{8'h05},{8'h00},{8'h01},{8'h02}};
         i_valid = 16'h0000;
@@ -432,6 +458,8 @@ module tb_linear_multiplier_seq();
         // cycle 10 -- no valid input 
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);        
         rst = 1'b0;
         i_data_bus = {{8'h02},{8'h01},{8'h00},{8'h05},{8'h04},{8'h03},{8'h08},{8'h07},{8'h06},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00}};
         i_valid = 16'h0000;
@@ -440,8 +468,12 @@ module tb_linear_multiplier_seq();
 
         #10
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);
         #10     
         $display("o_data_bus: %h\n", o_data_bus);
+        // $display("i_data_bus: %h\n", i_data_bus);
+        // $display("i_cmd: %h\n", i_cmd);        
         $stop;
     end
 
@@ -457,7 +489,7 @@ module tb_linear_multiplier_seq();
         .i_data_bus(i_data_bus),         // input data
         .o_valid(o_valid),               // output valid
         .o_data_bus(o_data_bus),         // output data 
-        .i_en(i_en),                     // distribute switch enable
+        .i_en(i_en),                     // multiplier enable
         .i_cmd(i_cmd)                    // command 
     );
 

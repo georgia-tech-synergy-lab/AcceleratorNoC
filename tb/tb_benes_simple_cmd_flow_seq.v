@@ -63,16 +63,18 @@
 
 // design the following testbench for 2^n inputs. n could be any integer.
 `define TEST_16_INPUT_BENES_PRE_INTEGRATION //change #30 into #40
+// `define Basic_testing_16pe //change #30 into #40
 
 
-`ifdef TEST_16_INPUT_BENES_PRE_INTEGRATION
+`ifdef Basic_testing_16pe
 // this testbench is used to test the functionality of integrating BENES network together with 1D Multipliers
 // DATA_WIDTH = 8
 // Num PE = 16
 // Each PE takes   4 + $clog2(DATA_WIDTH) + 1 = 8 bits (configuration)
 module tb_benes_simple_cmd_flow_seq();
-    parameter DATA_WIDTH = 8;
+    parameter DATA_WIDTH = 4;
 	parameter COMMAND_WIDTH  = 2;
+	parameter IN_COMMAND_WIDTH  = 16; // o_cmd should have 2 bits
 	parameter NUM_INPUT_DATA = 16;
 
 	//parameter
@@ -80,7 +82,8 @@ module tb_benes_simple_cmd_flow_seq();
 	localparam LEVEL = $clog2(NUM_SWITCH_IN);
 	localparam TOTAL_STAGE = 2*LEVEL+1;
 
-	localparam TOTAL_COMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH;
+	localparam TOTAL_COMMAND = NUM_SWITCH_IN*IN_COMMAND_WIDTH;
+	localparam OUT_COMMAND_WIDTH = TOTAL_COMMAND - NUM_SWITCH_IN*TOTAL_STAGE*COMMAND_WIDTH;
 	
 	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
 
@@ -96,6 +99,7 @@ module tb_benes_simple_cmd_flow_seq();
   
 	reg                                        i_en;
 	reg  [TOTAL_COMMAND-1:0]                   i_cmd;
+	wire [OUT_COMMAND_WIDTH-1:0]               o_cmd;
 
     // Test case declaration
     // all cases for control
@@ -213,7 +217,8 @@ module tb_benes_simple_cmd_flow_seq();
     benes_simple_cmd_flow_seq #(
 		.DATA_WIDTH(DATA_WIDTH),
         .COMMAND_WIDTH(COMMAND_WIDTH),
-        .NUM_INPUT_DATA(NUM_INPUT_DATA)
+        .NUM_INPUT_DATA(NUM_INPUT_DATA),
+        .IN_COMMAND_WIDTH(IN_COMMAND_WIDTH)
       ) dut(
 	    .clk(clk),
 	    .rst(rst),
@@ -222,7 +227,8 @@ module tb_benes_simple_cmd_flow_seq();
 		.o_valid(o_valid),
 		.o_data_bus(o_data_bus),
 		.i_en(i_en),
-		.i_cmd(i_cmd)
+		.i_cmd(i_cmd),
+        .o_cmd(o_cmd)
 	);
 
     always#5 clk=~clk;
@@ -230,3 +236,208 @@ module tb_benes_simple_cmd_flow_seq();
 endmodule
 `endif 
 
+
+
+
+
+
+`ifdef TEST_16_INPUT_BENES_PRE_INTEGRATION
+// this testbench is used to test the functionality of integrating BENES network together with 1D Multipliers
+// DATA_WIDTH = 8
+// Num PE = 16
+// Each PE takes   4 + $clog2(DATA_WIDTH) + 1 = 8 bits (configuration) ----> each switch corresponds to 2 PEs -> 16 bits
+// Each switch takes 2-bit command, 7 stages in total -> 14-bit command for BENES network.
+// Conclude: 8*2 + 14 = 30 bit command for each row. -> IN_COMMAND_WIDTH = 30
+module tb_benes_simple_cmd_flow_seq();
+    parameter DATA_WIDTH = 8;
+	parameter COMMAND_WIDTH  = 2;
+	parameter IN_COMMAND_WIDTH  = 30; // o_cmd should have 2 bits
+	parameter NUM_INPUT_DATA = 16;
+
+	//parameter
+    localparam NUM_SWITCH_IN = NUM_INPUT_DATA >> 1;
+	localparam LEVEL = $clog2(NUM_SWITCH_IN);
+	localparam TOTAL_STAGE = 2*LEVEL+1;
+
+	localparam TOTAL_COMMAND = NUM_SWITCH_IN*IN_COMMAND_WIDTH;
+	localparam BENES_COMMAND_ROW = TOTAL_STAGE*COMMAND_WIDTH;
+	localparam OUT_COMMAND_WIDTH = TOTAL_COMMAND - NUM_SWITCH_IN*TOTAL_STAGE*COMMAND_WIDTH;
+	
+	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+
+	// interface
+	reg                                        clk;
+	reg                                        rst;
+	
+	reg  [NUM_INPUT_DATA-1:0]                  i_valid;             
+	reg  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+	
+    wire [NUM_INPUT_DATA-1:0]                  o_valid;             
+	wire [WIDTH_INPUT_DATA-1:0]                o_data_bus; //{o_data_a, o_data_b}
+  
+	reg                                        i_en;
+	reg  [TOTAL_COMMAND-1:0]                   i_cmd;
+	wire [OUT_COMMAND_WIDTH-1:0]               o_cmd;
+
+    // Test case declaration
+    // all cases for control
+    initial
+    begin
+        // disable
+        clk = 1'b0;
+        rst = 1'b0;
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h06},{8'h07},{8'h02},{8'h03},{8'h04},{8'h05},{8'h00},{8'h01},{8'h02}};
+        i_valid = 16'h01ff;
+        i_en = 1'b0;
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}}};
+
+        // reset
+        #10
+        rst = 1'b1;
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h06},{8'h07},{8'h02},{8'h03},{8'h04},{8'h05},{8'h00},{8'h01},{8'h02}};
+        i_valid = 16'h01ff;
+        i_en = 1'b1;
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}}};
+
+        /*
+            case start!
+        */
+        
+        // cycle 0
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        rst = 1'b0;
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h06},{8'h07},{8'h02},{8'h03},{8'h04},{8'h05},{8'h00},{8'h01},{8'h02}};
+        i_valid = 16'h01ff;
+        i_en = 1'b1;
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}}};
+
+        // cycle 1  
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        rst = 1'b0;
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h15},{8'h16},{8'h17},{8'h0F},{8'h10},{8'h11},{8'h09},{8'h0A},{8'h0B}};
+        i_valid = 16'h01ff;
+        i_en = 1'b1;
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111111},{8'b01111111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110111},{8'b01111111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111111},{8'b01110111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111111},{8'b01111111}}};
+
+        // cycle 2
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        rst = 1'b0;
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h16},{8'h17},{8'h18},{8'h10},{8'h11},{8'h12},{8'h0A},{8'h0B},{8'h0C}};
+        i_valid = 16'h0049;
+        i_en = 1'b1;
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111000},{8'b01111111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01111000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111111},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111000},{8'b01111111}}};
+
+        // cycle 3
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        rst = 1'b0;
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h17},{8'h18},{8'h19},{8'h11},{8'h12},{8'h13},{8'h0B},{8'h0C},{8'h0D}};
+        i_valid = 16'h0049;
+        i_en = 1'b1;
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111000},{8'b01111111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01111000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111111},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111000},{8'b01111111}}};
+
+        // cycle 4
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        rst = 1'b0;
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h18},{8'h19},{8'h1A},{8'h12},{8'h13},{8'h14},{8'h0C},{8'h0D},{8'h0E}};
+        i_valid = 16'h0049;
+        i_en = 1'b1;
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110111},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110111}}};
+        
+        // cycle 5 
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1B},{8'h1C},{8'h1D},{8'h15},{8'h16},{8'h17},{8'h0F},{8'h10},{8'h11}};
+        rst = 1'b0;
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111111},{8'b01111111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110111},{8'b01111111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111111},{8'b01110111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111111},{8'b01111111}}};
+        i_valid = 16'h01ff;
+        i_en = 1'b1;
+        
+        // cycle 6
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        rst = 1'b0;
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1C},{8'h1D},{8'h1E},{8'h16},{8'h17},{8'h18},{8'h10},{8'h11},{8'h12}};
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111000},{8'b01111111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01111000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111111},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111000},{8'b01111111}}};
+        i_valid = 16'h0049;
+        i_en = 1'b1;
+
+        // cycle 7
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        rst = 1'b0;
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1D},{8'h1E},{8'h1F},{8'h17},{8'h18},{8'h19},{8'h11},{8'h12},{8'h13}};
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111000},{8'b01111111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01111000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111111},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01111000},{8'b01111111}}};
+        i_valid = 16'h0049;
+        i_en = 1'b1;
+
+        // cycle 8
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        rst = 1'b0;
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h1E},{8'h1F},{8'h20},{8'h18},{8'h19},{8'h1A},{8'h12},{8'h13},{8'h14}};
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110111},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110111}}};
+        i_valid = 16'h0049;
+        i_en = 1'b1;
+
+        // cycle 9 -- no valid input
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        rst = 1'b0;
+        i_data_bus = {{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h06},{8'h07},{8'h02},{8'h03},{8'h04},{8'h05},{8'h00},{8'h01},{8'h02}};
+        i_valid = 16'h0000;
+        i_en = 1'b1;
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110111},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110000}}};
+
+
+        // cycle 10 -- no valid input 
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        rst = 1'b0;
+        i_data_bus = {{8'h02},{8'h01},{8'h00},{8'h05},{8'h04},{8'h03},{8'h08},{8'h07},{8'h06},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00},{8'h00}};
+        i_valid = 16'h0000;
+        i_en = 1'b1;
+        i_cmd = {{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110101}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110101},{8'b01110111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110111},{8'b01110000}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110111}},{{(BENES_COMMAND_ROW>>1){2'b10}},{8'b01110000},{8'b01110000}}};
+
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        #10     
+        $display("o_data_bus: %h\n", o_data_bus);
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        #10     
+        $display("o_data_bus: %h\n", o_data_bus);
+        #10
+        $display("o_data_bus: %h\n", o_data_bus);
+        #10     
+        $display("o_data_bus: %h\n", o_data_bus);
+        $stop;
+    end
+
+    // instantiate DUT (device under test)
+    benes_simple_cmd_flow_seq #(
+		.DATA_WIDTH(DATA_WIDTH),
+        .COMMAND_WIDTH(COMMAND_WIDTH),
+        .NUM_INPUT_DATA(NUM_INPUT_DATA),
+        .IN_COMMAND_WIDTH(IN_COMMAND_WIDTH)
+    ) dut(
+	    .clk(clk),
+	    .rst(rst),
+		.i_valid(i_valid),
+		.i_data_bus(i_data_bus),
+		.o_valid(o_valid),
+		.o_data_bus(o_data_bus),
+		.i_en(i_en),
+		.i_cmd(i_cmd),
+        .o_cmd(o_cmd)
+	);
+
+    always#5 clk=~clk;
+
+endmodule
+
+`endif

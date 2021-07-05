@@ -39,7 +39,7 @@ module tb_mux_2x1_simple_seq();
 
 	// control signals
 	reg                            i_en;           // mux enable
-	reg    [COMMAND_WIDTH-1:0]    i_cmd;          // command 
+	reg    [COMMAND_WIDTH-1:0]     i_cmd;          // command 
                                 // 0 --> Branch Low
                                 // 1 --> Branch High
     

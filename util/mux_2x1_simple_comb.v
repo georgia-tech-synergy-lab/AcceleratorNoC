@@ -23,7 +23,7 @@
 
 module mux_2x1_simple_comb#(
 	parameter DATA_WIDTH = 32,
-    parameter COMMMAND_WIDTH = 1
+    parameter COMMAND_WIDTH = 1
 )(
     // data signals
 	i_valid,        // valid input data signal
@@ -44,7 +44,7 @@ module mux_2x1_simple_comb#(
 	output                         o_valid;             
 	    
 	input                          i_en;
-	input  [COMMMAND_WIDTH-1:0]    i_cmd;
+	input  [COMMAND_WIDTH-1:0]    i_cmd;
                                 // 0 --> Branch High
                                 // 1 --> Branch Low
 

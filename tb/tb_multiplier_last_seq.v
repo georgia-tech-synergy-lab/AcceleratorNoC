@@ -118,7 +118,7 @@ module tb_multiplier_last_seq();
     initial
     begin
         // disable
-        clk = 1'b1;
+        clk = 1'b0;
         rst = 1'b0;
         i_data_bus = {(DATA_WIDTH>>2){4'h0}};
         i_valid = 1'b1;
