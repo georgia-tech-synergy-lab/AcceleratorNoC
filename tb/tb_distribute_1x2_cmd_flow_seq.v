@@ -5,7 +5,7 @@
    Format:      keeping the input format unchange
    Timing:      Sequential Logic
    Latency:     1 cycle
-   Dummy Data:  {DATA_WIDTH{1'bz}}
+   Dummy Data:  {DATA_WIDTH{1'b0}}
 
    [SINGLE_BIT_CONTROL Version]
     Function:         Branch_high                                      Branch_low

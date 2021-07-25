@@ -4,7 +4,7 @@
     Data:        Only data width matters.
     Format:      keeping the input format unchange
     Timing:      Sequential Logic, each switch takes one clock cycle
-    Dummy Data:  {DATA_WIDTH{1'bz}}
+    Dummy Data:  {DATA_WIDTH{1'b0}}
 
     Function:    Unicast  or  Multicast(Not arbitrary Multicast)
                                   i_data_bus & i_valid     i_data_bus & i_valid

@@ -74,6 +74,7 @@ module mux_2x1_simple_seq#(
             o_valid_inner <= 1'b0;
         end
         else if(i_en)
+        begin
             case({i_cmd,i_valid_inner[1],i_valid_inner[0]})
                 3'b001,3'b011:
                 begin

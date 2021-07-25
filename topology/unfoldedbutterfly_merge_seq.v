@@ -7,7 +7,7 @@
     Reset:       Synchronized Reset [High Reset]
     Pipeline:    [full pipeline]every stage is a pipeline stage
     Latency:     Total latency = # stages (cycle)
-    Dummy Data:  {DATA_WIDTH{1'bz}}
+    Dummy Data:  {DATA_WIDTH{1'b0}}
 
     Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 

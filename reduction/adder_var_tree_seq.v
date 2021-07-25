@@ -5,7 +5,7 @@
     Format:      Output has LEVEL more bit than input data
     Timing:      Sequential Logic
     Reset:       Synchronized Reset [High Reset]
-    Dummy Data:  {(DATA_WIDTH+LEVELx){1'bz}}
+    Dummy Data:  {(DATA_WIDTH+LEVELx){1'b0}}
 
     Parameter:   NUM_INPUT_DATA could be arbitrary integer.
                  When it's not power of 2, redundent adder will not be instantiated.
@@ -123,7 +123,7 @@ module adder_var_tree_seq#(
                     .i_data_bus({{(DATA_WIDTH+i){1'b0}}, wire_level[i].inner_wire_data[2*j]}),
                     .o_valid(wire_level[i+1].inner_wire_valid[j]),
                     .o_data_bus(wire_level[i+1].inner_wire_data[j]),
-                    .i_en(i_en),
+                    .i_en(i_en)
                 );
             end
             else

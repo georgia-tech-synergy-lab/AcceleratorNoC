@@ -222,7 +222,7 @@ module tb_benes_merge_simple_comb();
     localparam LEVEL = $clog2(NUM_SWITCH_IN);
     localparam TOTAL_STAGE = 2*LEVEL+1;
 
-    localparam TOTAL_COMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH;
+    localparam TOTAL_COMMAND = (TOTAL_STAGE-1)*NUM_SWITCH_IN*COMMAND_WIDTH;
 
     localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
     localparam WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_OUTPUT_DATA;
@@ -385,7 +385,7 @@ module tb_benes_merge_simple_comb();
     localparam LEVEL = $clog2(NUM_SWITCH_IN);
     localparam TOTAL_STAGE = 2*LEVEL+1;
 
-    localparam TOTAL_COMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH;
+    localparam TOTAL_COMMAND = (TOTAL_STAGE-1)*NUM_SWITCH_IN*COMMAND_WIDTH;
 
     localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
     localparam WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_OUTPUT_DATA;
@@ -556,7 +556,7 @@ module tb_benes_merge_simple_comb();
     localparam LEVEL = $clog2(NUM_SWITCH_IN);
     localparam TOTAL_STAGE = 2*LEVEL+1;
 
-    localparam TOTAL_COMMAND = TOTAL_STAGE*NUM_SWITCH_IN*COMMAND_WIDTH;
+    localparam TOTAL_COMMAND = (TOTAL_STAGE-1)*NUM_SWITCH_IN*COMMAND_WIDTH;
 
     localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
     localparam WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_OUTPUT_DATA;

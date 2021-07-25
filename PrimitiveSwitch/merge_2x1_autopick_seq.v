@@ -78,7 +78,7 @@ module merge_2x1_autopick_seq#(
         else if(i_en)
         begin
             case({i_valid_inner[1],i_valid_inner[0]})
-                // 2'b01,2'bx1,2'bz1:
+                // 2'b01,2'bx1,2'b01:
                 2'b01:
                 begin
                     o_valid_inner <= 1'b1;

@@ -7,7 +7,7 @@
     Reset:       Synchronized Reset [High Reset]
     Latency:     # of LEVEL(every LEVEL is a pipeline stage)
 
-    Dummy Data:  {DATA_WIDTH{1'bz}}
+    Dummy Data:  {DATA_WIDTH{1'b0}}
 
     Parameter:   NUM_INPUT_DATA could be arbitrary integer
 

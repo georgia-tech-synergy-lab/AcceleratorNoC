@@ -4,7 +4,7 @@
     Data:        Only data width matters.
     Format:      Output has LEVEL more bit than input data
     Timing:      Combinational Logic
-    Dummy Data:  {(DATA_WIDTH+LEVELx){1'bz}}
+    Dummy Data:  {(DATA_WIDTH+LEVELx){1'b0}}
 
     Parameter:   NUM_INPUT_DATA could be arbitrary integer.
                  When it's not power of 2, redundent adder will not be instantiated.

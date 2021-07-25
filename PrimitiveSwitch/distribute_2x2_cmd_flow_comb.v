@@ -4,7 +4,7 @@
     Data:        Only data width matters.
     Format:      keeping the input format unchange
     Timing:      Combinational Logic
-    Dummy Data:  {DATA_WIDTH{1'bz}}
+    Dummy Data:  {DATA_WIDTH{1'b0}}
 
     ----------------------------------------------
     DESTINATION_TAG verion: 1 bit control for each data.

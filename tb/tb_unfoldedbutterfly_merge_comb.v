@@ -6,7 +6,7 @@
     Timing:      Combinational Logic
     Pipeline:    every stage is a pipeline stage
                  Total latency = # stages (cycle)
-    Dummy Data:  {DATA_WIDTH{1'bz}}
+    Dummy Data:  {DATA_WIDTH{1'b0}}
 
     Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 

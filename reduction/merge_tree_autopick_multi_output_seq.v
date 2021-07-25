@@ -6,7 +6,7 @@
     Timing:      Sequential Logic
     Reset:       Synchronized Reset [High Reset]
     Latency:     # of LEVEL
-    Dummy Data:  {DATA_WIDTH{1'bz}}
+    Dummy Data:  {DATA_WIDTH{1'b0}}
 
     Parameter:   NUM_INPUT_DATA could be arbitrary integer
                  ! The NUM_OUTPUT_DATA determines the # of level

@@ -63,7 +63,7 @@ module merge_2x1_autopick_comb#(
         if(i_en)
         begin
             case({i_valid_inner[1],i_valid_inner[0]})
-                // 2'b01,2'bx1,2'bz1:
+                // 2'b01,2'bx1,2'b01:
                 2'b01:
                 begin
                     o_valid_inner = 1'b1;
@@ -85,7 +85,7 @@ module merge_2x1_autopick_comb#(
         else
         begin
             o_valid_inner = 1'b0;
-            o_data_bus_inner = {DATA_WIDTH{1'bz}};
+            o_data_bus_inner = {DATA_WIDTH{1'b0}};
         end
     end
 

@@ -9,7 +9,7 @@
                  [full pipeline]every stage is a pipeline stage
                                 Total latency = # stages (cycle)
                  [2 stage pipeline] 0~LEVEL is the first pipeline stage.
-    Dummy Data:  {DATA_WIDTH{1'bz}}
+    Dummy Data:  {DATA_WIDTH{1'b0}}
 
     Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 
@@ -355,7 +355,7 @@ module benes_simple_seq#(
             begin: initialization
                 initial
                 begin
-                    first_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'bz}};
+                    first_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'b0}};
                 end
             end
         end
@@ -366,7 +366,7 @@ module benes_simple_seq#(
             begin: initialization
                 initial
                 begin
-                    second_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'bz}};
+                    second_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'b0}};
                 end
             end
         end
@@ -377,7 +377,7 @@ module benes_simple_seq#(
             begin:initialization
                 initial
                 begin
-                    pipeline_data_bus_reg[s][i] <= {NUM_INPUT_DATA{1'bz}};
+                    pipeline_data_bus_reg[s][i] <= {NUM_INPUT_DATA{1'b0}};
                     pipeline_data_valid_reg[s][i] <= 1'b0;
                 end
             end
@@ -393,7 +393,7 @@ module benes_simple_seq#(
                 begin
                     if(!rst_n)
                     begin
-                        first_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'bz}};
+                        first_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'b0}};
                     end
                     else if(i_en)
                     begin
@@ -401,7 +401,7 @@ module benes_simple_seq#(
                     end
                     else
                     begin
-                        first_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'bz}};
+                        first_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'b0}};
                     end
                 end
             end
@@ -424,7 +424,7 @@ module benes_simple_seq#(
                 end
                 else
                 begin
-                    pipeline_data_bus_reg[0][i] <= {DATA_WIDTH{1'bz}};
+                    pipeline_data_bus_reg[0][i] <= {DATA_WIDTH{1'b0}};
                     pipeline_data_valid_reg[0][i] <= 1'b0;
                 end
             end
@@ -511,7 +511,7 @@ module benes_simple_seq#(
                 begin
                     if(!rst_n)
                     begin
-                        second_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'bz}};
+                        second_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'b0}};
                     end
                     else if(i_en)
                     begin
@@ -519,7 +519,7 @@ module benes_simple_seq#(
                     end
                     else
                     begin
-                        second_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'bz}};
+                        second_pipeline_i_cmd_reg[i][j] <= {COMMAND_WIDTH{1'b0}};
                     end
                 end
             end
@@ -532,7 +532,7 @@ module benes_simple_seq#(
             begin
                 if(!rst_n)
                 begin
-                    pipeline_data_bus_reg[1][i] <= {DATA_WIDTH{1'bz}};
+                    pipeline_data_bus_reg[1][i] <= {DATA_WIDTH{1'b0}};
                     pipeline_data_valid_reg[1][i] <= 1'b0;  
                 end
                 else if(i_en)
@@ -542,7 +542,7 @@ module benes_simple_seq#(
                 end
                 else
                 begin
-                    pipeline_data_bus_reg[1][i] <= {DATA_WIDTH{1'bz}};
+                    pipeline_data_bus_reg[1][i] <= {DATA_WIDTH{1'b0}};
                     pipeline_data_valid_reg[1][i] <= 1'b0;
                 end
             end

@@ -73,46 +73,34 @@ module arbitor_last_served_2req(
 
     always@(posedge clk or negedge rst_n)
     begin
-        if(i_en)
+        if(!rst_n)
         begin
-            if(rst_n)
-            begin
-                o_grant_b_inner = 1'bz;
-            end
-            else
-            begin
-                if(i_valid)
-                begin
-                    out_and = req_b & (~o_grant_b_inner);
-                    o_grant_b_inner = (~req_a) | out_and;
-                end
-            end
+            o_grant_b_inner <= 1'b0;
+        end
+        else if(i_en & i_valid)
+        begin
+            out_and <= req_b & (~o_grant_b_inner);
+            o_grant_b_inner <= (~req_a) | out_and;
         end
         else
         begin
-            o_grant_b_inner = 1'bz;
+            o_grant_b_inner <= 1'b0;
         end
     end
 
     always@(posedge clk or negedge rst_n)
     begin
-        if(i_en)
+        if(!rst_n)
         begin
-            if(rst_n)
-            begin
-                o_valid_inner = 1'b0;
-            end
-            else
-            begin
-                if(i_valid)
-                begin
-                    o_valid_inner = req_a | req_b;
-                end
-            end
+            o_valid_inner <= 1'b0;
+        end
+        else if(i_en & i_valid)
+        begin
+            o_valid_inner <= req_a | req_b;
         end
         else
         begin
-            o_valid_inner = 1'b0;
+            o_valid_inner <= 1'b0;
         end
     end
 

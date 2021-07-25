@@ -9,7 +9,7 @@
                  [full pipeline]every stage is a pipeline stage
                                 Total latency = # stages (cycle)
                  [2 stage pipeline] 0~LEVEL is the first pipeline stage.
-    Dummy Data:  {DATA_WIDTH{1'bz}}
+    Dummy Data:  {DATA_WIDTH{1'b0}}
 
     Function:    Unicast  or  Multicast(Not arbitrary Multicast)
 
