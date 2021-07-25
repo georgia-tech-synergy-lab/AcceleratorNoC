@@ -4,7 +4,7 @@
     Data:        Only data width matters.
     Format:      keeping the input format unchange
     Timing:      Sequential Logic
-    Reset:       Synchronized Reset [High Reset]
+    Reset:       Asynchronized Reset [Low Reset]
     Latency:     # of LEVEL(every LEVEL is a pipeline stage)
 
     Dummy Data:  {DATA_WIDTH{1'b0}}

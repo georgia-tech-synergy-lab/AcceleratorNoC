@@ -4,7 +4,7 @@
     Data:        Only data width matters.
     Format:      Output has 1 more bit than input
     Timing:      Sequential Logic
-    Reset:       Synchronized Reset [High Reset]
+    Reset:       Asynchronized Reset [Low Reset]
     Dummy Data:  {DATA_WIDTH{1'b0}}
 
     Function:

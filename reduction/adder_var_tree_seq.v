@@ -4,7 +4,7 @@
     Data:        Only data width matters.
     Format:      Output has LEVEL more bit than input data
     Timing:      Sequential Logic
-    Reset:       Synchronized Reset [High Reset]
+    Reset:       Asynchronized Reset [Low Reset]
     Dummy Data:  {(DATA_WIDTH+LEVELx){1'b0}}
 
     Parameter:   NUM_INPUT_DATA could be arbitrary integer.

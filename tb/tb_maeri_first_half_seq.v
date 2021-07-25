@@ -4,7 +4,7 @@
     Data:        Only data width matters.
     Format:      keeping the reg format unchange
     Timing:      Sequential Logic
-    Reset:       Synchronized Reset [High Reset]
+    Reset:       Asynchronized Reset [Low Reset]
     Pipeline:    the system consist of three separate parts
                  For benes constructed with sequential switches, every stage is a pipeline stage
                  Total latency = # stages (cycle)

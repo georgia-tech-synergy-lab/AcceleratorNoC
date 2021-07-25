@@ -4,7 +4,7 @@
     Data:        Only data width matters.
     Format:      keeping the input format unchange
     Timing:      Sequential Logic
-    Reset:       Synchronized Reset [High Reset]
+    Reset:       Asynchronized Reset [Low Reset]
     Latency:     1 cycle
     Dummy Data:  {DATA_WIDTH{1'b0}}
     Note:        This distribute_2x2 switch is specially designed for

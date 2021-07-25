@@ -4,7 +4,7 @@
     Data:        Only data width matters.
     Format:      keeping the input format unchange
     Timing:      Sequential Logic
-    Reset:       Synchronized Reset [High Reset]
+    Reset:       Asynchronized Reset [Low Reset]
     Note:        Does not feed command, will autopick the valid input
                  to go to the output.
                  When both input are valid, choose the highIn to go output
