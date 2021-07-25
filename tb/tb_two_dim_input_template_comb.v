@@ -1,52 +1,52 @@
 `timescale 1ns / 1ps
-/////////////////////////////////////////////////////////////
-// Top Module:  tb_merge_2x1_simple_seq
-// Data:        Only data width matters.
-// Format:      Output has 1 more bit than input
-// Timing:      Combinational Logic
-// Dummy Data:  {DATA_WIDTH{1'b0}}
-// 
-// Function:  
-// 
-//       i_data_bus(data_a)        i_data_bus(data_b)
-//    [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]  
-//                          \     /     
-//                           v   v      
-//                           |¯¯¯| <--- i_valid[0]--data_b;
-//                           |___| <--- i_valid[1]--data_a;    
-//                          /     \   
-//                         /       \ 
-//                  o_data_bus   o_data_bus
-//            [DATA_WIDTH-1:0]  [2*DATA_WIDTH-1:DATA_WIDTH]
-//                                            
-//                                            
-//                                 1 bit longer than input
-//
-// Author:      Jianming Tong (jianming.tong@gatech.edu)
-/////////////////////////////////////////////////////////////
+/*
+    Top Module:  tb_merge_2x1_simple_seq
+    Data:        Only data width matters.
+    Format:      Output has 1 more bit than input
+    Timing:      Combinational Logic
+    Dummy Data:  {DATA_WIDTH{1'b0}}
+
+    Function:
+
+          i_data_bus(data_a)        i_data_bus(data_b)
+       [DATA_WIDTH+:DATA_WIDTH]    [DATA_WIDTH-1:0]
+                             \     /
+                              v   v
+                              |¯¯¯| <--- i_valid[0]--data_b;
+                              |___| <--- i_valid[1]--data_a;
+                             /     \
+                            /       \
+                     o_data_bus   o_data_bus
+               [DATA_WIDTH-1:0]  [2*DATA_WIDTH-1:DATA_WIDTH]
+
+
+                                    1 bit longer than input
+
+    Author:      Jianming Tong (jianming.tong@gatech.edu)
+*/
 
 
 module tb_two_dim_input_template_comb();
 
-	parameter DATA_WIDTH  = 32;
+    parameter DATA_WIDTH  = 32;
 
     // timing signals
     reg                            clk;
 
     // data signals
-	reg    [1:0]                   i_valid;        // valid input data signal
-	reg    [2*DATA_WIDTH-1:0]      i_data_bus;     // input data bus coming into mux
-	
-	wire                           o_valid;        // output valid
-    wire   [DATA_WIDTH-1:0]        o_data_bus;     // output data 
+    reg    [1:0]                   i_valid;        // valid input data signal
+    reg    [2*DATA_WIDTH-1:0]      i_data_bus;     // input data bus coming into mux
 
-	// control signals
-	reg                            i_en;           // mux enable
-	reg    [COMMAND_WIDTH-1:0]    i_cmd;          // i_cmd here is of no use in this module, leave it here for keeping the consistency of the interface.
-    
+    wire                           o_valid;        // output valid
+    wire   [DATA_WIDTH-1:0]        o_data_bus;     // output data
+
+    // control signals
+    reg                            i_en;           // mux enable
+    reg    [COMMAND_WIDTH-1:0]    i_cmd;          // i_cmd here is of no use in this module, leave it here for keeping the consistency of the interface.
+
     // Test case declaration
     // all cases for control
-    initial 
+    initial
     begin
         clk = 1'b0;
         // not enable at start
@@ -55,30 +55,30 @@ module tb_two_dim_input_template_comb();
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b0;
         i_cmd = 1'b0;
-        
+
         // input active
         #20
         i_valid = 2'b01;
         i_data_bus = {(DATA_WIDTH>>2){4'hA}};
         i_en = 1'b1;
         i_cmd = 1'b0;
-        
+
         $stop;
     end
 
     // instantiate DUT (device under test)
     two_dim_input_template_comb #(
-		.DATA_WIDTH(DATA_WIDTH),
-	) dut(
-	    .clk(clk),
-	    .rst(rst),
-		.i_valid(i_valid),
-		.i_data_bus(i_data_bus),
-		.o_valid(o_valid),
-		.o_data_bus(o_data_bus),
-		.i_en(i_en),
-		.i_cmd(i_cmd)  //i_cmd here is of no use, just make the interface general enough.
-	);
+        .DATA_WIDTH(DATA_WIDTH),
+    ) dut(
+        .clk(clk),
+        .rst_n(rst_n),
+        .i_valid(i_valid),
+        .i_data_bus(i_data_bus),
+        .o_valid(o_valid),
+        .o_data_bus(o_data_bus),
+        .i_en(i_en),
+        .i_cmd(i_cmd)  //i_cmd here is of no use, just make the interface general enough.
+    );
 
     always#5 clk=~clk;
 

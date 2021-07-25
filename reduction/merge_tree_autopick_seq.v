@@ -1,47 +1,47 @@
 `timescale 1ns / 1ps
-/////////////////////////////////////////////////////////////
-// Top Module:  merge_tree_autopick_seq
-// Data:        Only data width matters.
-// Format:      keeping the input format unchange
-// Timing:      Sequential Logic
-// Reset:       Synchronized Reset [High Reset]
-// Latency:     # of LEVEL
-// Dummy Data:  {DATA_WIDTH{1'bz}}
-//
-// Parameter:   NUM_INPUT_DATA could be arbitrary integer
-//
-// Function:   output 1 valid input from all input ports
-//             When multiple input valid -> input with higher 
-//             address in the input bus has higher priority. 
-//
-//   \     /     \     / ... \     /     \     /
-//    v   v       v   v  ...  v   v       v   v    
-//    |¯¯¯|       |¯¯¯|  ...  |¯¯¯|       |¯¯¯|
-//    |___|       |___|  ...  |___|       |___|
-//      v           v    ...     v           v
-//       \         /     ...      \         /    
-//        \       /      ...       \       /
-//         \     /       ...        \     /
-//          v   v        ...         v   v
-//          |¯¯¯|        ...         |¯¯¯|       
-//          |___|        ...         |___|       
-//            v                        v
-//             \                      /     
-//              \                    /  
-//               ...              ...
-//                ...           ...        
-//                 ...        ...      
-//                    \       /
-//                     \     /
-//                      v   v
-//                      |¯¯¯|           
-//                      |___| 
-//                        |       
-//                        v
-//                   o_data_bus(only pick 1 valid from all input data)
-//
-// Author:      Jianming Tong (jianming.tong@gatech.edu)
-/////////////////////////////////////////////////////////////
+/*
+    Top Module:  merge_tree_autopick_seq
+    Data:        Only data width matters.
+    Format:      keeping the input format unchange
+    Timing:      Sequential Logic
+    Reset:       Synchronized Reset [High Reset]
+    Latency:     # of LEVEL
+    Dummy Data:  {DATA_WIDTH{1'bz}}
+
+    Parameter:   NUM_INPUT_DATA could be arbitrary integer
+
+    Function:   output 1 valid input from all input ports
+                When multiple input valid -> input with higher
+                address in the input bus has higher priority.
+
+      \     /     \     / ... \     /     \     /
+       v   v       v   v  ...  v   v       v   v
+       |¯¯¯|       |¯¯¯|  ...  |¯¯¯|       |¯¯¯|
+       |___|       |___|  ...  |___|       |___|
+         v           v    ...     v           v
+          \         /     ...      \         /
+           \       /      ...       \       /
+            \     /       ...        \     /
+             v   v        ...         v   v
+             |¯¯¯|        ...         |¯¯¯|
+             |___|        ...         |___|
+               v                        v
+                \                      /
+                 \                    /
+                  ...              ...
+                   ...           ...
+                    ...        ...
+                       \       /
+                        \     /
+                         v   v
+                         |¯¯¯|
+                         |___|
+                           |
+                           v
+                      o_data_bus(only pick 1 valid from all input data)
+
+    Author:      Jianming Tong (jianming.tong@gatech.edu)
+*/
 
 
 module merge_tree_autopick_seq#(
@@ -50,40 +50,40 @@ module merge_tree_autopick_seq#(
 )(
     // timing signals
     clk,
-    rst,
+    rst_n,
 
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en            // distribute switch enable
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en            // distribute switch enable
 );
     // timing signals
     input                                        clk;
-    input                                        rst;
+    input                                        rst_n;
 
-	// interface
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [NUM_INPUT_DATA*DATA_WIDTH-1:0]       i_data_bus;
-	
-	output                                       o_valid;             
-	output [DATA_WIDTH-1:0]                      o_data_bus; //{o_data_a, o_data_b}
+    // interface
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [NUM_INPUT_DATA*DATA_WIDTH-1:0]       i_data_bus;
 
-	input                                        i_en;
+    output                                       o_valid;
+    output [DATA_WIDTH-1:0]                      o_data_bus; //{o_data_a, o_data_b}
+
+    input                                        i_en;
 
     // inner parameter and logic
     localparam   NUM_LEVEL = $clog2(NUM_INPUT_DATA); // Note: inner ceiling: e.g. $clog2(18) = 5, (2^5=32).
     // use ceiling to add 1 extra level to support all possible input cases (input not exactly 2^n).
     // If the input is exactly 2^n, then the num_switch in the last level will be 0.
-    
+
     // define output wire for all switches of different level.
     genvar i,j;
     generate
-    
+
     for (i =0; i< NUM_LEVEL+1; i=i+1)
     begin: wire_level
         // calculate # of switch in level i
@@ -91,8 +91,8 @@ module merge_tree_autopick_seq#(
         // image the input is the output from high level of the previous adder tree.
         localparam NUM_SWITCH_SHIFT =  NUM_INPUT_DATA >> i;
         localparam NOT_ADD_EXTRA_SWITCH_THIS_LEVEL = ((NUM_INPUT_DATA - ((NUM_INPUT_DATA >> i) << i)) == 0);
-        localparam NUM_SWITCH_LEVEL = (NOT_ADD_EXTRA_SWITCH_THIS_LEVEL)? NUM_SWITCH_SHIFT: (NUM_SWITCH_SHIFT + 1); 
-        
+        localparam NUM_SWITCH_LEVEL = (NOT_ADD_EXTRA_SWITCH_THIS_LEVEL)? NUM_SWITCH_SHIFT: (NUM_SWITCH_SHIFT + 1);
+
         // define the output wire for switches of level i
         wire       [DATA_WIDTH-1:0]              inner_wire_data[0:NUM_SWITCH_LEVEL-1];
         wire                                     inner_wire_valid[0:NUM_SWITCH_LEVEL-1];
@@ -120,21 +120,21 @@ module merge_tree_autopick_seq#(
                     .DATA_WIDTH(DATA_WIDTH)
                 ) merger(
                     .clk(clk),
-                    .rst(rst),
+                    .rst_n(rst_n),
                     .i_valid({{1'b1},wire_level[i].inner_wire_valid[2*j]}),
                     .i_data_bus({{DATA_WIDTH{1'b0}}, wire_level[i].inner_wire_data[2*j]}),
                     .o_valid(wire_level[i+1].inner_wire_valid[j]),
                     .o_data_bus(wire_level[i+1].inner_wire_data[j]),
                     .i_en(i_en)
                 );
-            end 
+            end
             else
             begin
                 merge_2x1_autopick_seq #(
                     .DATA_WIDTH(DATA_WIDTH)
                 ) merger(
                     .clk(clk),
-                    .rst(rst),
+                    .rst_n(rst_n),
                     .i_valid({wire_level[i].inner_wire_valid[2*j+1],wire_level[i].inner_wire_valid[2*j]}),
                     .i_data_bus({wire_level[i].inner_wire_data[2*j+1], wire_level[i].inner_wire_data[2*j]}),
                     .o_valid(wire_level[i+1].inner_wire_valid[j]),
@@ -145,7 +145,7 @@ module merge_tree_autopick_seq#(
         end
     end
 
-    always @(*) 
+    always @(*)
     begin
         o_data_bus_inner = wire_level[NUM_LEVEL].inner_wire_data[0];
         o_valid_inner = wire_level[NUM_LEVEL].inner_wire_valid[0];

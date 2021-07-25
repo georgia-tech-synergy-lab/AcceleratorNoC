@@ -7,7 +7,9 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <algorithm>
+#include <bitset>
 #define INVALID_DATA -1
 
 // Struct for tracking the simulation parameters
@@ -20,11 +22,11 @@ struct sim_config_t {
 
 // List of opcodes
 typedef enum {
-    OP_ML = 1,      // Mutlicast Low
-    OP_MH = 2,      // Mutlicast High
-    OP_CROSS = 3,   // Cross
-    OP_PT = 4,      // Pass through
-    OP_NOP = 5      // No operation
+    OP_ML = 0,      // Mutlicast Low
+    OP_MH = 3,      // Mutlicast High
+    OP_CROSS = 1,   // Cross
+    OP_PT = 2,      // Pass through
+    OP_NOP = 9      // No operation
 } config_t;
 
 
@@ -37,5 +39,8 @@ struct data_t{
 void setup_proc(const sim_config_t* sim_conf);
 void read_input(const sim_config_t* sim_conf);
 void run_proc(const sim_config_t* sim_conf);
+void run_multicasting_configuration(const sim_config_t* sim_conf);
+void run_unicasting_configuration(const sim_config_t* sim_conf);
 void test_config(const sim_config_t* sim_conf);
+void write_config(const sim_config_t* sim_conf);
 void complete_proc(const sim_config_t* sim_conf);

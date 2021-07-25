@@ -7,7 +7,6 @@ sim_config_t sim_conf;
 std::vector<data_t *> data_stage;
 std::vector<config_t *> config_stage;
 std::vector<int *> BENES_connection;
-FILE *fin = stdin;   // config file
 FILE *i_data = NULL; // i_data file
 bool IsMulticasting = false; // global variable to decide whether to implement multicasting.
 
@@ -133,9 +132,6 @@ void read_input(const sim_config_t* sim_conf){
     if(IsMulticasting)
         std::cout << "Multicasting" << std::endl;
 #endif
-
-    if(IsMulticasting)
-        std::cout << "Multicasting" << std::endl;
 }
 
 void run_multicasting_configuration(const sim_config_t* sim_conf){
@@ -610,7 +606,18 @@ void test_config(const sim_config_t* sim_conf){
 
     if(!test_pass)
         exit(EXIT_FAILURE);
+}
 
+void write_config(const sim_config_t* sim_conf){
+    std::ofstream out_config;
+    out_config.open ("output/benes_config.vmh");
+    for(int i=0; i<sim_conf->num_stage;i++){
+        for(int j=0; j<sim_conf->num_in_switch; j++){
+            out_config << std::bitset<2>(config_stage[i][j]) << " "; 
+        }
+        out_config << std::endl; 
+    }
+    out_config.close();
 }
 
 void complete_proc(const sim_config_t* sim_conf){
@@ -652,7 +659,6 @@ void complete_proc(const sim_config_t* sim_conf){
     BENES_connection.clear();
 
 }
-
 
 // Drive the cache simulator
 int main(int argc, char *const argv[])
@@ -701,6 +707,7 @@ int main(int argc, char *const argv[])
         read_input(&sim_conf);
         run_proc(&sim_conf);
         test_config(&sim_conf);
+        write_config(&sim_conf);
         complete_proc(&sim_conf);
     }
 }

@@ -1,81 +1,81 @@
 `timescale 1ns / 1ps
-/////////////////////////////////////////////////////////////
-// Top Module:  crossbar_one_hot_seq
-// Data:        Only data width matters.
-// Format:      keeping the input format unchange
-// Timing:      Sequential Logic; 1 cycle latency.
-// Dummy Data:  {DATA_WIDTH{1'b0}}
-// Command:     Each data comes with a NUM_OUTPUT_DATA-bit one-hot destination command.
-//              i_data_bus[0*DATA_WIDTH+:DATA_WIDTH] is corresponding to i_cmd
-// Function:    Arbitrary Unicast  or  Arbitrary Multicast
-// Note: this file is not parameterizable.
-// 
-// Example: A 5:4 crossbar. 
-//     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
-//                                            |        |        |        |
-//     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
-//                                            ||       ||       ||       ||
-//     i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
-//                                            |||      |||      |||      |||
-//     i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
-//                                            ||||     ||||     ||||     ||||
-//     i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
-//                                            |||||    |||||    |||||    |||||
-//                                            ______   ______   ______   ______
-//   5-bit one-hot control to each of mux ->  \____/   \____/   \____/   \____/
-//                                              |        |        |        |
-//                                              v        v        v        v 
-//                                       o_data_bus o_data_bus o_data_bus o_data_bus
-//                       [0*DATA_WIDTH+:DATA_WIDTH]           ...         [3*DATA_WIDTH+:DATA_WIDTH]
-//
-//                       [0*DATA_WIDTH+:DATA_WIDTH]           ...         [3*DATA_WIDTH+:DATA_WIDTH]
-//
-//
-// Example: A 64:8 hierarchy crossbar. For a hierarchy version [2 pipeline stages: first stage = 8* 8:1 mux -- second stage = 1* 8:1 mux;]
-//          The following is the hierarchy crossbar for a single output data. 
-//          And the whole hierarachy crossbar needs to instantiate the following logic multiple times.
-//
-//     i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
-//                                             |                                                           |                    
-//     i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
-//                                             ||                                                          ||                       
-//     i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
-//                                             |||                                                         |||                   
-//           ....                              ...                                                         ...                    
-//                                             ||||||||                                                    ||||||||               
-//     i_data_bus[63*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
-//                                             ||||||||                                                    ||||||||               
-//                                             ||||||||     ...   i_data_bus[0*DATA_WIDTH+:DATA_WIDTH] ->  |||||||| <- i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]        
-//                                             ||||||||                                                    ||||||||         
-//     i_data_bus[56*DATA_WIDTH+:DATA_WIDTH]-> |||||||| <- i_data_bus[63*DATA_WIDTH+:DATA_WIDTH]   ...     ||||||||         
-//                                            __________                                                  __________            
-//   5-bit one-hot control to each of mux ->  \________/                                                  \________/             
-//                                                |                                                           |                   
-//                                                v                                                           v                     
-//                                     inner_first_stage_data_reg[7]                            inner_first_stage_data_reg[0]
-//                                                |                                                           |                                       
-//                                                ---------------------------  ... ----------------------------
-//                                                                          ||||||||
-//                                                                         __________ 
-//                                                                         \________/          same logic repeats for 8 times.
-//                                                                             |             
-//                                                                             v              
-//                                                                        o_data_bus[7]    ...  o_data_bus[0]
-//
-//
-// Author:      Jianming Tong (jianming.tong@gatech.edu)
-/////////////////////////////////////////////////////////////
+/*
+    Top Module:  crossbar_one_hot_seq
+    Data:        Only data width matters.
+    Format:      keeping the input format unchange
+    Timing:      Sequential Logic; 1 cycle latency.
+    Dummy Data:  {DATA_WIDTH{1'b0}}
+    Command:     Each data comes with a NUM_OUTPUT_DATA-bit one-hot destination command.
+                 i_data_bus[0*DATA_WIDTH+:DATA_WIDTH] is corresponding to i_cmd
+    Function:    Arbitrary Unicast  or  Arbitrary Multicast
+    Note: this file is not parameterizable.
 
-// `define In16_Out8 
-// `define In8_Out8 
-// `define In8_Out8_input_tree_wire_pipeline_hierarchy_RTL 
+    Example: A 5:4 crossbar.
+        i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
+                                               |        |        |        |
+        i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
+                                               ||       ||       ||       ||
+        i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
+                                               |||      |||      |||      |||
+        i_data_bus[3*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
+                                               ||||     ||||     ||||     ||||
+        i_data_bus[4*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------>
+                                               |||||    |||||    |||||    |||||
+                                               ______   ______   ______   ______
+      5-bit one-hot control to each of mux ->  \____/   \____/   \____/   \____/
+                                                 |        |        |        |
+                                                 v        v        v        v
+                                          o_data_bus o_data_bus o_data_bus o_data_bus
+                          [0*DATA_WIDTH+:DATA_WIDTH]           ...         [3*DATA_WIDTH+:DATA_WIDTH]
+
+                          [0*DATA_WIDTH+:DATA_WIDTH]           ...         [3*DATA_WIDTH+:DATA_WIDTH]
+
+
+    Example: A 64:8 hierarchy crossbar. For a hierarchy version [2 pipeline stages: first stage = 8* 8:1 mux -- second stage = 1* 8:1 mux;]
+             The following is the hierarchy crossbar for a single output data.
+             And the whole hierarachy crossbar needs to instantiate the following logic multiple times.
+
+        i_data_bus[0*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
+                                                |                                                           |
+        i_data_bus[1*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
+                                                ||                                                          ||
+        i_data_bus[2*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
+                                                |||                                                         |||
+              ....                              ...                                                         ...
+                                                ||||||||                                                    ||||||||
+        i_data_bus[63*DATA_WIDTH+:DATA_WIDTH]  ------------------------------------------------------------------------------------------------->
+                                                ||||||||                                                    ||||||||
+                                                ||||||||     ...   i_data_bus[0*DATA_WIDTH+:DATA_WIDTH] ->  |||||||| <- i_data_bus[7*DATA_WIDTH+:DATA_WIDTH]
+                                                ||||||||                                                    ||||||||
+        i_data_bus[56*DATA_WIDTH+:DATA_WIDTH]-> |||||||| <- i_data_bus[63*DATA_WIDTH+:DATA_WIDTH]   ...     ||||||||
+                                               __________                                                  __________
+      5-bit one-hot control to each of mux ->  \________/                                                  \________/
+                                                   |                                                           |
+                                                   v                                                           v
+                                        inner_first_stage_data_reg[7]                            inner_first_stage_data_reg[0]
+                                                   |                                                           |
+                                                   ---------------------------  ... ----------------------------
+                                                                             ||||||||
+                                                                            __________
+                                                                            \________/          same logic repeats for 8 times.
+                                                                                |
+                                                                                v
+                                                                           o_data_bus[7]    ...  o_data_bus[0]
+
+
+    Author:      Jianming Tong (jianming.tong@gatech.edu)
+*/
+
+// `define In16_Out8
+// `define In8_Out8
+// `define In8_Out8_input_tree_wire_pipeline_hierarchy_RTL
 // `define In8_Out8_input_tree_wire_pipeline_hierarchy_RTL_ease_pnr // -> lastest 8:8 version
 // `define In8_Out8_input_tree_wire_pipeline_hierarchy_RTL_output_pipeline
 // `define In8_Out1
 // `define In8_Out8_input_pipeline_output_pipeline
 // `define In16_Out8_separate_8_8
 // `define In16_Out8_separate_8_8_wire_pipeline
-`define In16_Out8_8_8_wire_tree_pipeline   // -> lastest 16:8 version 
+`define In16_Out8_8_8_wire_tree_pipeline   // -> lastest 16:8 version
 // `define In16_Out8_pipeline_wire
 // `define In16_Out8_pipeline_wire_pipeline_i_en_pipeline_mux
 // `define In16_Out8_pipeline_wire_pipeline_i_en_pipeline_mux_output_pipeline
@@ -88,43 +88,43 @@
 
 `ifdef In8_Out1
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
-	parameter NUM_INPUT_DATA = 8   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
+    parameter NUM_INPUT_DATA = 8
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	
-    // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+    // interface
+    input                                        clk;
+    input                                        rst_n;
+
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -133,13 +133,13 @@ module crossbar_one_hot_seq#(
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: o_data_output_mux
-            
+
             // data mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
             assign inner_cmd_wire = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire)
                         8'b00000001:
@@ -189,9 +189,9 @@ module crossbar_one_hot_seq#(
             // valid mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
             assign inner_cmd_wire_valid = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_valid)
                         8'b00000001:
@@ -250,43 +250,43 @@ endmodule
 
 `ifdef In8_Out8
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 8   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 8
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	
-    // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+    // interface
+    input                                        clk;
+    input                                        rst_n;
+
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -295,13 +295,13 @@ module crossbar_one_hot_seq#(
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: o_data_output_mux
-            
+
             // data mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
             assign inner_cmd_wire = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire)
                         8'b00000001:
@@ -351,9 +351,9 @@ module crossbar_one_hot_seq#(
             // valid mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
             assign inner_cmd_wire_valid = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_valid)
                         8'b00000001:
@@ -411,45 +411,45 @@ endmodule
 
 `ifdef In8_Out8_input_tree_wire_pipeline_hierarchy_RTL
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 8   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 8
 )(
 
     // timeing signals
     clk,
-	rst,
-	
-    // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    rst_n,
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    // data signals
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-    
-    // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+    // interface
+    input                                        clk;
+    input                                        rst_n;
+
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
 
     // inner logic
@@ -463,12 +463,12 @@ module crossbar_one_hot_seq#(
         for(i=0; i<NUM_INPUT_DATA; i=i+1)
         begin: top_half
             wire_binary_tree_1_8_seq#(
-                .DATA_WIDTH(DATA_WIDTH), 
+                .DATA_WIDTH(DATA_WIDTH),
                 .NUM_OUTPUT_DATA(8),
-                .NUM_INPUT_DATA(1)) 
+                .NUM_INPUT_DATA(1))
             wire_pipeline(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_valid(i_valid[i]),
                 .i_data_bus(i_data_bus[i*DATA_WIDTH+:DATA_WIDTH]),
                 .o_valid(inner_valid_wire[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]),
@@ -479,16 +479,16 @@ module crossbar_one_hot_seq#(
 
         // input command
         for(i=0; i<NUM_INPUT_DATA; i=i+1)
-        begin:i_cmd_id  
+        begin:i_cmd_id
             wire                                             inner_cmd_wire[0:NUM_INPUT_DATA-1];
-            
+
             cmd_wire_binary_tree_1_8_seq #(
-                .DATA_WIDTH(DATA_WIDTH), 
+                .DATA_WIDTH(DATA_WIDTH),
                 .NUM_OUTPUT_DATA(8),
-                .NUM_INPUT_DATA(1)) 
+                .NUM_INPUT_DATA(1))
             cmd_pipeline(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_cmd(i_cmd[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]),
                 .o_cmd_0(inner_cmd_wire[0]),
                 .o_cmd_1(inner_cmd_wire[1]),
@@ -501,7 +501,7 @@ module crossbar_one_hot_seq#(
                 .i_en(i_en)
             );
         end
-        
+
         // eight 8:1 mux tree
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: bottom_half
@@ -514,12 +514,12 @@ module crossbar_one_hot_seq#(
             assign inner_cmd_i_mux_tree_wire = {i_cmd_id[7].inner_cmd_wire[i], i_cmd_id[6].inner_cmd_wire[i], i_cmd_id[5].inner_cmd_wire[i], i_cmd_id[4].inner_cmd_wire[i], i_cmd_id[3].inner_cmd_wire[i], i_cmd_id[2].inner_cmd_wire[i], i_cmd_id[1].inner_cmd_wire[i], i_cmd_id[0].inner_cmd_wire[i]};
 
             mux_tree_8_1_seq #(
-                .NUM_INPUT_DATA(8), 
+                .NUM_INPUT_DATA(8),
                 .NUM_OUTPUT_DATA(1),
-                .DATA_WIDTH(DATA_WIDTH)) 
+                .DATA_WIDTH(DATA_WIDTH))
             mux_tree(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_valid(inner_valid_i_mux_tree_wire),
                 .i_data_bus(inner_data_i_mux_tree_wire),
                 .o_valid(o_valid[i]),
@@ -536,50 +536,50 @@ endmodule
 
 
 module wire_binary_tree_1_8_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 1   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 1
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
-	
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
     // control signals
-	i_en            // distribute switch enable
+    i_en            // distribute switch enable
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
-	input                                        i_en;
+    input                                        i_en;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
 
 
     genvar i,j;
-    generate 
+    generate
         for (i = 0; i< NUM_LEVEL; i=i+1)
         begin: wire_tree_level
             localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
@@ -590,9 +590,9 @@ module wire_binary_tree_1_8_seq #(
             reg      [NUM_SWITCH_SHIFT-1:0]         i_valid_latch;
         end
 
-        always@(posedge clk)
+        always@(posedge clk or negedge rst_n)
         begin: first_level_assignment
-            if(i_en && (~rst))
+            if(i_en && (~rst_n))
             begin
                 wire_tree_level[0].i_data_latch <= i_data_bus;
                 wire_tree_level[0].i_valid_latch <= i_valid;
@@ -603,17 +603,17 @@ module wire_binary_tree_1_8_seq #(
                 wire_tree_level[0].i_valid_latch <= 1'b0;
             end
         end
-        
+
         for (i = 0; i< NUM_LEVEL-1; i=i+1)
         begin: wire_tree_assignment
             localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
-            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH; 
-            
+            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH;
+
             for( j=0; j<NUM_SWITCH_SHIFT; j=j+1)
             begin: level_assignment
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         wire_tree_level[i+1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[i].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
                         wire_tree_level[i+1].i_valid_latch[2*j] <= wire_tree_level[i].i_valid_latch[j];
@@ -635,8 +635,8 @@ module wire_binary_tree_1_8_seq #(
 
         for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
         begin: assign_output_latch
-            always @(posedge clk) begin
-                if(i_en && (~rst))
+            always @(posedge clk or negedge rst_n) begin
+                if(i_en && (~rst_n))
                 begin
                     o_data_bus_reg[2*i*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
                     o_valid_reg[2*i] <= wire_tree_level[NUM_LEVEL-1].i_valid_latch[i];
@@ -663,20 +663,20 @@ endmodule
 
 
 module cmd_wire_binary_tree_1_8_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 1   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 1
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	// i_valid,        // valid input data signal
-	// i_data_bus,     // input data bus coming into distribute switch
-	
-	// o_valid,        // output valid
-    // o_data_bus,     // output data 
+    // i_valid,        // valid input data signal
+    // i_data_bus,     // input data bus coming into distribute switch
+
+    // o_valid,        // output valid
+    // o_data_bus,     // output data
     o_cmd_0,
     o_cmd_1,
     o_cmd_2,
@@ -685,39 +685,39 @@ module cmd_wire_binary_tree_1_8_seq #(
     o_cmd_5,
     o_cmd_6,
     o_cmd_7,
-	
+
     // control signals
-	i_en,           // distribute switch enable
-	i_cmd           // input command
+    i_en,           // distribute switch enable
+    i_cmd           // input command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;  
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
-	output                                       o_cmd_0;             
-	output                                       o_cmd_1;             
-	output                                       o_cmd_2;             
-	output                                       o_cmd_3;             
-	output                                       o_cmd_4;             
-	output                                       o_cmd_5;             
-	output                                       o_cmd_6;             
-	output                                       o_cmd_7;             
+    output                                       o_cmd_0;
+    output                                       o_cmd_1;
+    output                                       o_cmd_2;
+    output                                       o_cmd_3;
+    output                                       o_cmd_4;
+    output                                       o_cmd_5;
+    output                                       o_cmd_6;
+    output                                       o_cmd_7;
 
-	input                                        i_en;
+    input                                        i_en;
 
     reg                                          o_cmd_reg[0:NUM_OUTPUT_DATA-1] ;
-    
-    // 
+
+    //
     genvar i,j;
     generate
         for(i=0; i<NUM_LEVEL; i=i+1)
@@ -728,9 +728,9 @@ module cmd_wire_binary_tree_1_8_seq #(
             reg  [WIDTH_PER_CMD_REG-1:0]         inner_cmd_reg[0:NUM_CMD_REG-1];
         end
 
-        always@(posedge clk)
+        always@(posedge clk or negedge rst_n)
         begin
-            if(i_en && (~rst))
+            if(i_en && (~rst_n))
             begin
                 cmd_wire[0].inner_cmd_reg[0] <= i_cmd;
             end
@@ -750,7 +750,7 @@ module cmd_wire_binary_tree_1_8_seq #(
 
             for(j=0; j<NUM_CMD_REG_LAST_LEVEL; j=j+1)
             begin: cmd_level_assignment
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
                     cmd_wire[i].inner_cmd_reg[2*j] <= cmd_wire[i-1].inner_cmd_reg[j][0*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
                     cmd_wire[i].inner_cmd_reg[2*j+1] <= cmd_wire[i-1].inner_cmd_reg[j][1*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
@@ -760,10 +760,10 @@ module cmd_wire_binary_tree_1_8_seq #(
 
         for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
         begin:o_latch_assignment
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
-                o_cmd_reg[2*i] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][0]; 
-                o_cmd_reg[2*i+1] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][1]; 
+                o_cmd_reg[2*i] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][0];
+                o_cmd_reg[2*i+1] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][1];
             end
         end
     endgenerate
@@ -781,44 +781,44 @@ endmodule
 
 
 module mux_tree_8_1_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
-	parameter NUM_INPUT_DATA = 8   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
+    parameter NUM_INPUT_DATA = 8
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -827,13 +827,13 @@ module mux_tree_8_1_seq #(
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: o_data_output_mux
-            
+
             // data mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
             assign inner_cmd_wire = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire)
                         8'b00000001:
@@ -883,9 +883,9 @@ module mux_tree_8_1_seq #(
             // valid mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
             assign inner_cmd_wire_valid = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_valid)
                         8'b00000001:
@@ -938,51 +938,51 @@ module mux_tree_8_1_seq #(
     assign o_valid = o_valid_reg;
 
 endmodule
-`endif 
+`endif
 
 
 `ifdef In8_Out8_input_tree_wire_pipeline_hierarchy_RTL_ease_pnr
 
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 8   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 8
 )(
 
     // timeing signals
     clk,
-	rst,
-	
-    // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    rst_n,
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    // data signals
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-    
-    // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+    // interface
+    input                                        clk;
+    input                                        rst_n;
+
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
 
     // inner logic
@@ -997,12 +997,12 @@ module crossbar_one_hot_seq#(
         for(i=0; i<NUM_INPUT_DATA; i=i+1)
         begin: top_half
             wire_binary_tree_1_8_seq#(
-                .DATA_WIDTH(DATA_WIDTH), 
+                .DATA_WIDTH(DATA_WIDTH),
                 .NUM_OUTPUT_DATA(8),
-                .NUM_INPUT_DATA(1)) 
+                .NUM_INPUT_DATA(1))
             wire_pipeline(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_valid(i_valid[i]),
                 .i_data_bus(i_data_bus[i*DATA_WIDTH+:DATA_WIDTH]),
                 .o_valid({o_inner_valid_wire[7*NUM_OUTPUT_DATA+i], o_inner_valid_wire[6*NUM_OUTPUT_DATA+i], o_inner_valid_wire[5*NUM_OUTPUT_DATA+i], o_inner_valid_wire[4*NUM_OUTPUT_DATA+i], o_inner_valid_wire[3*NUM_OUTPUT_DATA+i], o_inner_valid_wire[2*NUM_OUTPUT_DATA+i], o_inner_valid_wire[1*NUM_OUTPUT_DATA+i], o_inner_valid_wire[0*NUM_OUTPUT_DATA+i]}),
@@ -1013,16 +1013,16 @@ module crossbar_one_hot_seq#(
 
         // input command
         for(i=0; i<NUM_INPUT_DATA; i=i+1)
-        begin:i_cmd_id  
+        begin:i_cmd_id
             // wire                                             o_inner_cmd_wire[0:NUM_INPUT_DATA-1];
-            
+
             cmd_wire_binary_tree_1_8_seq #(
-                .DATA_WIDTH(DATA_WIDTH), 
+                .DATA_WIDTH(DATA_WIDTH),
                 .NUM_OUTPUT_DATA(8),
-                .NUM_INPUT_DATA(1)) 
+                .NUM_INPUT_DATA(1))
             cmd_pipeline(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_cmd(i_cmd[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]),
                 .o_cmd_0(o_inner_cmd_wire[0*NUM_OUTPUT_DATA+i]),
                 .o_cmd_1(o_inner_cmd_wire[1*NUM_OUTPUT_DATA+i]),
@@ -1035,7 +1035,7 @@ module crossbar_one_hot_seq#(
                 .i_en(i_en)
             );
         end
-        
+
         // eight 8:1 mux tree
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: bottom_half
@@ -1048,12 +1048,12 @@ module crossbar_one_hot_seq#(
             assign inner_cmd_i_mux_tree_wire = {o_inner_cmd_wire[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]};
 
             mux_tree_8_1_seq #(
-                .NUM_INPUT_DATA(8), 
+                .NUM_INPUT_DATA(8),
                 .NUM_OUTPUT_DATA(1),
-                .DATA_WIDTH(DATA_WIDTH)) 
+                .DATA_WIDTH(DATA_WIDTH))
             mux_tree(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_valid(inner_valid_i_mux_tree_wire),
                 .i_data_bus(inner_data_i_mux_tree_wire),
                 .o_valid(o_valid[i]),
@@ -1069,50 +1069,50 @@ endmodule
 
 
 module wire_binary_tree_1_8_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 1   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 1
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
-	
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
     // control signals
-	i_en            // distribute switch enable
+    i_en            // distribute switch enable
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
-	input                                        i_en;
+    input                                        i_en;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
 
 
     genvar i,j;
-    generate 
+    generate
         for (i = 0; i< NUM_LEVEL; i=i+1)
         begin: wire_tree_level
             localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
@@ -1123,9 +1123,9 @@ module wire_binary_tree_1_8_seq #(
             reg      [NUM_SWITCH_SHIFT-1:0]         i_valid_latch;
         end
 
-        always@(posedge clk)
+        always@(posedge clk or negedge rst_n)
         begin: first_level_assignment
-            if(i_en && (~rst))
+            if(i_en && (~rst_n))
             begin
                 wire_tree_level[0].i_data_latch <= i_data_bus;
                 wire_tree_level[0].i_valid_latch <= i_valid;
@@ -1136,17 +1136,17 @@ module wire_binary_tree_1_8_seq #(
                 wire_tree_level[0].i_valid_latch <= 1'b0;
             end
         end
-        
+
         for (i = 0; i< NUM_LEVEL-1; i=i+1)
         begin: wire_tree_assignment
             localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
-            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH; 
-            
+            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH;
+
             for( j=0; j<NUM_SWITCH_SHIFT; j=j+1)
             begin: level_assignment
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         wire_tree_level[i+1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[i].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
                         wire_tree_level[i+1].i_valid_latch[2*j] <= wire_tree_level[i].i_valid_latch[j];
@@ -1168,8 +1168,8 @@ module wire_binary_tree_1_8_seq #(
 
         for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
         begin: assign_output_latch
-            always @(posedge clk) begin
-                if(i_en && (~rst))
+            always @(posedge clk or negedge rst_n) begin
+                if(i_en && (~rst_n))
                 begin
                     o_data_bus_reg[2*i*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
                     o_valid_reg[2*i] <= wire_tree_level[NUM_LEVEL-1].i_valid_latch[i];
@@ -1196,20 +1196,20 @@ endmodule
 
 
 module cmd_wire_binary_tree_1_8_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 1   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 1
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	// i_valid,        // valid input data signal
-	// i_data_bus,     // input data bus coming into distribute switch
-	
-	// o_valid,        // output valid
-    // o_data_bus,     // output data 
+    // i_valid,        // valid input data signal
+    // i_data_bus,     // input data bus coming into distribute switch
+
+    // o_valid,        // output valid
+    // o_data_bus,     // output data
     o_cmd_0,
     o_cmd_1,
     o_cmd_2,
@@ -1218,39 +1218,39 @@ module cmd_wire_binary_tree_1_8_seq #(
     o_cmd_5,
     o_cmd_6,
     o_cmd_7,
-	
+
     // control signals
-	i_en,           // distribute switch enable
-	i_cmd           // input command
+    i_en,           // distribute switch enable
+    i_cmd           // input command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;  
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
-	output                                       o_cmd_0;             
-	output                                       o_cmd_1;             
-	output                                       o_cmd_2;             
-	output                                       o_cmd_3;             
-	output                                       o_cmd_4;             
-	output                                       o_cmd_5;             
-	output                                       o_cmd_6;             
-	output                                       o_cmd_7;             
+    output                                       o_cmd_0;
+    output                                       o_cmd_1;
+    output                                       o_cmd_2;
+    output                                       o_cmd_3;
+    output                                       o_cmd_4;
+    output                                       o_cmd_5;
+    output                                       o_cmd_6;
+    output                                       o_cmd_7;
 
-	input                                        i_en;
+    input                                        i_en;
 
     reg                                          o_cmd_reg[0:NUM_OUTPUT_DATA-1] ;
-    
-    // 
+
+    //
     genvar i,j;
     generate
         for(i=0; i<NUM_LEVEL; i=i+1)
@@ -1261,9 +1261,9 @@ module cmd_wire_binary_tree_1_8_seq #(
             reg  [WIDTH_PER_CMD_REG-1:0]         inner_cmd_reg[0:NUM_CMD_REG-1];
         end
 
-        always@(posedge clk)
+        always@(posedge clk or negedge rst_n)
         begin
-            if(i_en && (~rst))
+            if(i_en && (~rst_n))
             begin
                 cmd_wire[0].inner_cmd_reg[0] <= i_cmd;
             end
@@ -1283,7 +1283,7 @@ module cmd_wire_binary_tree_1_8_seq #(
 
             for(j=0; j<NUM_CMD_REG_LAST_LEVEL; j=j+1)
             begin: cmd_level_assignment
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
                     cmd_wire[i].inner_cmd_reg[2*j] <= cmd_wire[i-1].inner_cmd_reg[j][0*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
                     cmd_wire[i].inner_cmd_reg[2*j+1] <= cmd_wire[i-1].inner_cmd_reg[j][1*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
@@ -1293,10 +1293,10 @@ module cmd_wire_binary_tree_1_8_seq #(
 
         for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
         begin:o_latch_assignment
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
-                o_cmd_reg[2*i] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][0]; 
-                o_cmd_reg[2*i+1] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][1]; 
+                o_cmd_reg[2*i] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][0];
+                o_cmd_reg[2*i+1] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][1];
             end
         end
     endgenerate
@@ -1314,44 +1314,44 @@ endmodule
 
 
 module mux_tree_8_1_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
-	parameter NUM_INPUT_DATA = 8   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
+    parameter NUM_INPUT_DATA = 8
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -1360,13 +1360,13 @@ module mux_tree_8_1_seq #(
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: o_data_output_mux
-            
+
             // data mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
             assign inner_cmd_wire = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire)
                         8'b00000001:
@@ -1416,9 +1416,9 @@ module mux_tree_8_1_seq #(
             // valid mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
             assign inner_cmd_wire_valid = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_valid)
                         8'b00000001:
@@ -1476,51 +1476,51 @@ endmodule
 
 `ifdef In8_Out8_input_tree_wire_pipeline_hierarchy_RTL_output_pipeline
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 8   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 8
 )(
 
     // timeing signals
     clk,
-	rst,
-	
-    // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    rst_n,
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    // data signals
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
     // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input                                        clk;
+    input                                        rst_n;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;             
-	reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg; // {o_data_a, o_data_b}
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
-    wire   [NUM_OUTPUT_DATA-1:0]                 o_valid_wire;             
-	wire   [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_wire; // {o_data_a, o_data_b}
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
+
+    reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
+    reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg; // {o_data_a, o_data_b}
+
+    wire   [NUM_OUTPUT_DATA-1:0]                 o_valid_wire;
+    wire   [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_wire; // {o_data_a, o_data_b}
 
     localparam  NUM_OUT_WIRE_PIPELINE = 1;
 
@@ -1535,12 +1535,12 @@ module crossbar_one_hot_seq#(
         for(i=0; i<NUM_INPUT_DATA; i=i+1)
         begin: top_half
             wire_binary_tree_1_8_seq#(
-                .DATA_WIDTH(DATA_WIDTH), 
+                .DATA_WIDTH(DATA_WIDTH),
                 .NUM_OUTPUT_DATA(8),
-                .NUM_INPUT_DATA(1)) 
+                .NUM_INPUT_DATA(1))
             wire_pipeline(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_valid(i_valid[i]),
                 .i_data_bus(i_data_bus[i*DATA_WIDTH+:DATA_WIDTH]),
                 .o_valid(inner_valid_wire[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]),
@@ -1551,16 +1551,16 @@ module crossbar_one_hot_seq#(
 
         // input command
         for(i=0; i<NUM_INPUT_DATA; i=i+1)
-        begin:i_cmd_id  
+        begin:i_cmd_id
             wire                                             inner_cmd_wire[0:NUM_INPUT_DATA-1];
-            
+
             cmd_wire_binary_tree_1_8_seq #(
-                .DATA_WIDTH(DATA_WIDTH), 
+                .DATA_WIDTH(DATA_WIDTH),
                 .NUM_OUTPUT_DATA(8),
-                .NUM_INPUT_DATA(1)) 
+                .NUM_INPUT_DATA(1))
             cmd_pipeline(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_cmd(i_cmd[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]),
                 .o_cmd_0(inner_cmd_wire[0]),
                 .o_cmd_1(inner_cmd_wire[1]),
@@ -1573,7 +1573,7 @@ module crossbar_one_hot_seq#(
                 .i_en(i_en)
             );
         end
-        
+
         // eight 8:1 mux tree
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: bottom_half
@@ -1586,12 +1586,12 @@ module crossbar_one_hot_seq#(
             assign inner_cmd_i_mux_tree_wire = {i_cmd_id[7].inner_cmd_wire[i], i_cmd_id[6].inner_cmd_wire[i], i_cmd_id[5].inner_cmd_wire[i], i_cmd_id[4].inner_cmd_wire[i], i_cmd_id[3].inner_cmd_wire[i], i_cmd_id[2].inner_cmd_wire[i], i_cmd_id[1].inner_cmd_wire[i], i_cmd_id[0].inner_cmd_wire[i]};
 
             mux_tree_8_1_seq #(
-                .NUM_INPUT_DATA(8), 
+                .NUM_INPUT_DATA(8),
                 .NUM_OUTPUT_DATA(1),
-                .DATA_WIDTH(DATA_WIDTH)) 
+                .DATA_WIDTH(DATA_WIDTH))
             mux_tree(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_valid(inner_valid_i_mux_tree_wire),
                 .i_data_bus(inner_data_i_mux_tree_wire),
                 .o_valid(o_valid_wire[i]),
@@ -1602,14 +1602,14 @@ module crossbar_one_hot_seq#(
         end
 
 
-        // output pipeline  
+        // output pipeline
         for(j=0; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
         begin:output_shift_def
             reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg_shift;
             reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg_shift;
-        end 
+        end
 
-        always @(posedge clk) 
+        always @(posedge clk or negedge rst_n)
         begin
             output_shift_def[0].o_valid_reg_shift <= o_valid_wire;
             output_shift_def[0].o_data_bus_reg_shift <=  o_data_bus_wire;
@@ -1618,14 +1618,14 @@ module crossbar_one_hot_seq#(
         // output pipeline
         for(j=1; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
         begin:shift_output
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
                 output_shift_def[j].o_valid_reg_shift <= output_shift_def[j-1].o_valid_reg_shift;
                 output_shift_def[j].o_data_bus_reg_shift <=  output_shift_def[j-1].o_data_bus_reg_shift;
             end
-        end 
+        end
 
-        always @(posedge clk) 
+        always @(posedge clk or negedge rst_n)
         begin:shift_output_last
             o_valid_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_valid_reg_shift;
             o_data_bus_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_data_bus_reg_shift;
@@ -1639,50 +1639,50 @@ endmodule
 
 
 module wire_binary_tree_1_8_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 1   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 1
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
-	
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
     // control signals
-	i_en            // distribute switch enable
+    i_en            // distribute switch enable
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
-	input                                        i_en;
+    input                                        i_en;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
 
 
     genvar i,j;
-    generate 
+    generate
         for (i = 0; i< NUM_LEVEL; i=i+1)
         begin: wire_tree_level
             localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
@@ -1693,9 +1693,9 @@ module wire_binary_tree_1_8_seq #(
             reg      [NUM_SWITCH_SHIFT-1:0]         i_valid_latch;
         end
 
-        always@(posedge clk)
+        always@(posedge clk or negedge rst_n)
         begin: first_level_assignment
-            if(i_en && (~rst))
+            if(i_en && (~rst_n))
             begin
                 wire_tree_level[0].i_data_latch <= i_data_bus;
                 wire_tree_level[0].i_valid_latch <= i_valid;
@@ -1706,17 +1706,17 @@ module wire_binary_tree_1_8_seq #(
                 wire_tree_level[0].i_valid_latch <= 1'b0;
             end
         end
-        
+
         for (i = 0; i< NUM_LEVEL-1; i=i+1)
         begin: wire_tree_assignment
             localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
-            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH; 
-            
+            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH;
+
             for( j=0; j<NUM_SWITCH_SHIFT; j=j+1)
             begin: level_assignment
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         wire_tree_level[i+1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[i].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
                         wire_tree_level[i+1].i_valid_latch[2*j] <= wire_tree_level[i].i_valid_latch[j];
@@ -1738,8 +1738,8 @@ module wire_binary_tree_1_8_seq #(
 
         for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
         begin: assign_output_latch
-            always @(posedge clk) begin
-                if(i_en && (~rst))
+            always @(posedge clk or negedge rst_n) begin
+                if(i_en && (~rst_n))
                 begin
                     o_data_bus_reg[2*i*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
                     o_valid_reg[2*i] <= wire_tree_level[NUM_LEVEL-1].i_valid_latch[i];
@@ -1766,20 +1766,20 @@ endmodule
 
 
 module cmd_wire_binary_tree_1_8_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 1   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 1
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	// i_valid,        // valid input data signal
-	// i_data_bus,     // input data bus coming into distribute switch
-	
-	// o_valid,        // output valid
-    // o_data_bus,     // output data 
+    // i_valid,        // valid input data signal
+    // i_data_bus,     // input data bus coming into distribute switch
+
+    // o_valid,        // output valid
+    // o_data_bus,     // output data
     o_cmd_0,
     o_cmd_1,
     o_cmd_2,
@@ -1788,39 +1788,39 @@ module cmd_wire_binary_tree_1_8_seq #(
     o_cmd_5,
     o_cmd_6,
     o_cmd_7,
-	
+
     // control signals
-	i_en,           // distribute switch enable
-	i_cmd           // input command
+    i_en,           // distribute switch enable
+    i_cmd           // input command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;  
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
-	output                                       o_cmd_0;             
-	output                                       o_cmd_1;             
-	output                                       o_cmd_2;             
-	output                                       o_cmd_3;             
-	output                                       o_cmd_4;             
-	output                                       o_cmd_5;             
-	output                                       o_cmd_6;             
-	output                                       o_cmd_7;             
+    output                                       o_cmd_0;
+    output                                       o_cmd_1;
+    output                                       o_cmd_2;
+    output                                       o_cmd_3;
+    output                                       o_cmd_4;
+    output                                       o_cmd_5;
+    output                                       o_cmd_6;
+    output                                       o_cmd_7;
 
-	input                                        i_en;
+    input                                        i_en;
 
     reg                                          o_cmd_reg[0:NUM_OUTPUT_DATA-1] ;
-    
-    // 
+
+    //
     genvar i,j;
     generate
         for(i=0; i<NUM_LEVEL; i=i+1)
@@ -1831,9 +1831,9 @@ module cmd_wire_binary_tree_1_8_seq #(
             reg  [WIDTH_PER_CMD_REG-1:0]         inner_cmd_reg[0:NUM_CMD_REG-1];
         end
 
-        always@(posedge clk)
+        always@(posedge clk or negedge rst_n)
         begin
-            if(i_en && (~rst))
+            if(i_en && (~rst_n))
             begin
                 cmd_wire[0].inner_cmd_reg[0] <= i_cmd;
             end
@@ -1853,7 +1853,7 @@ module cmd_wire_binary_tree_1_8_seq #(
 
             for(j=0; j<NUM_CMD_REG_LAST_LEVEL; j=j+1)
             begin: cmd_level_assignment
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
                     cmd_wire[i].inner_cmd_reg[2*j] <= cmd_wire[i-1].inner_cmd_reg[j][0*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
                     cmd_wire[i].inner_cmd_reg[2*j+1] <= cmd_wire[i-1].inner_cmd_reg[j][1*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
@@ -1863,10 +1863,10 @@ module cmd_wire_binary_tree_1_8_seq #(
 
         for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
         begin:o_latch_assignment
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
-                o_cmd_reg[2*i] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][0]; 
-                o_cmd_reg[2*i+1] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][1]; 
+                o_cmd_reg[2*i] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][0];
+                o_cmd_reg[2*i+1] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][1];
             end
         end
     endgenerate
@@ -1884,44 +1884,44 @@ endmodule
 
 
 module mux_tree_8_1_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
-	parameter NUM_INPUT_DATA = 8   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
+    parameter NUM_INPUT_DATA = 8
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -1930,13 +1930,13 @@ module mux_tree_8_1_seq #(
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: o_data_output_mux
-            
+
             // data mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
             assign inner_cmd_wire = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire)
                         8'b00000001:
@@ -1986,9 +1986,9 @@ module mux_tree_8_1_seq #(
             // valid mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
             assign inner_cmd_wire_valid = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_valid)
                         8'b00000001:
@@ -2045,46 +2045,46 @@ endmodule
 
 `ifdef In8_Out8_input_pipeline_output_pipeline
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 8   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 8
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	localparam NUM_IN_WIRE_PIPELINE = 5;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+    localparam NUM_IN_WIRE_PIPELINE = 5;
     localparam NUM_OUT_WIRE_PIPELINE = 3;
-	
-    // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    // interface
+    input                                        clk;
+    input                                        rst_n;
+
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -2098,31 +2098,31 @@ module crossbar_one_hot_seq#(
             reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
             reg  [TOTAL_COMMAND-1:0]            i_cmd_shift;
             reg                                  i_en_shift;
-            reg                                  rst_shift;
-        end 
+            reg                                  res_shift;
+        end
 
-        always @(posedge clk) 
+        always @(posedge clk or negedge rst_n)
         begin:shift_first
             input_shift_def[0].i_valid_shift <= i_valid;
             input_shift_def[0].i_data_shift <= i_data_bus;
             input_shift_def[0].i_cmd_shift <= i_cmd;
             input_shift_def[0].i_en_shift <= i_en;
-            input_shift_def[0].rst_shift <= rst;
+            input_shift_def[0].res_shift <= rst_n;
         end
 
         for(i=1; i< NUM_IN_WIRE_PIPELINE; i=i+1)
         begin:input_shift
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
                 input_shift_def[i].i_valid_shift <= input_shift_def[i-1].i_valid_shift;
                 input_shift_def[i].i_data_shift <= input_shift_def[i-1].i_data_shift;
                 input_shift_def[i].i_cmd_shift <= input_shift_def[i-1].i_cmd_shift;
                 input_shift_def[i].i_en_shift <= input_shift_def[i-1].i_en_shift;
-                input_shift_def[i].rst_shift <= input_shift_def[i-1].rst_shift;
+                input_shift_def[i].res_shift <= input_shift_def[i-1].res_shift;
             end
         end
 
-        // output pipeline  
+        // output pipeline
         for(j=0; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
         begin:output_shift_def
             reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
@@ -2134,9 +2134,9 @@ module crossbar_one_hot_seq#(
             // data mux
             wire   [NUM_INPUT_DATA-1:0]           inner_cmd_wire;
             assign inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[7*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[6*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[5*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[4*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[3*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[2*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[1*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:two_8_8_xbar_o_data
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire)
                         8'b00000001:
@@ -2186,9 +2186,9 @@ module crossbar_one_hot_seq#(
             // valid mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
             assign inner_cmd_wire_valid = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[7*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[6*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[5*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[4*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[3*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[2*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[1*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:two_8_8_xbar_o_valid
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_valid)
                         8'b00000001:
@@ -2238,14 +2238,14 @@ module crossbar_one_hot_seq#(
 
         for(j=1; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
         begin:shift_output
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
                 output_shift_def[j].o_valid_reg <= output_shift_def[j-1].o_valid_reg;
                 output_shift_def[j].o_data_bus_reg <=  output_shift_def[j-1].o_data_bus_reg;
             end
-        end 
+        end
 
-        always @(posedge clk) 
+        always @(posedge clk or negedge rst_n)
         begin:shift_output_last
             o_valid_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_valid_reg;
             o_data_bus_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_data_bus_reg;
@@ -2263,43 +2263,43 @@ endmodule
 
 `ifdef In16_Out8
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 16   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 16
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	
-    // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+    // interface
+    input                                        clk;
+    input                                        rst_n;
+
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -2310,9 +2310,9 @@ module crossbar_one_hot_seq#(
         begin: o_data_output_mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
             assign inner_cmd_wire = {i_cmd[15*NUM_OUTPUT_DATA+i],i_cmd[14*NUM_OUTPUT_DATA+i],i_cmd[13*NUM_OUTPUT_DATA+i],i_cmd[12*NUM_OUTPUT_DATA+i],i_cmd[11*NUM_OUTPUT_DATA+i],i_cmd[10*NUM_OUTPUT_DATA+i],i_cmd[9*NUM_OUTPUT_DATA+i],i_cmd[8*NUM_OUTPUT_DATA+i],i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire)
                         16'b0000000000000001:
@@ -2420,46 +2420,46 @@ endmodule
 
 `ifdef In16_Out8_separate_8_8
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 16   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 16
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	
-    
-    localparam NUM_SEPARATE_FIRST_STAGE = 2;
-	
-    // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+
+    localparam NUM_SEPARATE_FIRST_STAGE = 2;
+
+    // interface
+    input                                        clk;
+    input                                        rst_n;
+
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -2478,13 +2478,13 @@ module crossbar_one_hot_seq#(
         begin
             for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
             begin: o_data_output_mux
-                
+
                 // data mux
                 wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
                 assign inner_cmd_wire = {i_cmd[(7+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(6+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(5+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(4+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(3+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(2+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(1+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(0+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire)
                             8'b00000001:
@@ -2534,9 +2534,9 @@ module crossbar_one_hot_seq#(
                 // valid mux
                 wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
                 assign inner_cmd_wire_valid = {i_cmd[(7+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(6+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(5+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(4+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(3+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(2+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(1+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i],i_cmd[(0+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire_valid)
                             8'b00000001:
@@ -2592,50 +2592,50 @@ module crossbar_one_hot_seq#(
             wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_data;
             assign  inner_cmd_wire_second_stage_data = {first_stage_output_def[1].o_valid_reg[i], first_stage_output_def[0].o_valid_reg[i]};
 
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_second_stage_data)
                         2'b01:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];                 
-                        end                        
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];
+                        end
                         2'b10:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[1].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];                 
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[1].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];
                         end
                         default:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};                 
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
                         end
                     endcase
                 end
             end
         end
-        
+
         // second stage -- eight 2:1 mux -- valid
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin
             wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_valid;
             assign  inner_cmd_wire_second_stage_valid = {first_stage_output_def[1].o_valid_reg[i], first_stage_output_def[0].o_valid_reg[i]};
 
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_second_stage_valid)
                         2'b01:
                         begin
-                            o_valid_reg[i] <= first_stage_output_def[0].o_valid_reg[i];                 
-                        end                        
+                            o_valid_reg[i] <= first_stage_output_def[0].o_valid_reg[i];
+                        end
                         2'b10:
                         begin
-                            o_valid_reg[i] <= first_stage_output_def[1].o_valid_reg[i];                 
+                            o_valid_reg[i] <= first_stage_output_def[1].o_valid_reg[i];
                         end
                         default:
                         begin
-                            o_valid_reg[i] <= {DATA_WIDTH{1'b0}};                 
+                            o_valid_reg[i] <= {DATA_WIDTH{1'b0}};
                         end
                     endcase
                 end
@@ -2648,50 +2648,50 @@ module crossbar_one_hot_seq#(
     assign o_valid = o_valid_reg;
 
 endmodule
-`endif 
+`endif
 
 
 `ifdef In16_Out8_8_8_wire_tree_pipeline
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 4,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 16   
+    parameter DATA_WIDTH = 4,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 16
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	
-    localparam NUM_SEPARATE_FIRST_STAGE = 2;
-	
-    // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+    localparam NUM_SEPARATE_FIRST_STAGE = 2;
+
+    // interface
+    input                                        clk;
+    input                                        rst_n;
+
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -2714,16 +2714,16 @@ module crossbar_one_hot_seq#(
             crossbar_8_8_seq#(
                 .DATA_WIDTH(DATA_WIDTH),      // could be arbitrary number
                 .NUM_OUTPUT_DATA(NUM_OUTPUT_DATA), // must be power of 2.
-                .NUM_INPUT_DATA(8)   
+                .NUM_INPUT_DATA(8)
             ) xba8_8(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_valid(i_valid[k*NUM_HALF_INPUT_DATA+:NUM_HALF_INPUT_DATA]),            // valid input data signal
                 .i_data_bus(i_data_bus[k*NUM_HALF_INPUT_DATA*DATA_WIDTH+:NUM_HALF_INPUT_DATA*DATA_WIDTH]),     // input data bus coming into distribute switch
                 .o_valid(first_stage_output_def[k].o_valid_wire),                         // output valid
-                .o_data_bus(first_stage_output_def[k].o_data_bus_wire),                   // output data 
+                .o_data_bus(first_stage_output_def[k].o_data_bus_wire),                   // output data
                 .i_en(i_en),                                                              // distribute switch enable
-                .i_cmd(i_cmd[k*NUM_HALF_COMMAND+:NUM_HALF_COMMAND])                       // the input should be one-hot encoded command 
+                .i_cmd(i_cmd[k*NUM_HALF_COMMAND+:NUM_HALF_COMMAND])                       // the input should be one-hot encoded command
             );
         end
 
@@ -2733,50 +2733,50 @@ module crossbar_one_hot_seq#(
             wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_data;
             assign  inner_cmd_wire_second_stage_data = {first_stage_output_def[1].o_valid_wire[i], first_stage_output_def[0].o_valid_wire[i]};
 
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_second_stage_data)
                         2'b01:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[0].o_data_bus_wire[i*DATA_WIDTH+:DATA_WIDTH];                 
-                        end                        
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[0].o_data_bus_wire[i*DATA_WIDTH+:DATA_WIDTH];
+                        end
                         2'b10:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[1].o_data_bus_wire[i*DATA_WIDTH+:DATA_WIDTH];                 
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[1].o_data_bus_wire[i*DATA_WIDTH+:DATA_WIDTH];
                         end
                         default:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};                 
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
                         end
                     endcase
                 end
             end
         end
-        
+
         // second stage -- eight 2:1 mux -- valid
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin:arbiter_2_1_mux_valid
             wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_valid;
             assign  inner_cmd_wire_second_stage_valid = {first_stage_output_def[1].o_valid_wire[i], first_stage_output_def[0].o_valid_wire[i]};
 
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_second_stage_valid)
                         2'b01:
                         begin
-                            o_valid_reg[i] <= first_stage_output_def[0].o_valid_wire[i];                 
-                        end                        
+                            o_valid_reg[i] <= first_stage_output_def[0].o_valid_wire[i];
+                        end
                         2'b10:
                         begin
-                            o_valid_reg[i] <= first_stage_output_def[1].o_valid_wire[i];                 
+                            o_valid_reg[i] <= first_stage_output_def[1].o_valid_wire[i];
                         end
                         default:
                         begin
-                            o_valid_reg[i] <= {DATA_WIDTH{1'b0}};                 
+                            o_valid_reg[i] <= {DATA_WIDTH{1'b0}};
                         end
                     endcase
                 end
@@ -2791,45 +2791,45 @@ module crossbar_one_hot_seq#(
 endmodule
 
 module crossbar_8_8_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 8   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 8
 )(
 
     // timeing signals
     clk,
-	rst,
-	
-    // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    rst_n,
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    // data signals
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-    
-    // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+    // interface
+    input                                        clk;
+    input                                        rst_n;
+
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
 
     // inner logic
@@ -2844,12 +2844,12 @@ module crossbar_8_8_seq#(
         for(i=0; i<NUM_INPUT_DATA; i=i+1)
         begin: top_half
             wire_binary_tree_1_8_seq#(
-                .DATA_WIDTH(DATA_WIDTH), 
+                .DATA_WIDTH(DATA_WIDTH),
                 .NUM_OUTPUT_DATA(8),
-                .NUM_INPUT_DATA(1)) 
+                .NUM_INPUT_DATA(1))
             wire_pipeline(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_valid(i_valid[i]),
                 .i_data_bus(i_data_bus[i*DATA_WIDTH+:DATA_WIDTH]),
                 .o_valid({o_inner_valid_wire[7*NUM_OUTPUT_DATA+i], o_inner_valid_wire[6*NUM_OUTPUT_DATA+i], o_inner_valid_wire[5*NUM_OUTPUT_DATA+i], o_inner_valid_wire[4*NUM_OUTPUT_DATA+i], o_inner_valid_wire[3*NUM_OUTPUT_DATA+i], o_inner_valid_wire[2*NUM_OUTPUT_DATA+i], o_inner_valid_wire[1*NUM_OUTPUT_DATA+i], o_inner_valid_wire[0*NUM_OUTPUT_DATA+i]}),
@@ -2860,16 +2860,16 @@ module crossbar_8_8_seq#(
 
         // input command
         for(i=0; i<NUM_INPUT_DATA; i=i+1)
-        begin:i_cmd_id  
+        begin:i_cmd_id
             // wire                                             o_inner_cmd_wire[0:NUM_INPUT_DATA-1];
-            
+
             cmd_wire_binary_tree_1_8_seq #(
-                .DATA_WIDTH(DATA_WIDTH), 
+                .DATA_WIDTH(DATA_WIDTH),
                 .NUM_OUTPUT_DATA(8),
-                .NUM_INPUT_DATA(1)) 
+                .NUM_INPUT_DATA(1))
             cmd_pipeline(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_cmd(i_cmd[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]),
                 .o_cmd_0(o_inner_cmd_wire[0*NUM_OUTPUT_DATA+i]),
                 .o_cmd_1(o_inner_cmd_wire[1*NUM_OUTPUT_DATA+i]),
@@ -2882,7 +2882,7 @@ module crossbar_8_8_seq#(
                 .i_en(i_en)
             );
         end
-        
+
         // eight 8:1 mux tree
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: bottom_half
@@ -2895,12 +2895,12 @@ module crossbar_8_8_seq#(
             assign inner_cmd_i_mux_tree_wire = {o_inner_cmd_wire[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]};
 
             mux_tree_8_1_seq #(
-                .NUM_INPUT_DATA(8), 
+                .NUM_INPUT_DATA(8),
                 .NUM_OUTPUT_DATA(1),
-                .DATA_WIDTH(DATA_WIDTH)) 
+                .DATA_WIDTH(DATA_WIDTH))
             mux_tree(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_valid(inner_valid_i_mux_tree_wire),
                 .i_data_bus(inner_data_i_mux_tree_wire),
                 .o_valid(o_valid[i]),
@@ -2915,50 +2915,50 @@ module crossbar_8_8_seq#(
 endmodule
 
 module wire_binary_tree_1_8_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 1   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 1
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
-	
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
     // control signals
-	i_en            // distribute switch enable
+    i_en            // distribute switch enable
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
-	input                                        i_en;
+    input                                        i_en;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
 
 
     genvar i,j;
-    generate 
+    generate
         for (i = 0; i< NUM_LEVEL; i=i+1)
         begin: wire_tree_level
             localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
@@ -2969,9 +2969,9 @@ module wire_binary_tree_1_8_seq #(
             reg      [NUM_SWITCH_SHIFT-1:0]         i_valid_latch;
         end
 
-        always@(posedge clk)
+        always@(posedge clk or negedge rst_n)
         begin: first_level_assignment
-            if(i_en && (~rst))
+            if(i_en && (~rst_n))
             begin
                 wire_tree_level[0].i_data_latch <= i_data_bus;
                 wire_tree_level[0].i_valid_latch <= i_valid;
@@ -2982,17 +2982,17 @@ module wire_binary_tree_1_8_seq #(
                 wire_tree_level[0].i_valid_latch <= 1'b0;
             end
         end
-        
+
         for (i = 0; i< NUM_LEVEL-1; i=i+1)
         begin: wire_tree_assignment
             localparam NUM_SWITCH_SHIFT =  (4'b0001 << i);
-            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH; 
-            
+            localparam WIDTH_DATA_LEVEL = NUM_SWITCH_SHIFT*DATA_WIDTH;
+
             for( j=0; j<NUM_SWITCH_SHIFT; j=j+1)
             begin: level_assignment
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         wire_tree_level[i+1].i_data_latch[(2*j)*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[i].i_data_latch[j*DATA_WIDTH+:DATA_WIDTH];
                         wire_tree_level[i+1].i_valid_latch[2*j] <= wire_tree_level[i].i_valid_latch[j];
@@ -3014,8 +3014,8 @@ module wire_binary_tree_1_8_seq #(
 
         for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
         begin: assign_output_latch
-            always @(posedge clk) begin
-                if(i_en && (~rst))
+            always @(posedge clk or negedge rst_n) begin
+                if(i_en && (~rst_n))
                 begin
                     o_data_bus_reg[2*i*DATA_WIDTH+:DATA_WIDTH] <= wire_tree_level[NUM_LEVEL-1].i_data_latch[i*DATA_WIDTH+:DATA_WIDTH];
                     o_valid_reg[2*i] <= wire_tree_level[NUM_LEVEL-1].i_valid_latch[i];
@@ -3042,20 +3042,20 @@ endmodule
 
 
 module cmd_wire_binary_tree_1_8_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 1   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 1
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	// i_valid,        // valid input data signal
-	// i_data_bus,     // input data bus coming into distribute switch
-	
-	// o_valid,        // output valid
-    // o_data_bus,     // output data 
+    // i_valid,        // valid input data signal
+    // i_data_bus,     // input data bus coming into distribute switch
+
+    // o_valid,        // output valid
+    // o_data_bus,     // output data
     o_cmd_0,
     o_cmd_1,
     o_cmd_2,
@@ -3064,39 +3064,39 @@ module cmd_wire_binary_tree_1_8_seq #(
     o_cmd_5,
     o_cmd_6,
     o_cmd_7,
-	
+
     // control signals
-	i_en,           // distribute switch enable
-	i_cmd           // input command
+    i_en,           // distribute switch enable
+    i_cmd           // input command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    localparam NUM_LEVEL = $clog2(NUM_OUTPUT_DATA);
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;  
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
-	output                                       o_cmd_0;             
-	output                                       o_cmd_1;             
-	output                                       o_cmd_2;             
-	output                                       o_cmd_3;             
-	output                                       o_cmd_4;             
-	output                                       o_cmd_5;             
-	output                                       o_cmd_6;             
-	output                                       o_cmd_7;             
+    output                                       o_cmd_0;
+    output                                       o_cmd_1;
+    output                                       o_cmd_2;
+    output                                       o_cmd_3;
+    output                                       o_cmd_4;
+    output                                       o_cmd_5;
+    output                                       o_cmd_6;
+    output                                       o_cmd_7;
 
-	input                                        i_en;
+    input                                        i_en;
 
     reg                                          o_cmd_reg[0:NUM_OUTPUT_DATA-1] ;
-    
-    // 
+
+    //
     genvar i,j;
     generate
         for(i=0; i<NUM_LEVEL; i=i+1)
@@ -3107,9 +3107,9 @@ module cmd_wire_binary_tree_1_8_seq #(
             reg  [WIDTH_PER_CMD_REG-1:0]         inner_cmd_reg[0:NUM_CMD_REG-1];
         end
 
-        always@(posedge clk)
+        always@(posedge clk or negedge rst_n)
         begin
-            if(i_en && (~rst))
+            if(i_en && (~rst_n))
             begin
                 cmd_wire[0].inner_cmd_reg[0] <= i_cmd;
             end
@@ -3129,7 +3129,7 @@ module cmd_wire_binary_tree_1_8_seq #(
 
             for(j=0; j<NUM_CMD_REG_LAST_LEVEL; j=j+1)
             begin: cmd_level_assignment
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
                     cmd_wire[i].inner_cmd_reg[2*j] <= cmd_wire[i-1].inner_cmd_reg[j][0*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
                     cmd_wire[i].inner_cmd_reg[2*j+1] <= cmd_wire[i-1].inner_cmd_reg[j][1*cmd_wire[i].WIDTH_PER_CMD_REG+:cmd_wire[i].WIDTH_PER_CMD_REG];
@@ -3139,10 +3139,10 @@ module cmd_wire_binary_tree_1_8_seq #(
 
         for(i=0; i<(NUM_OUTPUT_DATA>>1); i=i+1)
         begin:o_latch_assignment
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
-                o_cmd_reg[2*i] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][0]; 
-                o_cmd_reg[2*i+1] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][1]; 
+                o_cmd_reg[2*i] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][0];
+                o_cmd_reg[2*i+1] <= cmd_wire[NUM_LEVEL-1].inner_cmd_reg[i][1];
             end
         end
     endgenerate
@@ -3160,44 +3160,44 @@ endmodule
 
 
 module mux_tree_8_1_seq #(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
-	parameter NUM_INPUT_DATA = 8   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 1, // must be power of 2.
+    parameter NUM_INPUT_DATA = 8
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -3206,13 +3206,13 @@ module mux_tree_8_1_seq #(
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: o_data_output_mux
-            
+
             // data mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
             assign inner_cmd_wire = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire)
                         8'b00000001:
@@ -3262,9 +3262,9 @@ module mux_tree_8_1_seq #(
             // valid mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
             assign inner_cmd_wire_valid = {i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-               if(i_en && (~rst))
+               if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_valid)
                         8'b00000001:
@@ -3322,83 +3322,83 @@ endmodule
 
 `ifdef In16_Out8_separate_8_8_wire_pipeline
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 16   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 16
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	
-    localparam NUM_IN_WIRE_PIPELINE = 5;
-    
-    localparam NUM_SEPARATE_FIRST_STAGE = 2;
-	
-    // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+    localparam NUM_IN_WIRE_PIPELINE = 5;
+
+    localparam NUM_SEPARATE_FIRST_STAGE = 2;
+
+    // interface
+    input                                        clk;
+    input                                        rst_n;
+
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
 
     genvar i,j,k;
     generate
-        // input wire pipeline -- divide wire into multiple pipeline stage to shorten the length of wire. 
+        // input wire pipeline -- divide wire into multiple pipeline stage to shorten the length of wire.
         for(j=0; j< NUM_IN_WIRE_PIPELINE; j=j+1)
         begin:input_shift_def
             reg  [NUM_INPUT_DATA-1:0]            i_valid_shift;
             reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
             reg  [TOTAL_COMMAND-1:0]            i_cmd_shift;
             reg                                  i_en_shift;
-            reg                                  rst_shift;
-        end 
+            reg                                  res_shift;
+        end
 
-        always @(posedge clk) 
+        always @(posedge clk or negedge rst_n)
         begin:shift_input_initial
             input_shift_def[0].i_valid_shift <= i_valid;
             input_shift_def[0].i_data_shift <= i_data_bus;
             input_shift_def[0].i_cmd_shift <= i_cmd;
             input_shift_def[0].i_en_shift <= i_en;
-            input_shift_def[0].rst_shift <= rst;
+            input_shift_def[0].res_shift <= rst_n;
         end
 
         for(j=1; j< NUM_IN_WIRE_PIPELINE; j=j+1)
         begin:shift_input
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
                 input_shift_def[j].i_valid_shift <= input_shift_def[j-1].i_valid_shift;
                 input_shift_def[j].i_data_shift <= input_shift_def[j-1].i_data_shift;
                 input_shift_def[j].i_cmd_shift <= input_shift_def[j-1].i_cmd_shift;
                 input_shift_def[j].i_en_shift <= input_shift_def[j-1].i_en_shift;
-                input_shift_def[j].rst_shift <= input_shift_def[j-1].rst_shift;
+                input_shift_def[j].res_shift <= input_shift_def[j-1].res_shift;
             end
-        end 
+        end
 
         // define output reg of the two 8:8 mux.
         for(k=0; k<NUM_SEPARATE_FIRST_STAGE; k=k+1)
@@ -3412,13 +3412,13 @@ module crossbar_one_hot_seq#(
         begin:xbar_id
             for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
             begin: o_data_output_mux
-                
+
                 // data mux
                 wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
                 assign inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(7+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(6+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(5+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(4+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(0+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin:two_8_8_xbar_o_data
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire)
                             8'b00000001:
@@ -3468,9 +3468,9 @@ module crossbar_one_hot_seq#(
                 // valid mux
                 wire [NUM_INPUT_DATA-1:0] inner_cmd_wire_valid;
                 assign inner_cmd_wire_valid = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(7+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(6+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(5+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(4+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i], input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(0+k*NUM_OUTPUT_DATA)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin:two_8_8_xbar_o_valid
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire_valid)
                             8'b00000001:
@@ -3526,50 +3526,50 @@ module crossbar_one_hot_seq#(
             wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_data;
             assign  inner_cmd_wire_second_stage_data = {first_stage_output_def[1].o_valid_reg[i], first_stage_output_def[0].o_valid_reg[i]};
 
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_second_stage_data)
                         2'b01:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];                 
-                        end                        
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[0].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];
+                        end
                         2'b10:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[1].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];                 
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= first_stage_output_def[1].o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH];
                         end
                         default:
                         begin
-                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};                 
+                            o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
                         end
                     endcase
                 end
             end
         end
-        
+
         // second stage -- eight 2:1 mux -- valid
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin:eight_2_1_mux_o_valid
             wire    [NUM_SEPARATE_FIRST_STAGE-1:0]   inner_cmd_wire_second_stage_valid;
             assign  inner_cmd_wire_second_stage_valid = {first_stage_output_def[1].o_valid_reg[i], first_stage_output_def[0].o_valid_reg[i]};
 
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_second_stage_valid)
                         2'b01:
                         begin
-                            o_valid_reg[i] <= first_stage_output_def[0].o_valid_reg[i];                 
-                        end                        
+                            o_valid_reg[i] <= first_stage_output_def[0].o_valid_reg[i];
+                        end
                         2'b10:
                         begin
-                            o_valid_reg[i] <= first_stage_output_def[1].o_valid_reg[i];                 
+                            o_valid_reg[i] <= first_stage_output_def[1].o_valid_reg[i];
                         end
                         default:
                         begin
-                            o_valid_reg[i] <= {DATA_WIDTH{1'b0}};                 
+                            o_valid_reg[i] <= {DATA_WIDTH{1'b0}};
                         end
                     endcase
                 end
@@ -3582,59 +3582,59 @@ module crossbar_one_hot_seq#(
     assign o_valid = o_valid_reg;
 
 endmodule
-`endif 
+`endif
 
 `ifdef In16_Out8_pipeline_wire_pipeline_i_en_pipeline_mux
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 16   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 16
 )(
     // timeing signals
     clk,
-	rst,
-	
-    // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    rst_n,
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    // data signals
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	localparam NUM_IN_WIRE_PIPELINE = 6;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
 
-	localparam NUM_IN_MUX_FIRST_STAGE = 4;
-	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+    localparam NUM_IN_WIRE_PIPELINE = 6;
 
-	localparam NUM_WIRE_PIPELINE_FIRST_STAGE = 2;
+    localparam NUM_IN_MUX_FIRST_STAGE = 4;
+    localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
 
-	localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
-	localparam NUM_MUX_SECOND_STAGE = 1;
+    localparam NUM_WIRE_PIPELINE_FIRST_STAGE = 2;
+
+    localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
+    localparam NUM_MUX_SECOND_STAGE = 1;
 
 
     // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input                                        clk;
+    input                                        rst_n;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -3642,36 +3642,36 @@ module crossbar_one_hot_seq#(
 
     genvar i,j;
     generate
-        // input pipeline -- divide wire into multiple pipeline stage to shorten the length of wire. 
+        // input pipeline -- divide wire into multiple pipeline stage to shorten the length of wire.
         for(j=0; j< NUM_IN_WIRE_PIPELINE; j=j+1)
         begin:input_shift_def
             reg  [NUM_INPUT_DATA-1:0]            i_valid_shift;
             reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
             reg  [TOTAL_COMMAND-1:0]            i_cmd_shift;
             reg                                  i_en_shift;
-            reg                                  rst_shift;
-        end 
+            reg                                  res_shift;
+        end
 
-        always @(posedge clk) 
+        always @(posedge clk or negedge rst_n)
         begin:shift_input_initial
             input_shift_def[0].i_valid_shift <= i_valid;
             input_shift_def[0].i_data_shift <= i_data_bus;
             input_shift_def[0].i_cmd_shift <= i_cmd;
             input_shift_def[0].i_en_shift <= i_en;
-            input_shift_def[0].rst_shift <= rst;
+            input_shift_def[0].res_shift <= rst_n;
         end
 
         for(j=1; j< NUM_IN_WIRE_PIPELINE; j=j+1)
         begin:shift_input
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
                 input_shift_def[j].i_valid_shift <= input_shift_def[j-1].i_valid_shift;
                 input_shift_def[j].i_data_shift <= input_shift_def[j-1].i_data_shift;
                 input_shift_def[j].i_cmd_shift <= input_shift_def[j-1].i_cmd_shift;
                 input_shift_def[j].i_en_shift <= input_shift_def[j-1].i_en_shift;
-                input_shift_def[j].rst_shift <= input_shift_def[j-1].rst_shift;
+                input_shift_def[j].res_shift <= input_shift_def[j-1].res_shift;
             end
-        end 
+        end
 
         // instantiate output data mux
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
@@ -3681,34 +3681,34 @@ module crossbar_one_hot_seq#(
                 reg   [NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]        inner_data_shift;
                 reg   [NUM_MUX_FIRST_STAGE-1:0]                   inner_valid_shift;
                 reg                                               inner_en_shift;
-                reg                                               inner_rst_shift;
+                reg                                               inner_res_shift;
             end
 
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
                 first_stage_def[0].inner_en_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift;
-                first_stage_def[0].inner_rst_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift;
+                first_stage_def[0].inner_res_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].res_shift;
             end
 
             for(j=1; j< NUM_WIRE_PIPELINE_FIRST_STAGE; j=j+1)
             begin:shift_input_first_stage
-                always @(posedge clk)
+                always @(posedge clk or negedge rst_n)
                 begin
                     first_stage_def[j].inner_valid_shift <= first_stage_def[j-1].inner_valid_shift;
                     first_stage_def[j].inner_data_shift <= first_stage_def[j-1].inner_data_shift;
                     first_stage_def[j].inner_en_shift <= first_stage_def[j-1].inner_en_shift;
-                    first_stage_def[j].inner_rst_shift <= first_stage_def[j-1].inner_rst_shift;
+                    first_stage_def[j].inner_res_shift <= first_stage_def[j-1].inner_res_shift;
                 end
             end
-            
+
             // first pipeline stage -- data -- 4 * 4:1 mux logic.
             for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
             begin:first_stage_data
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
                 assign  inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].res_shift))
                     begin
                         case(inner_cmd_wire)
                             4'b0001:
@@ -3745,9 +3745,9 @@ module crossbar_one_hot_seq#(
             begin:first_stage_valid
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_valid;
                 assign  inner_cmd_wire_valid = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].res_shift))
                     begin
                         case(inner_cmd_wire_valid)
                             4'b0001:
@@ -3774,7 +3774,7 @@ module crossbar_one_hot_seq#(
                     end
                     else
                     begin
-                        first_stage_def[0].inner_valid_shift[j] <= 1'b0; 
+                        first_stage_def[0].inner_valid_shift[j] <= 1'b0;
                     end
                 end
             end
@@ -3783,9 +3783,9 @@ module crossbar_one_hot_seq#(
             assign inner_cmd_wire_second_stage = {first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_valid_shift};
 
             //data_mux
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:second_stage_data
-                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_res_shift))
                 begin
                     case(inner_cmd_wire_second_stage)
                         4'b0001:
@@ -3817,9 +3817,9 @@ module crossbar_one_hot_seq#(
             end
 
             //valid_mux
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:second_stage_valid
-                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_res_shift))
                 begin
                     case(inner_cmd_wire_second_stage)
                         4'b0001:
@@ -3861,99 +3861,99 @@ endmodule
 
 `ifdef In16_Out8_pipeline_wire_pipeline_i_en_pipeline_mux_output_pipeline
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 16   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 16
 )(
     // timeing signals
     clk,
-	rst,
-	
-    // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    rst_n,
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    // data signals
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	localparam NUM_IN_WIRE_PIPELINE = 8;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
 
-	localparam NUM_IN_MUX_FIRST_STAGE = 4;
-	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+    localparam NUM_IN_WIRE_PIPELINE = 8;
 
-	localparam NUM_WIRE_PIPELINE_FIRST_STAGE = 2;
+    localparam NUM_IN_MUX_FIRST_STAGE = 4;
+    localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
 
-	localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
-	localparam NUM_MUX_SECOND_STAGE = 1;
+    localparam NUM_WIRE_PIPELINE_FIRST_STAGE = 2;
+
+    localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
+    localparam NUM_MUX_SECOND_STAGE = 1;
 
     localparam NUM_OUT_WIRE_PIPELINE = 2;
 
     // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input                                        clk;
+    input                                        rst_n;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
 
     genvar i,j;
     generate
-        // input pipeline -- divide wire into multiple pipeline stage to shorten the length of wire. 
+        // input pipeline -- divide wire into multiple pipeline stage to shorten the length of wire.
         for(j=0; j< NUM_IN_WIRE_PIPELINE; j=j+1)
         begin:input_shift_def
             reg  [NUM_INPUT_DATA-1:0]            i_valid_shift;
             reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
             reg  [TOTAL_COMMAND-1:0]            i_cmd_shift;
             reg                                  i_en_shift;
-            reg                                  rst_shift;
-        end 
+            reg                                  res_shift;
+        end
 
-        always @(posedge clk) 
+        always @(posedge clk or negedge rst_n)
         begin:shift_input_initial
             input_shift_def[0].i_valid_shift <= i_valid;
             input_shift_def[0].i_data_shift <= i_data_bus;
             input_shift_def[0].i_cmd_shift <= i_cmd;
             input_shift_def[0].i_en_shift <= i_en;
-            input_shift_def[0].rst_shift <= rst;
+            input_shift_def[0].res_shift <= rst_n;
         end
 
         for(j=1; j< NUM_IN_WIRE_PIPELINE; j=j+1)
         begin:shift_input
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
                 input_shift_def[j].i_valid_shift <= input_shift_def[j-1].i_valid_shift;
                 input_shift_def[j].i_data_shift <= input_shift_def[j-1].i_data_shift;
                 input_shift_def[j].i_cmd_shift <= input_shift_def[j-1].i_cmd_shift;
                 input_shift_def[j].i_en_shift <= input_shift_def[j-1].i_en_shift;
-                input_shift_def[j].rst_shift <= input_shift_def[j-1].rst_shift;
+                input_shift_def[j].res_shift <= input_shift_def[j-1].res_shift;
             end
-        end 
+        end
 
-        // output pipeline  
+        // output pipeline
         for(j=0; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
         begin:output_shift_def
             reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg_shift;
             reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg_shift;
-        end 
+        end
 
         // instantiate output data mux
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
@@ -3964,34 +3964,34 @@ module crossbar_one_hot_seq#(
                 reg   [NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]        inner_data_shift;
                 reg   [NUM_MUX_FIRST_STAGE-1:0]                   inner_valid_shift;
                 reg                                               inner_en_shift;
-                reg                                               inner_rst_shift;
+                reg                                               inner_res_shift;
             end
-            
-            always @(posedge clk) 
+
+            always @(posedge clk or negedge rst_n)
             begin
                 first_stage_def[0].inner_en_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift;
-                first_stage_def[0].inner_rst_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift;
+                first_stage_def[0].inner_res_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].res_shift;
             end
 
             for(j=1; j< NUM_WIRE_PIPELINE_FIRST_STAGE; j=j+1)
             begin:shift_input_first_stage
-                always @(posedge clk)
+                always @(posedge clk or negedge rst_n)
                 begin
                     first_stage_def[j].inner_valid_shift <= first_stage_def[j-1].inner_valid_shift;
                     first_stage_def[j].inner_data_shift <= first_stage_def[j-1].inner_data_shift;
                     first_stage_def[j].inner_en_shift <= first_stage_def[j-1].inner_en_shift;
-                    first_stage_def[j].inner_rst_shift <= first_stage_def[j-1].inner_rst_shift;
+                    first_stage_def[j].inner_res_shift <= first_stage_def[j-1].inner_res_shift;
                 end
             end
-            
+
             // first pipeline stage -- data -- 4 * 4:1 mux logic.
             for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
             begin:first_stage_data
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
                 assign  inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].res_shift))
                     begin
                         case(inner_cmd_wire)
                             4'b0001:
@@ -4028,9 +4028,9 @@ module crossbar_one_hot_seq#(
             begin:first_stage_valid
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_valid;
                 assign  inner_cmd_wire_valid = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].res_shift))
                     begin
                         case(inner_cmd_wire_valid)
                             4'b0001:
@@ -4057,7 +4057,7 @@ module crossbar_one_hot_seq#(
                     end
                     else
                     begin
-                        first_stage_def[0].inner_valid_shift[j] <= 1'b0; 
+                        first_stage_def[0].inner_valid_shift[j] <= 1'b0;
                     end
                 end
             end
@@ -4066,9 +4066,9 @@ module crossbar_one_hot_seq#(
             assign inner_cmd_wire_second_stage = {first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_valid_shift};
 
             //data_mux
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:second_stage_data
-                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_res_shift))
                 begin
                     case(inner_cmd_wire_second_stage)
                         4'b0001:
@@ -4100,9 +4100,9 @@ module crossbar_one_hot_seq#(
             end
 
             //valid_mux
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:second_stage_valid
-                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_res_shift))
                 begin
                     case(inner_cmd_wire_second_stage)
                         4'b0001:
@@ -4136,14 +4136,14 @@ module crossbar_one_hot_seq#(
 
         for(j=1; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
         begin:shift_output
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
                 output_shift_def[j].o_valid_reg_shift <= output_shift_def[j-1].o_valid_reg_shift;
                 output_shift_def[j].o_data_bus_reg_shift <=  output_shift_def[j-1].o_data_bus_reg_shift;
             end
-        end 
+        end
 
-        always @(posedge clk) 
+        always @(posedge clk or negedge rst_n)
         begin:shift_output_last
             o_valid_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_valid_reg_shift;
             o_data_bus_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_data_bus_reg_shift;
@@ -4159,101 +4159,101 @@ endmodule
 
 
 `ifdef In16_Out8_pipeline_wire_pipeline_double_8_8_xbar_separate
-// implement a 16-to-8 xbar as two separate 8-to-8 NoC, followed by a 2x1 MUX. 
+// implement a 16-to-8 xbar as two separate 8-to-8 NoC, followed by a 2x1 MUX.
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 16   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 16
 )(
     // timeing signals
     clk,
-	rst,
-	
-    // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    rst_n,
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    // data signals
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	localparam NUM_IN_WIRE_PIPELINE = 8;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
 
-	localparam NUM_IN_MUX_FIRST_STAGE = 4;
-	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+    localparam NUM_IN_WIRE_PIPELINE = 8;
 
-	localparam NUM_WIRE_PIPELINE_FIRST_STAGE = 2;
+    localparam NUM_IN_MUX_FIRST_STAGE = 4;
+    localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
 
-	localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
-	localparam NUM_MUX_SECOND_STAGE = 1;
+    localparam NUM_WIRE_PIPELINE_FIRST_STAGE = 2;
+
+    localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
+    localparam NUM_MUX_SECOND_STAGE = 1;
 
     localparam NUM_OUT_WIRE_PIPELINE = 2;
 
     // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input                                        clk;
+    input                                        rst_n;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
 
     genvar i,j;
     generate
-        // input pipeline -- divide wire into multiple pipeline stage to shorten the length of wire. 
+        // input pipeline -- divide wire into multiple pipeline stage to shorten the length of wire.
         for(j=0; j< NUM_IN_WIRE_PIPELINE; j=j+1)
         begin:input_shift_def
             reg  [NUM_INPUT_DATA-1:0]            i_valid_shift;
             reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
             reg  [TOTAL_COMMAND-1:0]            i_cmd_shift;
             reg                                  i_en_shift;
-            reg                                  rst_shift;
+            reg                                  res_shift;
         end
 
-        always @(posedge clk) 
+        always @(posedge clk or negedge rst_n)
         begin:shift_input_initial
             input_shift_def[0].i_valid_shift <= i_valid;
             input_shift_def[0].i_data_shift <= i_data_bus;
             input_shift_def[0].i_cmd_shift <= i_cmd;
             input_shift_def[0].i_en_shift <= i_en;
-            input_shift_def[0].rst_shift <= rst;
+            input_shift_def[0].res_shift <= rst_n;
         end
 
         for(j=1; j< NUM_IN_WIRE_PIPELINE; j=j+1)
         begin:shift_input
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
                 input_shift_def[j].i_valid_shift <= input_shift_def[j-1].i_valid_shift;
                 input_shift_def[j].i_data_shift <= input_shift_def[j-1].i_data_shift;
                 input_shift_def[j].i_cmd_shift <= input_shift_def[j-1].i_cmd_shift;
                 input_shift_def[j].i_en_shift <= input_shift_def[j-1].i_en_shift;
-                input_shift_def[j].rst_shift <= input_shift_def[j-1].rst_shift;
+                input_shift_def[j].res_shift <= input_shift_def[j-1].res_shift;
             end
-        end 
+        end
 
-        // output pipeline  
+        // output pipeline
         for(j=0; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
         begin:output_shift_def
             reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg_shift;
             reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg_shift;
-        end 
+        end
 
         // instantiate output data mux
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
@@ -4264,34 +4264,34 @@ module crossbar_one_hot_seq#(
                 reg   [NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]        inner_data_shift;
                 reg   [NUM_MUX_FIRST_STAGE-1:0]                   inner_valid_shift;
                 reg                                               inner_en_shift;
-                reg                                               inner_rst_shift;
+                reg                                               inner_res_shift;
             end
-            
-            always @(posedge clk) 
+
+            always @(posedge clk or negedge rst_n)
             begin
                 first_stage_def[0].inner_en_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift;
-                first_stage_def[0].inner_rst_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift;
+                first_stage_def[0].inner_res_shift <= input_shift_def[NUM_IN_WIRE_PIPELINE-1].res_shift;
             end
 
             for(j=1; j< NUM_WIRE_PIPELINE_FIRST_STAGE; j=j+1)
             begin:shift_input_first_stage
-                always @(posedge clk)
+                always @(posedge clk or negedge rst_n)
                 begin
                     first_stage_def[j].inner_valid_shift <= first_stage_def[j-1].inner_valid_shift;
                     first_stage_def[j].inner_data_shift <= first_stage_def[j-1].inner_data_shift;
                     first_stage_def[j].inner_en_shift <= first_stage_def[j-1].inner_en_shift;
-                    first_stage_def[j].inner_rst_shift <= first_stage_def[j-1].inner_rst_shift;
+                    first_stage_def[j].inner_res_shift <= first_stage_def[j-1].inner_res_shift;
                 end
             end
-            
+
             // first pipeline stage -- data -- 1 * 8:1 mux logic.
             for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
             begin:first_stage_data
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
                 assign  inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(0+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].res_shift))
                     begin
                         case(inner_cmd_wire)
                             4'b0001:
@@ -4328,9 +4328,9 @@ module crossbar_one_hot_seq#(
             begin:first_stage_valid
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_valid;
                 assign  inner_cmd_wire_valid = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                    if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].res_shift))
                     begin
                         case(inner_cmd_wire_valid)
                             4'b0001:
@@ -4357,7 +4357,7 @@ module crossbar_one_hot_seq#(
                     end
                     else
                     begin
-                        first_stage_def[0].inner_valid_shift[j] <= 1'b0; 
+                        first_stage_def[0].inner_valid_shift[j] <= 1'b0;
                     end
                 end
             end
@@ -4366,9 +4366,9 @@ module crossbar_one_hot_seq#(
             assign inner_cmd_wire_second_stage = {first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_valid_shift};
 
             //data_mux
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:second_stage_data
-                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_res_shift))
                 begin
                     case(inner_cmd_wire_second_stage)
                         4'b0001:
@@ -4400,9 +4400,9 @@ module crossbar_one_hot_seq#(
             end
 
             //valid_mux
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:second_stage_valid
-                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_rst_shift))
+                if(first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_en_shift && (~first_stage_def[NUM_WIRE_PIPELINE_FIRST_STAGE-1].inner_res_shift))
                 begin
                     case(inner_cmd_wire_second_stage)
                         4'b0001:
@@ -4436,14 +4436,14 @@ module crossbar_one_hot_seq#(
 
         for(j=1; j< NUM_OUT_WIRE_PIPELINE; j=j+1)
         begin:shift_output
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
                 output_shift_def[j].o_valid_reg_shift <= output_shift_def[j-1].o_valid_reg_shift;
                 output_shift_def[j].o_data_bus_reg_shift <=  output_shift_def[j-1].o_data_bus_reg_shift;
             end
-        end 
+        end
 
-        always @(posedge clk) 
+        always @(posedge clk or negedge rst_n)
         begin:shift_output_last
             o_valid_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_valid_reg_shift;
             o_data_bus_reg <= output_shift_def[NUM_OUT_WIRE_PIPELINE-1].o_data_bus_reg_shift;
@@ -4458,45 +4458,45 @@ endmodule
 
 `ifdef In16_Out8_pipeline_wire
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 16   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 16
 )(
     // timeing signals
     clk,
-	rst,
-	
-    // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    rst_n,
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    // data signals
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
+
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	localparam NUM_IN_WIRE_PIPELINE = 7;
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+    localparam NUM_IN_WIRE_PIPELINE = 7;
     // interface
-	input                                        clk;
-	input                                        rst;
-	
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input                                        clk;
+    input                                        rst_n;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
+
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -4509,39 +4509,39 @@ module crossbar_one_hot_seq#(
             reg  [WIDTH_INPUT_DATA-1:0]          i_data_shift;
             reg  [TOTAL_COMMAND-1:0]            i_cmd_shift;
             reg                                  i_en_shift;
-            reg                                  rst_shift;
-        end 
+            reg                                  res_shift;
+        end
 
-        always @(posedge clk) 
+        always @(posedge clk or negedge rst_n)
         begin:shift_first
             input_shift_def[0].i_valid_shift <= i_valid;
             input_shift_def[0].i_data_shift <= i_data_bus;
             input_shift_def[0].i_cmd_shift <= i_cmd;
             input_shift_def[0].i_en_shift <= i_en;
-            input_shift_def[0].rst_shift <= rst;
+            input_shift_def[0].res_shift <= rst_n;
         end
 
         for(i=1; i< NUM_IN_WIRE_PIPELINE; i=i+1)
         begin:input_shift
-            always @(posedge clk) 
+            always @(posedge clk or negedge rst_n)
             begin
                 input_shift_def[i].i_valid_shift <= input_shift_def[i-1].i_valid_shift;
                 input_shift_def[i].i_data_shift <= input_shift_def[i-1].i_data_shift;
                 input_shift_def[i].i_cmd_shift <= input_shift_def[i-1].i_cmd_shift;
                 input_shift_def[i].i_en_shift <= input_shift_def[i-1].i_en_shift;
-                input_shift_def[i].rst_shift <= input_shift_def[i-1].rst_shift;
+                input_shift_def[i].res_shift <= input_shift_def[i-1].res_shift;
             end
-        end 
+        end
 
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin: o_data_output_mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
             assign inner_cmd_wire = {input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[15*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[14*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[13*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[12*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[11*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[10*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[9*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[8*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[7*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[6*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[5*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[4*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[3*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[2*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[1*NUM_OUTPUT_DATA+i],input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_cmd_shift[0*NUM_OUTPUT_DATA+i]};
-            
+
             //data_mux
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-                if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].res_shift))
                 begin
                     case(inner_cmd_wire)
                         16'b0000000000000001:
@@ -4621,9 +4621,9 @@ module crossbar_one_hot_seq#(
             end
 
             //valid_mux
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-                if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].rst_shift))
+                if(input_shift_def[NUM_IN_WIRE_PIPELINE-1].i_en_shift && (~input_shift_def[NUM_IN_WIRE_PIPELINE-1].res_shift))
                 begin
                     case(inner_cmd_wire)
                         16'b0000000000000001:
@@ -4712,43 +4712,43 @@ endmodule
 
 `ifdef In64_Out8
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 64   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 64
 )(
     // timeing signals
     clk,
-	rst,
-	
+    rst_n,
+
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
-	
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
+
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
@@ -4759,9 +4759,9 @@ module crossbar_one_hot_seq#(
         begin: o_data_output_mux
             wire [NUM_INPUT_DATA-1:0] inner_cmd_wire;
             assign inner_cmd_wire = {i_cmd[63*NUM_OUTPUT_DATA+i],i_cmd[62*NUM_OUTPUT_DATA+i],i_cmd[61*NUM_OUTPUT_DATA+i],i_cmd[60*NUM_OUTPUT_DATA+i],i_cmd[59*NUM_OUTPUT_DATA+i],i_cmd[58*NUM_OUTPUT_DATA+i],i_cmd[57*NUM_OUTPUT_DATA+i],i_cmd[56*NUM_OUTPUT_DATA+i],i_cmd[55*NUM_OUTPUT_DATA+i],i_cmd[54*NUM_OUTPUT_DATA+i],i_cmd[53*NUM_OUTPUT_DATA+i],i_cmd[52*NUM_OUTPUT_DATA+i],i_cmd[51*NUM_OUTPUT_DATA+i],i_cmd[50*NUM_OUTPUT_DATA+i],i_cmd[49*NUM_OUTPUT_DATA+i],i_cmd[48*NUM_OUTPUT_DATA+i],i_cmd[47*NUM_OUTPUT_DATA+i],i_cmd[46*NUM_OUTPUT_DATA+i],i_cmd[45*NUM_OUTPUT_DATA+i],i_cmd[44*NUM_OUTPUT_DATA+i],i_cmd[43*NUM_OUTPUT_DATA+i],i_cmd[42*NUM_OUTPUT_DATA+i],i_cmd[41*NUM_OUTPUT_DATA+i],i_cmd[40*NUM_OUTPUT_DATA+i],i_cmd[39*NUM_OUTPUT_DATA+i],i_cmd[38*NUM_OUTPUT_DATA+i],i_cmd[37*NUM_OUTPUT_DATA+i],i_cmd[36*NUM_OUTPUT_DATA+i],i_cmd[35*NUM_OUTPUT_DATA+i],i_cmd[34*NUM_OUTPUT_DATA+i],i_cmd[33*NUM_OUTPUT_DATA+i],i_cmd[32*NUM_OUTPUT_DATA+i],i_cmd[31*NUM_OUTPUT_DATA+i],i_cmd[30*NUM_OUTPUT_DATA+i],i_cmd[29*NUM_OUTPUT_DATA+i],i_cmd[28*NUM_OUTPUT_DATA+i],i_cmd[27*NUM_OUTPUT_DATA+i],i_cmd[26*NUM_OUTPUT_DATA+i],i_cmd[25*NUM_OUTPUT_DATA+i],i_cmd[24*NUM_OUTPUT_DATA+i],i_cmd[23*NUM_OUTPUT_DATA+i],i_cmd[22*NUM_OUTPUT_DATA+i],i_cmd[21*NUM_OUTPUT_DATA+i],i_cmd[20*NUM_OUTPUT_DATA+i],i_cmd[19*NUM_OUTPUT_DATA+i],i_cmd[18*NUM_OUTPUT_DATA+i],i_cmd[17*NUM_OUTPUT_DATA+i],i_cmd[16*NUM_OUTPUT_DATA+i],i_cmd[15*NUM_OUTPUT_DATA+i],i_cmd[14*NUM_OUTPUT_DATA+i],i_cmd[13*NUM_OUTPUT_DATA+i],i_cmd[12*NUM_OUTPUT_DATA+i],i_cmd[11*NUM_OUTPUT_DATA+i],i_cmd[10*NUM_OUTPUT_DATA+i],i_cmd[9*NUM_OUTPUT_DATA+i],i_cmd[8*NUM_OUTPUT_DATA+i],i_cmd[7*NUM_OUTPUT_DATA+i],i_cmd[6*NUM_OUTPUT_DATA+i],i_cmd[5*NUM_OUTPUT_DATA+i],i_cmd[4*NUM_OUTPUT_DATA+i],i_cmd[3*NUM_OUTPUT_DATA+i],i_cmd[2*NUM_OUTPUT_DATA+i],i_cmd[1*NUM_OUTPUT_DATA+i],i_cmd[0*NUM_OUTPUT_DATA+i]};
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire)
                         64'b0000000000000000000000000000000000000000000000000000000000000001:
@@ -5110,54 +5110,54 @@ endmodule
 
 `ifdef In64_Out8_hier_8_8
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 64   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 64
 )(
     // timeing signals
     clk,
-    rst,
+    rst_n,
 
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	localparam NUM_IN_MUX_FIRST_STAGE = 8;
-	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
 
-	localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
-	localparam NUM_MUX_SECOND_STAGE = 1;
+    localparam NUM_IN_MUX_FIRST_STAGE = 8;
+    localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+
+    localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
+    localparam NUM_MUX_SECOND_STAGE = 1;
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
-    
+
     genvar i,j;
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
@@ -5165,15 +5165,15 @@ module crossbar_one_hot_seq#(
             // first pipeline stage -- buffer definition.
             reg    [NUM_IN_MUX_FIRST_STAGE*DATA_WIDTH-1:0]      inner_first_stage_data_reg;
             reg    [NUM_IN_MUX_FIRST_STAGE-1:0]                 inner_first_stage_valid_reg;
-            
+
             // first pipeline stage -- 8 * 8:1 mux logic.
             for(j=0; j< NUM_MUX_FIRST_STAGE; j=j+1)
             begin:first_stage
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
                 assign  inner_cmd_wire = {i_cmd[(7+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(6+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(5+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(4+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire)
                             8'b00000001:
@@ -5231,7 +5231,7 @@ module crossbar_one_hot_seq#(
                     else
                     begin
                         inner_first_stage_data_reg[j*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                        inner_first_stage_valid_reg[j] <= 1'b0; 
+                        inner_first_stage_valid_reg[j] <= 1'b0;
                     end
                 end
             end
@@ -5239,9 +5239,9 @@ module crossbar_one_hot_seq#(
             // second stage -- a single 8:1 mux.
             wire  [NUM_IN_MUX_SECOND_STAGE-1:0]  inner_cmd_wire_second_stage;
             assign inner_cmd_wire_second_stage = inner_first_stage_valid_reg;
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:second_stage
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_second_stage)
                         8'b00000001:
@@ -5287,14 +5287,14 @@ module crossbar_one_hot_seq#(
                         default:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b0;                
+                            o_valid_reg[i] <= 1'b0;
                         end
                     endcase
                 end
                 else
                 begin
                     o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                    o_valid_reg[i] <= 1'b0; 
+                    o_valid_reg[i] <= 1'b0;
                 end
             end
         end
@@ -5304,61 +5304,61 @@ module crossbar_one_hot_seq#(
     assign o_valid = o_valid_reg;
 
 endmodule
-`endif  
+`endif
 
 
 
 
 `ifdef In32_Out8_hier_4_8
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 32   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 32
 )(
     // timeing signals
     clk,
-    rst,
+    rst_n,
 
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	localparam NUM_IN_MUX_FIRST_STAGE = 4;In32_Out8_hier_3_lvl_2_2_8_separate
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+
+    localparam NUM_IN_MUX_FIRST_STAGE = 4;In32_Out8_hier_3_lvl_2_2_8_separate
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
-    
+
     // first pipeline stage -- buffer definition.
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]      inner_first_stage_data_reg;
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE-1:0]                 inner_first_stage_valid_reg;
-    
+
     genvar i,j;
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
@@ -5368,9 +5368,9 @@ module crossbar_one_hot_seq#(
             begin:first_stage
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
                 assign  inner_cmd_wire = {i_cmd[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire & i_valid[j*NUM_IN_MUX_FIRST_STAGE+:NUM_IN_MUX_FIRST_STAGE])
                             4'b0001:
@@ -5403,7 +5403,7 @@ module crossbar_one_hot_seq#(
                     else
                     begin
                         inner_first_stage_data_reg[(i*NUM_OUTPUT_DATA+j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                        inner_first_stage_valid_reg[(i*NUM_OUTPUT_DATA+j)] <= 1'b0; 
+                        inner_first_stage_valid_reg[(i*NUM_OUTPUT_DATA+j)] <= 1'b0;
                     end
                 end
             end
@@ -5411,9 +5411,9 @@ module crossbar_one_hot_seq#(
             // second stage -- a single 8:1 mux.
             wire  [NUM_IN_MUX_SECOND_STAGE-1:0]  inner_cmd_wire_second_stage;
             assign inner_cmd_wire_second_stage = inner_first_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_FIRST_STAGE];
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:second_stage
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_second_stage)
                         8'b00000001:
@@ -5459,14 +5459,14 @@ module crossbar_one_hot_seq#(
                         default:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b0;                
+                            o_valid_reg[i] <= 1'b0;
                         end
                     endcase
                 end
                 else
                 begin
                     o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                    o_valid_reg[i] <= 1'b0; 
+                    o_valid_reg[i] <= 1'b0;
                 end
             end
         end
@@ -5477,66 +5477,66 @@ module crossbar_one_hot_seq#(
     assign o_valid = o_valid_reg;
 
 endmodule
-`endif  
+`endif
 
 
 
 `ifdef In32_Out8_hier_4_8_separate
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 32   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 32
 )(
     // timeing signals
     clk,
-    rst,
+    rst_n,
 
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	localparam NUM_IN_MUX_FIRST_STAGE = 4;
-	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
 
-	localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
-	localparam NUM_MUX_SECOND_STAGE = 1;
+    localparam NUM_IN_MUX_FIRST_STAGE = 4;
+    localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
 
-	localparam DATA_INDEX_BIT_WIDTH = $clog2(WIDTH_INPUT_DATA);
+    localparam NUM_IN_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE;
+    localparam NUM_MUX_SECOND_STAGE = 1;
+
+    localparam DATA_INDEX_BIT_WIDTH = $clog2(WIDTH_INPUT_DATA);
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
-    
+
     // first pipeline stage -- buffer definition.
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]      inner_first_stage_data_reg;
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE-1:0]                 inner_first_stage_valid_reg;
-    
+
     genvar i,j,k;
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
@@ -5546,9 +5546,9 @@ module crossbar_one_hot_seq#(
             begin:first_stage_data
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
                 assign  inner_cmd_wire = {i_cmd[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire)
                             4'b0001:
@@ -5585,9 +5585,9 @@ module crossbar_one_hot_seq#(
             begin:first_stage_valid
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_valid;
                 assign  inner_cmd_wire_valid = {i_cmd[(3+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(2+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire_valid)
                             4'b0001:
@@ -5614,7 +5614,7 @@ module crossbar_one_hot_seq#(
                     end
                     else
                     begin
-                        inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0; 
+                        inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0;
                     end
                 end
             end
@@ -5622,9 +5622,9 @@ module crossbar_one_hot_seq#(
             // second stage -- data -- a single 8:1 mux.
             wire  [NUM_IN_MUX_SECOND_STAGE-1:0]  inner_cmd_wire_second_stage;
             assign inner_cmd_wire_second_stage = inner_first_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_FIRST_STAGE];
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:second_stage
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_second_stage)
                         8'b00000001:
@@ -5673,7 +5673,7 @@ module crossbar_one_hot_seq#(
 
             // second stage -- valid -- a single 8:1 or tree.
             localparam  LEVEL_OR_TREE = $clog2(NUM_IN_MUX_SECOND_STAGE);
-            
+
             wire  [NUM_IN_MUX_SECOND_STAGE-1:0]          inner_cmd_wire_second_stage_valid;
             assign inner_cmd_wire_second_stage_valid = inner_first_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_FIRST_STAGE];
 
@@ -5682,7 +5682,7 @@ module crossbar_one_hot_seq#(
                 localparam WIDTH_VALID = NUM_IN_MUX_SECOND_STAGE>>(j+1);
                 wire   [WIDTH_VALID-1:0]  inner_o_valid_tree_reg;
             end
-            
+
             for (j=0; j<LEVEL_OR_TREE-1; j=j+1)
             begin: o_valid_gen_tree_lvl_assignment
                 localparam WIDTH_VALID = (NUM_IN_MUX_SECOND_STAGE>>(j+1));
@@ -5699,10 +5699,10 @@ module crossbar_one_hot_seq#(
                     end
                 end
             end
-            
-            always@(posedge clk)
+
+            always@(posedge clk or negedge rst_n)
             begin
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     o_valid_reg[i] <= o_valid_gen_tree_lvl[LEVEL_OR_TREE-2].inner_o_valid_tree_reg[0] | o_valid_gen_tree_lvl[LEVEL_OR_TREE-2].inner_o_valid_tree_reg[1];
                 end
@@ -5715,62 +5715,62 @@ module crossbar_one_hot_seq#(
     assign o_valid = o_valid_reg;
 
 endmodule
-`endif  
+`endif
 
 
 
 `ifdef In32_Out8_hier_3_lvl_2_2_8
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 32   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 32
 )(
     // timeing signals
     clk,
-    rst,
+    rst_n,
 
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	localparam NUM_IN_MUX_FIRST_STAGE = 2;
-	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
 
-	localparam NUM_IN_MUX_SECOND_STAGE = 2;
-	localparam NUM_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE >> $clog2(NUM_IN_MUX_SECOND_STAGE);
+    localparam NUM_IN_MUX_FIRST_STAGE = 2;
+    localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
 
-	localparam NUM_IN_MUX_THIRD_STAGE = NUM_MUX_SECOND_STAGE;
-	localparam NUM_MUX_THIRD_STAGE = 1;
+    localparam NUM_IN_MUX_SECOND_STAGE = 2;
+    localparam NUM_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE >> $clog2(NUM_IN_MUX_SECOND_STAGE);
+
+    localparam NUM_IN_MUX_THIRD_STAGE = NUM_MUX_SECOND_STAGE;
+    localparam NUM_MUX_THIRD_STAGE = 1;
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
-    
+
     // first pipeline stage -- buffer definition.
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]       inner_first_stage_data_reg;
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE-1:0]                  inner_first_stage_valid_reg;
@@ -5778,10 +5778,10 @@ module crossbar_one_hot_seq#(
     // second pipeline stage -- buffer definition.
     reg    [NUM_OUTPUT_DATA*NUM_MUX_SECOND_STAGE*DATA_WIDTH-1:0]      inner_second_stage_data_reg;
     reg    [NUM_OUTPUT_DATA*NUM_MUX_SECOND_STAGE-1:0]                 inner_second_stage_valid_reg;
-    
+
     genvar i,j,k;
     generate
-        
+
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
         begin:output_mux
             // first pipeline stage -- 16 * 2:1 mux logic.
@@ -5789,9 +5789,9 @@ module crossbar_one_hot_seq#(
             begin:first_stage
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire;
                 assign  inner_cmd_wire = {i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire)
                             2'b01:
@@ -5814,7 +5814,7 @@ module crossbar_one_hot_seq#(
                     else
                     begin
                         inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                        inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0; 
+                        inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0;
                     end
                 end
             end
@@ -5824,9 +5824,9 @@ module crossbar_one_hot_seq#(
             begin:second_stage
                 wire  [NUM_IN_MUX_SECOND_STAGE-1:0]       inner_cmd_wire_second_stage_valid;
                 assign  inner_cmd_wire_second_stage_valid = inner_first_stage_valid_reg[(i*NUM_OUTPUT_DATA + j)*NUM_IN_MUX_FIRST_STAGE+:NUM_IN_MUX_FIRST_STAGE];
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire_second_stage_valid)
                             2'b01:
@@ -5849,7 +5849,7 @@ module crossbar_one_hot_seq#(
                     else
                     begin
                         inner_second_stage_data_reg[(i*NUM_MUX_SECOND_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                        inner_second_stage_valid_reg[(i*NUM_MUX_SECOND_STAGE+j)] <= 1'b0; 
+                        inner_second_stage_valid_reg[(i*NUM_MUX_SECOND_STAGE+j)] <= 1'b0;
                     end
                 end
             end
@@ -5857,9 +5857,9 @@ module crossbar_one_hot_seq#(
             // third stage -- a single 8:1 mux.
             wire  [NUM_IN_MUX_THIRD_STAGE-1:0]  inner_cmd_wire_third_stage;
             assign inner_cmd_wire_third_stage = inner_second_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_SECOND_STAGE];
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:third_stage
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_third_stage)
                         8'b00000001:
@@ -5905,14 +5905,14 @@ module crossbar_one_hot_seq#(
                         default:
                         begin
                             o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                            o_valid_reg[i] <= 1'b0;                
+                            o_valid_reg[i] <= 1'b0;
                         end
                     endcase
                 end
                 else
                 begin
                     o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
-                    o_valid_reg[i] <= 1'b0; 
+                    o_valid_reg[i] <= 1'b0;
                 end
             end
         end
@@ -5922,62 +5922,62 @@ module crossbar_one_hot_seq#(
     assign o_valid = o_valid_reg;
 
 endmodule
-`endif  
+`endif
 
 
 `ifdef In32_Out8_hier_3_lvl_2_2_8_separate
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 32   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 32
 )(
     // timeing signals
     clk,
-    rst,
+    rst_n,
 
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	localparam NUM_IN_MUX_FIRST_STAGE = 2;
-	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
 
-	localparam NUM_IN_MUX_SECOND_STAGE = 2;
-	localparam NUM_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE >> $clog2(NUM_IN_MUX_SECOND_STAGE);
+    localparam NUM_IN_MUX_FIRST_STAGE = 2;
+    localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
 
-	localparam NUM_IN_MUX_THIRD_STAGE = NUM_MUX_SECOND_STAGE;
-	localparam NUM_MUX_THIRD_STAGE = 1;
+    localparam NUM_IN_MUX_SECOND_STAGE = 2;
+    localparam NUM_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE >> $clog2(NUM_IN_MUX_SECOND_STAGE);
+
+    localparam NUM_IN_MUX_THIRD_STAGE = NUM_MUX_SECOND_STAGE;
+    localparam NUM_MUX_THIRD_STAGE = 1;
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                  i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
-    
+
     // first pipeline stage -- buffer definition.
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]       inner_first_stage_data_reg;
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE-1:0]                  inner_first_stage_valid_reg;
@@ -5985,7 +5985,7 @@ module crossbar_one_hot_seq#(
     // second pipeline stage -- buffer definition.
     reg    [NUM_OUTPUT_DATA*NUM_MUX_SECOND_STAGE*DATA_WIDTH-1:0]      inner_second_stage_data_reg;
     reg    [NUM_OUTPUT_DATA*NUM_MUX_SECOND_STAGE-1:0]                 inner_second_stage_valid_reg;
-    
+
     genvar i,j,k;
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
@@ -5995,9 +5995,9 @@ module crossbar_one_hot_seq#(
             begin:first_stage
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_data;
                 assign  inner_cmd_wire_data = {i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire_data)
                             2'b01:
@@ -6025,9 +6025,9 @@ module crossbar_one_hot_seq#(
             begin:first_stage_valid
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_valid;
                 assign  inner_cmd_wire_valid = {i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire_valid)
                             2'b01:
@@ -6046,7 +6046,7 @@ module crossbar_one_hot_seq#(
                     end
                     else
                     begin
-                        inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0; 
+                        inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0;
                     end
                 end
             end
@@ -6056,9 +6056,9 @@ module crossbar_one_hot_seq#(
             begin:second_stage
                 wire  [NUM_IN_MUX_SECOND_STAGE-1:0]       inner_cmd_wire_second_stage_data;
                 assign  inner_cmd_wire_second_stage_data = inner_first_stage_valid_reg[(i*NUM_OUTPUT_DATA + j)*NUM_IN_MUX_FIRST_STAGE+:NUM_IN_MUX_FIRST_STAGE];
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire_second_stage_data)
                             2'b01:
@@ -6087,9 +6087,9 @@ module crossbar_one_hot_seq#(
             begin:second_stage_valid
                 wire  [NUM_IN_MUX_SECOND_STAGE-1:0]       inner_cmd_wire_second_stage_valid;
                 assign  inner_cmd_wire_second_stage_valid = inner_first_stage_valid_reg[(i*NUM_OUTPUT_DATA + j)*NUM_IN_MUX_FIRST_STAGE+:NUM_IN_MUX_FIRST_STAGE];
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(i_en && (~rst_n))
                     begin
                         case(inner_cmd_wire_second_stage_valid)
                             2'b01:
@@ -6108,7 +6108,7 @@ module crossbar_one_hot_seq#(
                     end
                     else
                     begin
-                        inner_second_stage_valid_reg[(i*NUM_MUX_SECOND_STAGE+j)] <= 1'b0; 
+                        inner_second_stage_valid_reg[(i*NUM_MUX_SECOND_STAGE+j)] <= 1'b0;
                     end
                 end
             end
@@ -6116,9 +6116,9 @@ module crossbar_one_hot_seq#(
             // third stage -- a single 8:1 mux.
             wire  [NUM_IN_MUX_THIRD_STAGE-1:0]  inner_cmd_wire_third_stage;
             assign inner_cmd_wire_third_stage = inner_second_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_SECOND_STAGE];
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:third_stage
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_third_stage)
                         8'b00000001:
@@ -6168,9 +6168,9 @@ module crossbar_one_hot_seq#(
             // third stage -- valid --  a single 8:1 mux.
             wire  [NUM_IN_MUX_THIRD_STAGE-1:0]  inner_cmd_wire_third_stage_valid;
             assign inner_cmd_wire_third_stage_valid = inner_second_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_SECOND_STAGE];
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:third_stage_valid
-                if(i_en && (~rst))
+                if(i_en && (~rst_n))
                 begin
                     case(inner_cmd_wire_third_stage_valid)
                         8'b00000001:
@@ -6207,13 +6207,13 @@ module crossbar_one_hot_seq#(
                         end
                         default:
                         begin
-                            o_valid_reg[i] <= 1'b0;                
+                            o_valid_reg[i] <= 1'b0;
                         end
                     endcase
                 end
                 else
                 begin
-                    o_valid_reg[i] <= 1'b0; 
+                    o_valid_reg[i] <= 1'b0;
                 end
             end
         end
@@ -6230,57 +6230,57 @@ endmodule
 
 `ifdef In32_Out8_hier_3_lvl_2_2_8_separate
 module crossbar_one_hot_seq#(
-	parameter DATA_WIDTH = 32,      // could be arbitrary number
-	parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
-	parameter NUM_INPUT_DATA = 32   
+    parameter DATA_WIDTH = 32,      // could be arbitrary number
+    parameter NUM_OUTPUT_DATA  = 8, // must be power of 2.
+    parameter NUM_INPUT_DATA = 32
 )(
     // timeing signals
     clk,
-    rst,
+    rst_n,
 
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input data bus coming into distribute switch
-	
-	o_valid,        // output valid
-    o_data_bus,     // output data 
+    i_valid,        // valid input data signal
+    i_data_bus,     // input data bus coming into distribute switch
 
-	// control signals
-	i_en,           // distribute switch enable
-	i_cmd           // the input should be one-hot encoded command 
+    o_valid,        // output valid
+    o_data_bus,     // output data
+
+    // control signals
+    i_en,           // distribute switch enable
+    i_cmd           // the input should be one-hot encoded command
 );
 
-	//parameter
-	localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
-	
-	localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
-	localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
+    //parameter
+    localparam TOTAL_COMMAND = NUM_INPUT_DATA*NUM_OUTPUT_DATA;
 
-	localparam NUM_IN_MUX_FIRST_STAGE = 2;
-	localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
+    localparam WIDTH_INPUT_DATA = NUM_INPUT_DATA*DATA_WIDTH;
+    localparam WIDTH_OUTPUT_DATA = NUM_OUTPUT_DATA*DATA_WIDTH;
 
-	localparam NUM_IN_MUX_SECOND_STAGE = 2;
-	localparam NUM_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE >> $clog2(NUM_IN_MUX_SECOND_STAGE);
+    localparam NUM_IN_MUX_FIRST_STAGE = 2;
+    localparam NUM_MUX_FIRST_STAGE = NUM_INPUT_DATA >> $clog2(NUM_IN_MUX_FIRST_STAGE);
 
-	localparam NUM_IN_MUX_THIRD_STAGE = NUM_MUX_SECOND_STAGE;
-	localparam NUM_MUX_THIRD_STAGE = 1;
+    localparam NUM_IN_MUX_SECOND_STAGE = 2;
+    localparam NUM_MUX_SECOND_STAGE = NUM_MUX_FIRST_STAGE >> $clog2(NUM_IN_MUX_SECOND_STAGE);
+
+    localparam NUM_IN_MUX_THIRD_STAGE = NUM_MUX_SECOND_STAGE;
+    localparam NUM_MUX_THIRD_STAGE = 1;
 
     // interface
-	input                                        clk;
-	input                                        rst;
+    input                                        clk;
+    input                                        rst_n;
 
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
-	
-	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
-	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 
-	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+    output [NUM_OUTPUT_DATA-1:0]                 o_valid;
+    output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
+    input  [TOTAL_COMMAND-1:0]                   i_cmd;
 
     reg    [NUM_OUTPUT_DATA-1:0]                 o_valid_reg;
     reg    [WIDTH_OUTPUT_DATA-1:0]               o_data_bus_reg;
-    
+
     // first pipeline stage -- buffer definition.
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE*DATA_WIDTH-1:0]       inner_first_stage_data_reg;
     reg    [NUM_OUTPUT_DATA*NUM_MUX_FIRST_STAGE-1:0]                  inner_first_stage_valid_reg;
@@ -6288,7 +6288,7 @@ module crossbar_one_hot_seq#(
     // second pipeline stage -- buffer definition.
     reg    [NUM_OUTPUT_DATA*NUM_MUX_SECOND_STAGE*DATA_WIDTH-1:0]      inner_second_stage_data_reg;
     reg    [NUM_OUTPUT_DATA*NUM_MUX_SECOND_STAGE-1:0]                 inner_second_stage_valid_reg;
-    
+
     genvar i,j,k;
     generate
         for(i=0; i<NUM_OUTPUT_DATA; i=i+1)
@@ -6298,9 +6298,13 @@ module crossbar_one_hot_seq#(
             begin:first_stage
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_data;
                 assign  inner_cmd_wire_data = {i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(!rst_n)
+                    begin
+                        inner_first_stage_data_reg[(i*NUM_MUX_FIRST_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    end
+                    else if(i_en)
                     begin
                         case(inner_cmd_wire_data)
                             2'b01:
@@ -6328,9 +6332,13 @@ module crossbar_one_hot_seq#(
             begin:first_stage_valid
                 wire  [NUM_IN_MUX_FIRST_STAGE-1:0]       inner_cmd_wire_valid;
                 assign  inner_cmd_wire_valid = {i_cmd[(1+j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i],i_cmd[(j*NUM_IN_MUX_FIRST_STAGE)*NUM_OUTPUT_DATA+i]};
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(!rst_n)
+                    begin
+                        inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0;
+                    end
+                    else if(i_en)
                     begin
                         case(inner_cmd_wire_valid)
                             2'b01:
@@ -6349,7 +6357,7 @@ module crossbar_one_hot_seq#(
                     end
                     else
                     begin
-                        inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0; 
+                        inner_first_stage_valid_reg[(i*NUM_MUX_FIRST_STAGE+j)] <= 1'b0;
                     end
                 end
             end
@@ -6359,9 +6367,13 @@ module crossbar_one_hot_seq#(
             begin:second_stage
                 wire  [NUM_IN_MUX_SECOND_STAGE-1:0]       inner_cmd_wire_second_stage_data;
                 assign  inner_cmd_wire_second_stage_data = inner_first_stage_valid_reg[(i*NUM_OUTPUT_DATA + j)*NUM_IN_MUX_FIRST_STAGE+:NUM_IN_MUX_FIRST_STAGE];
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(!rst_n)
+                    begin
+                        inner_second_stage_data_reg[(i*NUM_MUX_SECOND_STAGE+j)*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                    end
+                    else if(i_en)
                     begin
                         case(inner_cmd_wire_second_stage_data)
                             2'b01:
@@ -6390,9 +6402,13 @@ module crossbar_one_hot_seq#(
             begin:second_stage_valid
                 wire  [NUM_IN_MUX_SECOND_STAGE-1:0]       inner_cmd_wire_second_stage_valid;
                 assign  inner_cmd_wire_second_stage_valid = inner_first_stage_valid_reg[(i*NUM_OUTPUT_DATA + j)*NUM_IN_MUX_FIRST_STAGE+:NUM_IN_MUX_FIRST_STAGE];
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin
-                    if(i_en && (~rst))
+                    if(!rst_n)
+                    begin
+                        inner_second_stage_valid_reg[(i*NUM_MUX_SECOND_STAGE+j)] <= 1'b0;
+                    end
+                    else if(i_en)
                     begin
                         case(inner_cmd_wire_second_stage_valid)
                             2'b01:
@@ -6411,7 +6427,7 @@ module crossbar_one_hot_seq#(
                     end
                     else
                     begin
-                        inner_second_stage_valid_reg[(i*NUM_MUX_SECOND_STAGE+j)] <= 1'b0; 
+                        inner_second_stage_valid_reg[(i*NUM_MUX_SECOND_STAGE+j)] <= 1'b0;
                     end
                 end
             end
@@ -6419,9 +6435,13 @@ module crossbar_one_hot_seq#(
             // third stage -- a single 8:1 mux.
             wire  [NUM_IN_MUX_THIRD_STAGE-1:0]  inner_cmd_wire_third_stage;
             assign inner_cmd_wire_third_stage = inner_second_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_SECOND_STAGE];
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:third_stage
-                if(i_en && (~rst))
+                if(!rst_n)
+                begin
+                    o_data_bus_reg[i*DATA_WIDTH+:DATA_WIDTH] <= {DATA_WIDTH{1'b0}};
+                end
+                else if(i_en)
                 begin
                     case(inner_cmd_wire_third_stage)
                         8'b00000001:
@@ -6471,9 +6491,13 @@ module crossbar_one_hot_seq#(
             // third stage -- valid --  a single 8:1 mux.
             wire  [NUM_IN_MUX_THIRD_STAGE-1:0]  inner_cmd_wire_third_stage_valid;
             assign inner_cmd_wire_third_stage_valid = inner_second_stage_valid_reg[i*NUM_OUTPUT_DATA+:NUM_MUX_SECOND_STAGE];
-            always@(posedge clk)
+            always@(posedge clk or negedge rst_n)
             begin:third_stage_valid
-                if(i_en && (~rst))
+                if(!rst_n)
+                begin
+                    o_valid_reg[i] <= 1'b0;
+                end
+                else if(i_en)
                 begin
                     case(inner_cmd_wire_third_stage_valid)
                         8'b00000001:
@@ -6510,13 +6534,13 @@ module crossbar_one_hot_seq#(
                         end
                         default:
                         begin
-                            o_valid_reg[i] <= 1'b0;                
+                            o_valid_reg[i] <= 1'b0;
                         end
                     endcase
                 end
                 else
                 begin
-                    o_valid_reg[i] <= 1'b0; 
+                    o_valid_reg[i] <= 1'b0;
                 end
             end
         end

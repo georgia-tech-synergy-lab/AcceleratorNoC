@@ -10,4 +10,4 @@ env.Append(CXXFLAGS=['-std=c++17', '-lboost_program_options' ])
 env.Append(LIBS=['-lboost_program_options'])
 env.Append(CPPPATH = Split(includes))
 
-env.Program('BinaryWriter', ['./src/BinaryWriter.cpp'])
+env.Program('multiplier_controller', ['./src/multiplier_controller.cpp'])

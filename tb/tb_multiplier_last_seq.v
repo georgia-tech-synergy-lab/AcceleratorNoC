@@ -1,117 +1,117 @@
 `timescale 1ns / 1ps
-/////////////////////////////////////////////////////////////
-// Top Module:  tb_multiplier_last_seq
-// Data:        Only data width matters.
-// Format:      keeping the input format unchange
-// Timing:      Sequential Logic, multiplication result has 3-cycle latency 
-// Dummy Data:  {DATA_WIDTH{1'b0}}
-// 
-// Function:    Multiplier with forwarding link for data local reuse
-// 
-//                             first cycle                                      |      second cycle
-//                                                                              |
-// 1'b0 & i_valid -> data_dynamic_wire = i_data_fwd_latch                       |
-// 1'b1 & i_valid -> data_dynamic_wire = data_stream_reg                        |    
-//                       serve as the input selection --  i_cmd[2]              |    
-//                                                           |                  |     
-//                                 i_data_fwd_latch          |                  |  
-//                                   ______               |\ v                  |      
-//  i_fwd_bus & i_fwd_valid -------->_|_|_|-------------->| \                   | 
-//                              /|                        |  |                  |
-//                             / |   ______               |  |     ______              ___
-//                            |  |-->_|_|_|-------------->|  |---->_|_|_|------------>|   | 
-//    i_data_bus & i_valid -->|  |  data_stream_latch     | /  data_dynamic_reg       | X |----> o_data_full_latch & o_valid_latch
-//                             \ |   ______               |/                          |   | 
-//                              \|-->_|_|_|------------------------------------------>|___|     
-//                              ^   data_stationary_reg
-//                              |   
-//                           i_cmd[1] -- serve as reg selection
-//                              |        1'b0 & i_valid -> data_stationary_reg = i_data_bus
-//                              |        1'b1 & i_valid -> data_stream_reg = i_data_bus
-//                              |
-//                           i_cmd[0] -- serve as input gate control
-//                                       1'b0 -> data_stationary_reg remain unchanged
-//                                       1'b0 -> data_stream_reg remain unchanged
-// 
-//                                                first stage                  |      second stage
-//                                                                             |
-//                                                                             |
-//                                                                             |
-//                                                           reg               |
-// 
-//                i_cmd[3 +: ($clog2(DATA_WIDTH)+2)] --> cmd_second_stage_reg ----> 
-// 
-// 
-//    ——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-//                     
-//  second stage       |   third stage
-//       output        |   
-//                     |     
-//                     |      specify (DATA_WIDTH>>1) kinds of bit selections + non-shift.
-//                     |    cmd_second_stage_reg[1+:($clog2(DATA_WIDTH)+1)]
-//                     |      |
-//                     |     _v_
-//                          |   |
-//  o_data_full_latch ----> |   |  ---> o_data_bus & o_valid
-//                          |___|
-//                        bit_selection
-//
-//
-//
-// Note: there might be some demand for changing data_stream_reg & data_stationary_reg & data_dynamic_wire into FIFO
-// 1. pattern to remember the configurations: 1 is always used to select data_stream_reg e.g. i_cmd[1] & i_cmd[2]
-//
-// Author:      Jianming Tong (jianming.tong@gatech.edu)
-/////////////////////////////////////////////////////////////
+/*
+    Top Module:  tb_multiplier_last_seq
+    Data:        Only data width matters.
+    Format:      keeping the input format unchange
+    Timing:      Sequential Logic, multiplication result has 3-cycle latency
+    Dummy Data:  {DATA_WIDTH{1'b0}}
+
+    Function:    Multiplier with forwarding link for data local reuse
+
+                                first cycle                                      |      second cycle
+                                                                                 |
+    1'b0 & i_valid -> data_dynamic_wire = i_data_fwd_latch                       |
+    1'b1 & i_valid -> data_dynamic_wire = data_stream_reg                        |
+                          serve as the input selection --  i_cmd[2]              |
+                                                              |                  |
+                                    i_data_fwd_latch          |                  |
+                                      ______               |\ v                  |
+     i_fwd_bus & i_fwd_valid -------->_|_|_|-------------->| \                   |
+                                 /|                        |  |                  |
+                                / |   ______               |  |     ______              ___
+                               |  |-->_|_|_|-------------->|  |---->_|_|_|------------>|   |
+       i_data_bus & i_valid -->|  |  data_stream_latch     | /  data_dynamic_reg       | X |----> o_data_full_latch & o_valid_latch
+                                \ |   ______               |/                          |   |
+                                 \|-->_|_|_|------------------------------------------>|___|
+                                 ^   data_stationary_reg
+                                 |
+                              i_cmd[1] -- serve as reg selection
+                                 |        1'b0 & i_valid -> data_stationary_reg = i_data_bus
+                                 |        1'b1 & i_valid -> data_stream_reg = i_data_bus
+                                 |
+                              i_cmd[0] -- serve as input gate control
+                                          1'b0 -> data_stationary_reg remain unchanged
+                                          1'b0 -> data_stream_reg remain unchanged
+
+                                                   first stage                  |      second stage
+                                                                                |
+                                                                                |
+                                                                                |
+                                                              reg               |
+
+                   i_cmd[3 +: ($clog2(DATA_WIDTH)+2)] --> cmd_second_stage_reg ---->
+
+
+       ——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+     second stage       |   third stage
+          output        |
+                        |
+                        |      specify (DATA_WIDTH>>1) kinds of bit selections + non-shift.
+                        |    cmd_second_stage_reg[1+:($clog2(DATA_WIDTH)+1)]
+                        |      |
+                        |     _v_
+                             |   |
+     o_data_full_latch ----> |   |  ---> o_data_bus & o_valid
+                             |___|
+                           bit_selection
+
+
+
+    Note: there might be some demand for changing data_stream_reg & data_stationary_reg & data_dynamic_wire into FIFO
+    1. pattern to remember the configurations: 1 is always used to select data_stream_reg e.g. i_cmd[1] & i_cmd[2]
+
+    Author:      Jianming Tong (jianming.tong@gatech.edu)
+*/
 
 
 module tb_multiplier_last_seq();
 
-	parameter DATA_WIDTH  = 8;
-	parameter COMMAND_WIDTH  = 4 + $clog2(DATA_WIDTH) + 1;
+    parameter DATA_WIDTH  = 8;
+    parameter COMMAND_WIDTH  = 4 + $clog2(DATA_WIDTH) + 1;
 
     // timing signals
     reg                            clk;
-    reg                            rst;
+    reg                            rst_n;
 
     // data signals
-	reg                            i_valid;        // valid input data signal
-	reg    [DATA_WIDTH-1:0]        i_data_bus;     // input data bus coming into mux
- 
+    reg                            i_valid;        // valid input data signal
+    reg    [DATA_WIDTH-1:0]        i_data_bus;     // input data bus coming into mux
+
     reg                            i_fwd_valid;    // valid input data signal
-	reg    [DATA_WIDTH-1:0]        i_fwd_bus;      // input data bus coming into mux
-	
-	wire                           o_valid;        // output valid
-    wire   [DATA_WIDTH-1:0]        o_data_bus;     // output data 
-	
-	// control signals
-	reg                            i_en;           // mux enable
-	reg    [COMMAND_WIDTH-1:0]     i_cmd;          // command 
+    reg    [DATA_WIDTH-1:0]        i_fwd_bus;      // input data bus coming into mux
+
+    wire                           o_valid;        // output valid
+    wire   [DATA_WIDTH-1:0]        o_data_bus;     // output data
+
+    // control signals
+    reg                            i_en;           // mux enable
+    reg    [COMMAND_WIDTH-1:0]     i_cmd;          // command
 
 /*
         Expected output
         # o_data_bus: 00
-        # 
+        #
         # o_data_bus: 00
-        # 
+        #
         # o_data_bus: 00
-        # 
+        #
         # o_data_bus: 42
-        # 
+        #
         # o_data_bus: 63
-        # 
+        #
         # o_data_bus: 84
-        # 
+        #
         # o_data_bus: 8c
-        # 
+        #
         # o_data_bus: c6
-        # 
+        #
         # o_data_bus: fc
-        # 
+        #
         # o_data_bus: 00
-        # 
+        #
         # o_data_bus: 00
-        # 
+        #
 */
 
     // Test case declaration
@@ -119,7 +119,7 @@ module tb_multiplier_last_seq();
     begin
         // disable
         clk = 1'b0;
-        rst = 1'b0;
+        rst_n = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'h0}};
         i_valid = 1'b1;
 
@@ -131,7 +131,7 @@ module tb_multiplier_last_seq();
 
         // reset
         #10
-        rst = 1'b1;
+        rst_n = 1'b0;
         i_data_bus = {(DATA_WIDTH>>2){4'h0}};
         i_valid = 1'b1;
 
@@ -142,7 +142,7 @@ module tb_multiplier_last_seq();
         i_cmd = 8'b01110101;
 
         // case 1 - enable & ms_init_SteadyVal
-        // 1. receive valid value from i_data_bus 
+        // 1. receive valid value from i_data_bus
         // 2. store it into i_data_stationary_reg
         // 3. no multiplication -- output invalid
         // 4. forward data invalid
@@ -152,10 +152,10 @@ module tb_multiplier_last_seq();
         // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
+        rst_n = 1'b1;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'h1}};
-        
+
         i_fwd_bus = {(DATA_WIDTH>>2){4'h8}};
         i_fwd_valid = 1'b1;
 
@@ -163,29 +163,29 @@ module tb_multiplier_last_seq();
         i_cmd = 8'b00110101;
 
         // case 2 - enable & ms_runLEdgeFirst
-        // 1. receive valid value from i_data_bus 
+        // 1. receive valid value from i_data_bus
         // 2. store it into i_data_stream_reg
         // 3. do multiplication -- o_valid = 1 (use saved data from previous cycle)
         // 4. input forward data invalid
         // 5. cut LS 8 bits
         // observed reg: i_data_stream_reg = i_data_bus
         //               i_data_stationary_reg
-        //               o_fwd valid  
-        //               o_data_bus valid  
+        //               o_fwd valid
+        //               o_data_bus valid
         // all other regs are invalid
         // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
+        rst_n = 1'b1;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'h2}};
-        
+
         i_fwd_bus = {(DATA_WIDTH>>2){4'h9}};
         i_fwd_valid = 1'b1;
 
         i_en = 1'b1;
         i_cmd = 8'b00111111;
-        
+
         // case 3 - enable & ms_runLEdge
         // 1. receive valid value from i_data_bus
         // 2. store it into i_data_stream_reg
@@ -199,15 +199,15 @@ module tb_multiplier_last_seq();
         // all other regs are invalid
         // output expect (appear 1 cycle later; used after 2 cycles):
         // o_data_bus = 3
-        // o_valid = 1 
+        // o_valid = 1
         // o_fwd_bus = 3
-        // o_fwd_valid = 1 
+        // o_fwd_valid = 1
         #10
         $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
+        rst_n = 1'b1;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'h3}};
-        
+
         i_fwd_bus = {(DATA_WIDTH>>2){4'hA}};
         i_fwd_valid = 1'b1;
 
@@ -228,10 +228,10 @@ module tb_multiplier_last_seq();
         // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
+        rst_n = 1'b1;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'h4}};
-        
+
         i_fwd_bus = {(DATA_WIDTH>>2){4'hB}};
         i_fwd_valid = 1'b1;
 
@@ -239,53 +239,53 @@ module tb_multiplier_last_seq();
         i_cmd = 8'b00111111;
 
         // case 5 - enable & ms_runMiddle
-        // 1. receive valid value from i_data_bus 
+        // 1. receive valid value from i_data_bus
         // 2. store it into i_data_stream_reg
         // 3. do multiplication -- o_valid = 1 (use saved data from previous cycle)
         // 4. receive valid input forward data
         // 5. cut LS 8 bits
         // observed reg: i_data_stream_reg = i_data_bus
         //               i_data_stationary_reg
-        //               o_fwd valid  
-        //               o_data_bus valid  
+        //               o_fwd valid
+        //               o_data_bus valid
         // all other regs are invalid
         // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
+        rst_n = 1'b1;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'h5}};
-        
+
         i_fwd_bus = {(DATA_WIDTH>>2){4'hC}};
         i_fwd_valid = 1'b1;
 
         i_en = 1'b1;
-        i_cmd = 8'b00111000; 
-        
+        i_cmd = 8'b00111000;
+
         // case 6 - enable & ms_runREdgeFirst
         // 1. receive invalid value from i_data_bus
         // 2. store it into i_data_stream_reg
         // 3. do multiplication -- o_valid = 1 (use saved data from previous cycle)
-        // 4. input forward value invalid 
+        // 4. input forward value invalid
         // 5. cut LS 8 bits
         // observed reg: i_data_stream_reg = i_data_bus
         //               i_data_stationary_reg
-        //               o_fwd valid  
-        //               o_data_bus valid  
+        //               o_fwd valid
+        //               o_data_bus valid
         // all other regs are invalid
         // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
+        rst_n = 1'b1;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'h6}};
-        
+
         i_fwd_bus = {(DATA_WIDTH>>2){4'hD}};
         i_fwd_valid = 1'b1;
 
         i_en = 1'b1;
-        i_cmd = 8'b00110111; 
-        
+        i_cmd = 8'b00110111;
+
         // case 7 - enable & ms_runREdge
         // 1. receive invalid value from i_data_bus
         // 2. store it into i_data_stream_reg
@@ -294,21 +294,21 @@ module tb_multiplier_last_seq();
         // 5. cut LS 8 bits
         // observed reg: i_data_stream_reg = i_data_bus
         //               i_data_stationary_reg
-        //               o_fwd valid  
-        //               o_data_bus valid  
+        //               o_fwd valid
+        //               o_data_bus valid
         // all other regs are invalid
         // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
+        rst_n = 1'b1;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'h7}};
-        
+
         i_fwd_bus = {(DATA_WIDTH>>2){4'hE}};
         i_fwd_valid = 1'b1;
 
         i_en = 1'b1;
-        i_cmd = 8'b00110000; 
+        i_cmd = 8'b00110000;
 
         // case 8 - enable & ms_runREdge
         // 1. receive invalid value from i_data_bus
@@ -318,38 +318,38 @@ module tb_multiplier_last_seq();
         // 5. cut MS 8 bits
         // observed reg: i_data_stream_reg = i_data_bus
         //               i_data_stationary_reg
-        //               o_fwd valid  
-        //               o_data_bus valid  
+        //               o_fwd valid
+        //               o_data_bus valid
         // all other regs are invalid
         // output expect (appear 1 cycle later; used after 2 cycles):
         #10
         $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
+        rst_n = 1'b1;
         i_valid = 1'b1;
         i_data_bus = {(DATA_WIDTH>>2){4'h7}};
-        
+
         i_fwd_bus = {(DATA_WIDTH>>2){4'hE}};
         i_fwd_valid = 1'b1;
 
         i_en = 1'b1;
-        i_cmd = 8'b11110000; 
+        i_cmd = 8'b11110000;
 
         // case 9 - no valid input
-        #10     
+        #10
         $display("o_data_bus: %h\n", o_data_bus);
-        rst = 1'b0;
+        rst_n = 1'b1;
         i_valid = 2'b00;
         i_data_bus = {(DATA_WIDTH>>2){4'h7}};
-        
+
         i_fwd_bus = {(DATA_WIDTH>>2){4'hE}};
         i_fwd_valid = 1'b0;
 
         i_en = 1'b1;
         i_cmd = 8'b00110000;
 
-        #10     
+        #10
         $display("o_data_bus: %h\n", o_data_bus);
-        #10     
+        #10
         $display("o_data_bus: %h\n", o_data_bus);
         $stop;
     end
@@ -360,15 +360,15 @@ module tb_multiplier_last_seq();
         .COMMAND_WIDTH(COMMAND_WIDTH)    // total input command bits.
     )dut (
         .clk(clk),
-        .rst(rst),
+        .rst_n(rst_n),
         .i_valid(i_valid),               // valid input data signal
         .i_data_bus(i_data_bus),         // input data
         .i_fwd_valid(i_fwd_valid),       // valid forward data signal
         .i_fwd_bus(i_fwd_bus),           // data forward input from neighbor multiplier
         .o_valid(o_valid),               // output valid
-        .o_data_bus(o_data_bus),         // output data 
+        .o_data_bus(o_data_bus),         // output data
         .i_en(i_en),                     // distribute switch enable
-        .i_cmd(i_cmd)                    // command 
+        .i_cmd(i_cmd)                    // command
     );
 
     always#5 clk=~clk;

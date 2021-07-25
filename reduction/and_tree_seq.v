@@ -1,43 +1,43 @@
 `timescale 1ns / 1ps
-/////////////////////////////////////////////////////////////
-// Top Module:  and_tree_seq
-// Data:        Only data width matters.
-// Format:      keeping the input format unchange
-// Timing:      Combinational Logic
-// Dummy Data:  {DATA_WIDTH{1'b0}}
-//
-// Parameter:   NUM_INPUT_DATA could be arbitrary integer
-//
-// Function:    AND all bit of input together
-//  MSB                                        LSB
-//   \     /     \     / ... \     /     \     / i_data_latch[0]
-//    v   v       v   v  ...  v   v       v   v    
-//    |¯¯¯|       |¯¯¯|  ...  |¯¯¯|       |¯¯¯|
-//    |___|       |___|  ...  |___|       |___|
-//      v           v    ...     v           v
-//       \         /     ...      \         /    
-//        \       /      ...       \       /
-//         \     /       ...        \     /
-//          v   v        ...         v   v
-//          |¯¯¯|        ...         |¯¯¯|       
-//          |___|        ...         |___|       
-//            v                        v
-//             \                      /     
-//              \                    /  
-//               ...              ...
-//                ...           ...        
-//                 ...        ...      
-//                    \       /
-//                     \     /
-//                      v   v
-//                      |¯¯¯|           
-//                      |___| 
-//                        |       
-//                        v
-//                   o_data_bus(logic AND of all bits of input data)
-//
-// Author:      Jianming Tong (jianming.tong@gatech.edu)
-/////////////////////////////////////////////////////////////
+/*
+    Top Module:  and_tree_seq
+    Data:        Only data width matters.
+    Format:      keeping the input format unchange
+    Timing:      Combinational Logic
+    Dummy Data:  {DATA_WIDTH{1'b0}}
+
+    Parameter:   NUM_INPUT_DATA could be arbitrary integer
+
+    Function:    AND all bit of input together
+     MSB                                        LSB
+      \     /     \     / ... \     /     \     / i_data_latch[0]
+       v   v       v   v  ...  v   v       v   v
+       |¯¯¯|       |¯¯¯|  ...  |¯¯¯|       |¯¯¯|
+       |___|       |___|  ...  |___|       |___|
+         v           v    ...     v           v
+          \         /     ...      \         /
+           \       /      ...       \       /
+            \     /       ...        \     /
+             v   v        ...         v   v
+             |¯¯¯|        ...         |¯¯¯|
+             |___|        ...         |___|
+               v                        v
+                \                      /
+                 \                    /
+                  ...              ...
+                   ...           ...
+                    ...        ...
+                       \       /
+                        \     /
+                         v   v
+                         |¯¯¯|
+                         |___|
+                           |
+                           v
+                      o_data_bus(logic AND of all bits of input data)
+
+    Author:      Jianming Tong (jianming.tong@gatech.edu)
+*/
 
 
 module and_tree_seq#(
@@ -46,36 +46,36 @@ module and_tree_seq#(
 )(
     // timing signals
     clk,
-    rst,
+    rst_n,
 
     // data signals
-	i_valid,        // valid input data signal
-	i_data_bus,     // input a vector with DATA_WIDTH in length
-	
-	o_valid,        // output valid
+    i_valid,        // valid input data signal
+    i_data_bus,     // input a vector with DATA_WIDTH in length
+
+    o_valid,        // output valid
     o_data_bus,     // output logic AND of all bits inside the input vector.
 
-	// control signals
-	i_en            // distribute switch enable
+    // control signals
+    i_en            // distribute switch enable
 );
     // timing signals
     input                                        clk;
-    input                                        rst;
-      
-	// interface
-	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
-	input  [NUM_INPUT_DATA-1:0]                  i_data_bus;
+    input                                        rst_n;
 
-	output                                       o_valid;             
-	output                                       o_data_bus; // {o_data_a, o_data_b}
+    // interface
+    input  [NUM_INPUT_DATA-1:0]                  i_valid;
+    input  [NUM_INPUT_DATA-1:0]                  i_data_bus;
 
-	input                                        i_en;
+    output                                       o_valid;
+    output                                       o_data_bus; // {o_data_a, o_data_b}
+
+    input                                        i_en;
 
     // inner parameter and logic
     localparam   NUM_LEVEL = $clog2(NUM_INPUT_DATA); // Note: inner ceiling: e.g. $clog2(18) = 5, (2^5=32).
     // use ceiling to add 1 extra level to support all possible input cases (input not exactly 2^n).
     // If the input is exactly 2^n, then the num_switch in the last level will be 0.
-    
+
     // define output wire for all switches of different level.
     genvar i,j;
     generate
@@ -85,8 +85,8 @@ module and_tree_seq#(
         // non power of 2 version is also taken into consideration
         localparam NUM_SWITCH_SHIFT =  NUM_INPUT_DATA >> i;
         localparam NOT_ADD_EXTRA_SWITCH_THIS_LEVEL = ((NUM_INPUT_DATA - ((NUM_INPUT_DATA >> i) << i)) == 0);
-        localparam NUM_SWITCH_LEVEL = (NOT_ADD_EXTRA_SWITCH_THIS_LEVEL)? NUM_SWITCH_SHIFT: (NUM_SWITCH_SHIFT + 1); 
-        
+        localparam NUM_SWITCH_LEVEL = (NOT_ADD_EXTRA_SWITCH_THIS_LEVEL)? NUM_SWITCH_SHIFT: (NUM_SWITCH_SHIFT + 1);
+
         // define the output wire for switches of level i
         reg                                     i_data_latch[0:NUM_SWITCH_LEVEL-1];
         reg                                     i_valid_latch[0:NUM_SWITCH_LEVEL-1];
@@ -109,7 +109,7 @@ module and_tree_seq#(
             else
             begin
                 AND_Tree_level[0].i_data_latch[j] = 1'b0;
-                AND_Tree_level[0].i_valid_latch[j] = 1'b0;              
+                AND_Tree_level[0].i_valid_latch[j] = 1'b0;
             end
         end
     end
@@ -121,9 +121,14 @@ module and_tree_seq#(
         begin: AND_gate_in_level
             if( j==(AND_Tree_level[i+1].NUM_SWITCH_LEVEL -1) && ((AND_Tree_level[i].NUM_SWITCH_LEVEL >> 1) != AND_Tree_level[i+1].NUM_SWITCH_LEVEL) )
             begin
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin:AND_GATE_edge
-                    if(AND_Tree_level[i].i_valid_latch[2*j] && (~rst) && i_en)
+                    if(!rst_n)
+                    begin
+                        AND_Tree_level[i+1].i_valid_latch[j] <= 1'b0;
+                        AND_Tree_level[i+1].i_data_latch[j] <= 1'b0;
+                    end
+                    else if(AND_Tree_level[i].i_valid_latch[2*j] && i_en)
                     begin
                         AND_Tree_level[i+1].i_valid_latch[j] <= 1'b1;
                         AND_Tree_level[i+1].i_data_latch[j] <= AND_Tree_level[i].i_data_latch[2*j];
@@ -134,12 +139,17 @@ module and_tree_seq#(
                         AND_Tree_level[i+1].i_data_latch[j] <= 1'b0;
                     end
                 end
-            end 
+            end
             else
             begin
-                always@(posedge clk)
+                always@(posedge clk or negedge rst_n)
                 begin:AND_GATE
-                    if(AND_Tree_level[i].i_valid_latch[2*j+1] && AND_Tree_level[i].i_valid_latch[2*j] && (~rst)  && i_en)
+                    if(!rst_n)
+                    begin
+                        AND_Tree_level[i+1].i_valid_latch[j] <= 1'b0;
+                        AND_Tree_level[i+1].i_data_latch[j] <= 1'b0;
+                    end
+                    else if(AND_Tree_level[i].i_valid_latch[2*j+1] && AND_Tree_level[i].i_valid_latch[2*j] && i_en)
                     begin
                         AND_Tree_level[i+1].i_valid_latch[j] <= 1'b1;
                         AND_Tree_level[i+1].i_data_latch[j] <= AND_Tree_level[i].i_data_latch[2*j+1] & AND_Tree_level[i].i_data_latch[2*j];

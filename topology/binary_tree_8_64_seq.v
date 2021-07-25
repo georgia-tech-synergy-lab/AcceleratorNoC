@@ -6,7 +6,7 @@ module binary_tree_8_64_seq#(
 
     // timeing signals
     clk,
-	rst,
+	rst_n,
 	
     // data signals
 	i_valid,        // valid input data signal
@@ -29,17 +29,17 @@ module binary_tree_8_64_seq#(
     
     // interface
 	input                                        clk;
-	input                                        rst;
+	input                                        rst_n;
 	
 	input  [NUM_INPUT_DATA-1:0]                  i_valid;             
 	input  [WIDTH_INPUT_DATA-1:0]                i_data_bus;
 	
 	output [NUM_OUTPUT_DATA-1:0]                 o_valid;             
 	output [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; // {o_data_a, o_data_b}
-	output [TOTAL_COMMAND-1:0]                  o_cmd; // {o_data_a, o_data_b}
+	output [TOTAL_COMMAND-1:0]                   o_cmd;      // {o_data_a, o_data_b}
 
 	input                                        i_en;
-	input  [TOTAL_COMMAND-1:0]                  i_cmd;
+	input  [TOTAL_COMMAND-1:0]                   i_cmd;
 
 
     // inner logic
@@ -55,7 +55,7 @@ module binary_tree_8_64_seq#(
                 .NUM_INPUT_DATA(1)) 
             wire_pipeline(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_valid(i_valid[i]),
                 .i_data_bus(i_data_bus[i*DATA_WIDTH+:DATA_WIDTH]),
                 .o_valid({o_valid[7*NUM_OUTPUT_DATA+i], o_inner_valid_wire[6*NUM_OUTPUT_DATA+i], o_inner_valid_wire[5*NUM_OUTPUT_DATA+i], o_inner_valid_wire[4*NUM_OUTPUT_DATA+i], o_inner_valid_wire[3*NUM_OUTPUT_DATA+i], o_inner_valid_wire[2*NUM_OUTPUT_DATA+i], o_inner_valid_wire[1*NUM_OUTPUT_DATA+i], o_inner_valid_wire[0*NUM_OUTPUT_DATA+i]}),
@@ -75,7 +75,7 @@ module binary_tree_8_64_seq#(
                 .NUM_INPUT_DATA(1)) 
             cmd_pipeline(
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .i_cmd(i_cmd[i*NUM_OUTPUT_DATA+:NUM_OUTPUT_DATA]),
                 .o_cmd_0(o_cmd[0*NUM_OUTPUT_DATA+i]),
                 .o_cmd_1(o_cmd[1*NUM_OUTPUT_DATA+i]),
