@@ -368,9 +368,7 @@ module tb_benes_merge_simple_comb();
     always#5 clk=~clk;
 
 endmodule
-
 `endif
-
 
 
 `ifdef TEST_16_INPUT_BENES_MERGE
@@ -400,7 +398,7 @@ module tb_benes_merge_simple_comb();
     wire [WIDTH_OUTPUT_DATA-1:0]               o_data_bus; //{o_data_a, o_data_b}
 
     reg                                        i_en;
-    reg  [TOTAL_COMMAND-1:0]                  i_cmd;
+    reg  [TOTAL_COMMAND-1:0]                   i_cmd;
                                     // 11 --> Multicast_HighIn
                                     // 00 --> Multicast_LowIn
                                     // 10 --> Pass Through
