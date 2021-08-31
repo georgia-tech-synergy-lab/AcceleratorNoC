@@ -141,6 +141,7 @@ module tb_maeri_first_half_seq();
         #
         # o_data_bus: 00000000000000000000000000000000
     */
+    
     initial
     begin
         // disable

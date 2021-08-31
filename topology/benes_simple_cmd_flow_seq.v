@@ -127,6 +127,7 @@ module benes_simple_cmd_flow_seq#(
                                     // 00 --> Multicast_LowIn
                                     // 10 --> Pass Through
                                     // 01 --> Pass Switch
+                                    
     output [TOTAL_OUTPUT_COMMAND-1:0]            o_cmd;
 
     // inner logic

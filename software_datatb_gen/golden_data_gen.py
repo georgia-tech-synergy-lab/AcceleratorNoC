@@ -17,6 +17,6 @@ if __name__ == "__main__":
     data = []
     for i in range(4096):
         data.append(i)
-    verification_mem_write("../data/verification.mem", data)
-    input_data_memory_write("../data/input_data.coe", data)
+    verification_mem_write("./data/verification.mem", data)
+    input_data_memory_write("./data/input_data.coe", data)
     
