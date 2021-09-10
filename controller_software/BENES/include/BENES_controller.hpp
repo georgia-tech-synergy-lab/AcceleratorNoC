@@ -29,7 +29,6 @@ typedef enum {
     OP_NOP = 9      // No operation
 } config_t;
 
-
 struct data_t{
     bool is_config_gen;
     int target_data;   //only used for multicasting, because this data will be replaced by target_data somewhere
