@@ -1,0 +1,1 @@
+number of activated router in binary tree = 120number of activated router in mux tree = 120

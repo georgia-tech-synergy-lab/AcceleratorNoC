@@ -1,0 +1,15 @@
+env = Environment()
+
+# includes = '''
+#               include
+# 			  src
+# '''
+
+env.Append(LINKFLAGS=['-lboost_program_options'])
+env.Append(CXXFLAGS=['-std=c++17', '-lboost_program_options' ])
+env.Append(LIBS=['-lboost_program_options'])
+# env.Append(CPPPATH = Split(includes))
+
+env.Program('combination', ['./combination.cpp'])
+env.Program('in_data_gen', ['./input_gen.cpp'])
+env.Program('rm_duplicate', ['./rm_duplicate.cpp'])

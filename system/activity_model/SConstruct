@@ -1,0 +1,13 @@
+env = Environment()
+
+includes = '''
+              include
+			  src
+'''
+
+env.Append(LINKFLAGS=['-lboost_program_options'])
+env.Append(CXXFLAGS=['-std=c++17', '-lboost_program_options' ])
+env.Append(LIBS=['-lboost_program_options'])
+env.Append(CPPPATH = Split(includes))
+
+env.Program('activity_model_xbar', ['./src/activity_model_xbar.cpp'])
