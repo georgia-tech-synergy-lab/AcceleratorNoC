@@ -1,5 +1,9 @@
 # Activity Factor Estimation Tool for Tree-based (Crossbar) ALL-to-ALL network
 
+The activity factor estimation tool is implementing an emulator for Verilog-based mux-tree all-to-all network and collect a number of activated routers.
+
+![./img/mux_tree_based_xbar.png](mux_tree_based_xbar.png)
+
 ## Files description
 
 In **test** folder, three functions are offered.
@@ -42,5 +46,5 @@ The brute-force command generation for 128 input all-to-all network took more th
 For a 8-input-4-output all-to-all network, the worst case is the a single input going out to all output ports. 
 
 So I implement broadcasting of a single input data out of 128 input data and get the number:
-- number of actived router in binary tree = 120  
-- number of actived router in mux tree = 120  
+- number of the active routers in binary tree = 120 
+- number of the active routers in mux tree = 120
