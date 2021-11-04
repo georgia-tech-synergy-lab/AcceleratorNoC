@@ -32,6 +32,8 @@ void setup_proc(const sim_config_t* sim_conf, sim_statistic_t* sim_stats){
     /*
         initialize the data structure
     */
+    sim_stats->num_router_binary_tree = 0;
+    sim_stats->num_router_mux_tree = 0;
 
     i_cmd.resize(sim_conf->num_in_data);
     for(int i = 0; i<sim_conf->num_in_data; i++){
@@ -111,6 +113,7 @@ void setup_proc(const sim_config_t* sim_conf, sim_statistic_t* sim_stats){
             for(int j=0; j<int(0b1 << i); j++){
                 lvl_ptr[j].value = 0; 
                 lvl_ptr[j].valid = 0; 
+                sim_stats->num_router_binary_tree++;
             }
             tree_ptr[i] = lvl_ptr;
         }
@@ -126,6 +129,7 @@ void setup_proc(const sim_config_t* sim_conf, sim_statistic_t* sim_stats){
                 lvl_ptr[j].value = 0; 
                 lvl_ptr[j].valid = 0; 
                 lvl_ptr[j].cmd = no; 
+                sim_stats->num_router_mux_tree++;
             }
             tree_ptr[i] = lvl_ptr;
         }
@@ -143,6 +147,7 @@ void setup_proc(const sim_config_t* sim_conf, sim_statistic_t* sim_stats){
 
     sim_stats->num_access_binary_tree = 0;
     sim_stats->num_access_mux_tree = 0;
+
 }
 
 
@@ -171,7 +176,6 @@ void read_cmd(const sim_config_t* sim_conf, char *const argv[]){
         i_cmd[i][j] = yes -> valid input i should be sent to the output j  
         otherwise no.
     */
-    
     for (int i=0; i<sim_conf->num_in_data; i++){
         for (int j=0; j<sim_conf->num_out_data; j++){
             if(i_cmd_out[j] == i)
@@ -180,16 +184,13 @@ void read_cmd(const sim_config_t* sim_conf, char *const argv[]){
                 i_cmd[i][j] = no;
         }
     }
-
 }
 
 
 void run_proc(const sim_config_t* sim_conf){
-
     /*
         transfer i_cmd through the binary tree
     */
-
     for (int i = 0; i<sim_conf->num_in_data; i++){
         for (int j = 0; j<sim_conf->num_out_data; j++){
             o_cmd_biary_tree[j][i] = i_cmd[i][j];
@@ -273,12 +274,14 @@ void update_statistic(const sim_config_t* sim_conf, sim_statistic_t* sim_stats){
     outfile << "number of activated router in binary tree = " << int(sim_stats->num_access_binary_tree) \
      <<  " number of activated router in mux tree = " << int(sim_stats->num_access_mux_tree) << std::endl;
 
+    outfile << "active percentage of activated routers in binary tree = " << std::setw(2) << double(sim_stats->num_access_binary_tree)/double(sim_stats->num_router_binary_tree) \
+     <<  " active percentage of activated routers in mux tree = " <<  std::setw(2) << double(sim_stats->num_access_mux_tree)/double(sim_stats->num_router_mux_tree) << std::endl;
+
     sim_stats->num_access_binary_tree = 0;
     sim_stats->num_access_mux_tree = 0;
 }
 
 void complete_proc(const sim_config_t* sim_conf){
-
     for(int k=0; k< sim_conf->num_in_data; k++){
         for(int i=0; i< sim_conf->num_lvl_log_output; i++){
             delete [] binary_tree[k][i];
@@ -305,8 +308,6 @@ void complete_proc(const sim_config_t* sim_conf){
 // Drive the cache simulator
 int main(int argc, char *const argv[])
 {
-
-    
     // initialize the configuration.
     memset(&sim_conf, 0, sizeof(sim_conf));
     memset(&sim_stats, 0, sizeof(sim_stats));
@@ -381,5 +382,4 @@ int main(int argc, char *const argv[])
         update_statistic(&sim_conf, &sim_stats);
     }
     complete_proc(&sim_conf);
-
 }

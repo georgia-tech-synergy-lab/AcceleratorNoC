@@ -12,12 +12,12 @@
 
                                 first cycle                                      |      second cycle
                                                                                  |
-    1'b0 & i_valid -> data_dynamic_wire = i_data_fwd_latch                       |
-    1'b1 & i_valid -> data_dynamic_wire = data_stream_reg                        |     1'b1 & valid_dynamic_wire ->  o_fwd_bus = data_dynamic_wire
+    1'b0 & i_valid -> data_dynamic_reg = i_data_fwd_latch                        |
+    1'b1 & i_valid -> data_dynamic_reg = data_stream_reg                         |     1'b1 & valid_dynamic_wire ->  o_fwd_bus = data_dynamic_reg
                           serve as the input selection --  i_cmd[2]              |     cmd_second_stage_reg[0](i_cmd[3]) -- serve as output fwd enable
                                                               |                  |        |
                                     i_data_fwd_latch          |                  |        v
-                                      ______               |\ v                  |      1 ____
+                                      ______               |\ v                  |    1  ___
      i_fwd_bus & i_fwd_valid -------->_|_|_|-------------->| \                   |  |---|   |---> o_fwd_bus & o_fwd_valid (output port)
                                  /|                        |  |                  |  |   |___|
                                 / |   ______               |  |     ______          |   ___
@@ -153,7 +153,6 @@ module multiplier_seq#(
                                                                // ($clog2(DATA_WIDTH) + 1) bits for bit selection
                                                                // ($clog2(DATA_WIDTH) + 2) in total
 
-
     /*
         first stage (1 cycle)
     */
@@ -188,7 +187,6 @@ module multiplier_seq#(
         valid_stationary_reg <= 1'b0;
         valid_dynamic_reg <= 1'b0;
     end
-
 
     // i_data_stationary_latch
     // --- change when input change (input in our design usually change at the posedge clk)

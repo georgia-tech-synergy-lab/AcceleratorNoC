@@ -106,7 +106,6 @@ def benes(data_in, ctrl, num_in, num_stg):
             data[0][(i<<1)] = data_in[(i<<1)]
             data[0][(i<<1)+1] = data_in[(i<<1)+1]
     
-
     # following four level
     for stg_idx in range(num_stg-1):
         # connection function transmission
@@ -147,7 +146,7 @@ if __name__ == "__main__":
     data = np.zeros(NUM_IN, np.int64)
     
     res_file = open(f"./data/res_verification.mem", "w")
-
+    
     for i in range(NUM_TEST_CASE):
         for j in range(NUM_IN):
             data[j] = int(file_list[j][i][:-1], 16) 

@@ -68,7 +68,7 @@ module adder_seq#(
 
     always@(posedge clk or negedge rst_n)
     begin
-         if(!rst_n)
+        if(!rst_n)
         begin
             o_data_bus_inner <= {(DATA_WIDTH){1'b0}};
             o_valid_inner <= 1'b0;

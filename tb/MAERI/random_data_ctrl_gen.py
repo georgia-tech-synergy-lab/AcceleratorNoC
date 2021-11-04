@@ -14,7 +14,6 @@ def input_data_memory_write(file_name, data):
         fcoe.write("memory_initialization_vector = \n")
         fcoe.write(f"{hex_data};\n")
 
-
 def random_cmd_write_mem(file_name, data):
     cmd_out = []
 

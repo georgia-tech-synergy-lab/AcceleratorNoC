@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <fstream>
 #include <getopt.h>
+#include <iomanip>
 
 #define POWER_CONSUMP 2             // the power consumption for a single router
 
@@ -25,7 +26,9 @@ struct sim_config_t {
 
 struct sim_statistic_t {
     uint64_t num_access_binary_tree; // Number of activated router in the binary tree
+    uint64_t num_router_binary_tree; // Number of level of the second-level tree
     uint64_t num_access_mux_tree;    // Number of activated router in the mux tree
+    uint64_t num_router_mux_tree;    // Number of level of the second-level tree
 };
 
 enum target_t {yes=1, no=0};

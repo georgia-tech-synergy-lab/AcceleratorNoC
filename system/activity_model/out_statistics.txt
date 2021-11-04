@@ -1,1 +1,660 @@
-number of activated router in binary tree = 120number of activated router in mux tree = 120
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 28
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.466667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 25
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.416667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 19
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.316667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667
+number of activated router in binary tree = 28 number of activated router in mux tree = 22
+active percentage of activated routers in binary tree = 0.5 active percentage of activated routers in mux tree = 0.366667

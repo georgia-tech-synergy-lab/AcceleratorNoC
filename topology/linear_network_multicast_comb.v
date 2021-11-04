@@ -9,8 +9,8 @@
     Function:    Unicast  or  Multicast(arbitrary Multicast)
                                   i_data_bus & i_valid     i_data_bus & i_valid
      i_data_bus & i_valid  -->|¯¯¯|------------------>|¯¯¯|------------------>|¯¯¯|--> i_data_bus & i_valid
-            i_dest[N-1:0]  -->|___|------------------>|___|------------------>|___|--> i_dest[N-4:0]
-             (one-hot)          |    i_dest[N-2:0]      |     i_dest[N-3:0]     |
+             i_cmd[N-1:0]  -->|___|------------------>|___|------------------>|___|--> i_cmd[N-4:0]
+             (multi-hot)        |          i_cmd[N-2:0] |          i_cmd[N-3:0] |
                                 v                       v                       v
                            o_data_bus              o_data_bus               o_data_bus
             [0*DATA_WIDTH+:DATA_WIDTH]     [1*DATA_WIDTH+:DATA_WIDTH]    [2*DATA_WIDTH+:DATA_WIDTH]
