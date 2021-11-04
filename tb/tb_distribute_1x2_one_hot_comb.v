@@ -7,7 +7,7 @@
     Dummy Data:  {DATA_WIDTH{1'b0}}
 
     Function:    Unicast  or  Multicast(arbitrary Multicast)
-    
+
                                    i_data_bus & i_valid     i_data_bus & i_valid
     i_data_bus & i_valid  -->|¯¯¯|------------------>|¯¯¯|------------------>|¯¯¯|--> i_data_bus & i_valid
             i_cmd[N-1:0]  -->|___|------------------>|___|------------------>|___|--> i_cmd[N-4:0]
@@ -25,6 +25,8 @@
 
 
 `ifdef MULTIPLE_STAGE_COMMAND_INPUT_TEST
+
+`define PERIOD 10
 
 module tb_distribute_1x2_one_hot_comb();
 
@@ -65,60 +67,62 @@ module tb_distribute_1x2_one_hot_comb();
     begin
         clk = 1'b0;
         // not enable at start
+        rst_n = 1'b1;
         i_valid = 1'b0;
-        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_data_bus = {(DATA_WIDTH>>2){4'h0}};
         i_en = 1'b0;
-        next_cmd = {OUT_COMMAND_WIDTH{1'b1}};
-        i_cmd ={1'b1, next_cmd};
+        i_cmd ={NUM_NODE{1'b1}};
 
-        // input active --  Pass to the next node
-        #20
-        i_valid = 1'b1;
-        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
-        i_en = 1'b1;
-        next_cmd = {OUT_COMMAND_WIDTH{1'b1}};
-        i_cmd = {1'b0, next_cmd};
+        // reset
+        rst_n = 1'b0;
+        i_valid = 1'b0;
+        i_data_bus = {(DATA_WIDTH>>2){4'h0}};
+        i_en = 1'b0;
+        i_cmd ={NUM_NODE{1'b0}};
 
-        // input active --  output to Node & Pass to the next node
-        #20
+        // input active -- Pass to the next node
+        #(`PERIOD)
+        rst_n = 1'b1;
         i_valid = 1'b1;
-        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_data_bus = {(DATA_WIDTH>>2){4'h1}};
         i_en = 1'b1;
-        next_cmd = {OUT_COMMAND_WIDTH{1'b1}};
-        i_cmd = {1'b1, next_cmd};
+        i_cmd = {{(NUM_NODE-1){1'b0}}, 1'b1};
+
+        // input active -- output to Node & Pass to the next node
+        #(`PERIOD)
+        i_valid = 1'b1;
+        i_data_bus = {(DATA_WIDTH>>2){4'h2}};
+        i_en = 1'b1;
+        i_cmd = {{(NUM_NODE-2){1'b0}}, 2'b10};
 
         // disable in progress
-        #20
+        #(`PERIOD)
         i_valid = 1'b1;
-        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
-        i_en = 1'b0;
-        next_cmd = {OUT_COMMAND_WIDTH{1'b1}};
-        i_cmd = {1'b1, next_cmd};
+        i_data_bus = {(DATA_WIDTH>>2){4'h3}};
+        i_en = 1'b1;
+        i_cmd = {{(NUM_NODE-3){1'b0}}, 3'b100};
 
         // enable in progress -- Pass to the next node
-        #20
+        #(`PERIOD)
         i_valid = 1'b1;
-        i_data_bus = {(DATA_WIDTH>>2){4'hA}};
+        i_data_bus = {(DATA_WIDTH>>2){4'h4}};
         i_en = 1'b1;
-        next_cmd = {OUT_COMMAND_WIDTH{1'b1}};
-        i_cmd = {1'b1, next_cmd};
+        i_cmd = {{(NUM_NODE-4){1'b0}}, 4'b1000};
 
         // change data half way -- output to Node & Pass to the next node
-        #20
+        #(`PERIOD)
         i_valid = 1'b1;
-        i_data_bus = {(DATA_WIDTH>>2){4'hB}};
+        i_data_bus = {(DATA_WIDTH>>2){4'h5}};
         i_en = 1'b1;
-        next_cmd = {OUT_COMMAND_WIDTH{1'b1}};
-        i_cmd = {1'b1, next_cmd};
+        i_cmd = {(NUM_NODE){1'b1}};
 
         // invalid input
-        #20
+        #(`PERIOD)
         i_valid = 1'b0;
-        i_data_bus = {(DATA_WIDTH>>2){4'hB}};
+        i_data_bus = {(DATA_WIDTH>>2){4'h6}};
         i_en = 1'b1;
-        next_cmd = {OUT_COMMAND_WIDTH{1'b1}};
-        i_cmd = {1'b1, next_cmd};
-
+        i_cmd = {(NUM_NODE){1'b1}};
+        #(4*`PERIOD)
         $stop;
     end
 
