@@ -370,7 +370,6 @@ int main(int argc, char *const argv[])
          example: ./activity_model_xbar -f ./test/input_file -c ./test/in_cmd_unique.txt -i 8 -v 4 -o 4 -n 330");
     }
 
-
     sim_conf.num_lvl_log_input = log2(sim_conf.num_in_data);
     sim_conf.num_lvl_log_output = log2(sim_conf.num_out_data);
 

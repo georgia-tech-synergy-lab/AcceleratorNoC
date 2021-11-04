@@ -6,20 +6,16 @@
     Timing:      Combinational Logic
     Dummy Data:  {DATA_WIDTH{1'b0}}
 
-    [SINGLE_BIT_CONTROL Version]
-     Function:   output to Node & Pass to the next node             Pass to next node
-
-                       i_data_bus                                       i_data_bus
-                           |                                                |
-                           v                                                v
-                         |¯¯¯| <--i_valid=1'b1                            |¯¯¯| <--i_valid=1'b1
-     o_cmd=(n-1)b'??? <--|___| <--i_cmd=n'b1???      o_cmd=(n-1)b'??? <-- |___| <--i_cmd=n'b0???
-                        /     \                                          /     \
-               o_data_high   i_data_bus                             invalid    i_data_bus
-
-          o_data_high = o_data_bus[2*DATA_WIDTH-1: DATA_WIDTH]
-          o_data_low  = o_data_bus[DATA_WIDTH-1: 0]
-          i_valid = 2'b1?; where ? indicates that we don't care about this bit
+    Function:    Unicast  or  Multicast(arbitrary Multicast)
+    
+                                   i_data_bus & i_valid     i_data_bus & i_valid
+    i_data_bus & i_valid  -->|¯¯¯|------------------>|¯¯¯|------------------>|¯¯¯|--> i_data_bus & i_valid
+            i_cmd[N-1:0]  -->|___|------------------>|___|------------------>|___|--> i_cmd[N-4:0]
+             (one-hot)         |     i_cmd[N-2:0]      |     i_cmd[N-3:0]      |
+                               v                       v                       v
+                           o_data_bus              o_data_bus              o_data_bus
+            [0*DATA_WIDTH+:DATA_WIDTH]     [1*DATA_WIDTH+:DATA_WIDTH]   [2*DATA_WIDTH+:DATA_WIDTH]
+ control signal:            i_cmd[0]                i_cmd[1]                i_cmd[2]
 
     Author:      Jianming Tong (jianming.tong@gatech.edu)
 */

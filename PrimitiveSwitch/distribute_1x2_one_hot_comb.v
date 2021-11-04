@@ -20,6 +20,8 @@
           o_data_node = o_data_bus[2*DATA_WIDTH-1: DATA_WIDTH] -- connect to node
           o_data_low  = o_data_bus[DATA_WIDTH-1: 0] -- connect to data bus.
 
+    Controller: each node consumes the LSB.
+
     Author:      Jianming Tong (jianming.tong@gatech.edu)
 */
 
@@ -69,20 +71,20 @@ module distribute_1x2_one_hot_comb#(
     begin
         if(i_en && i_valid)
         begin
-            case(i_cmd[IN_COMMAND_WIDTH-1])
+            case(i_cmd[0])
                 1'b1: // output to Node & pass to the next node
                 begin
                     o_data_bus_inner = {i_data_bus, i_data_bus};
                     o_valid_inner = 2'b11;
 
-                    o_cmd_inner = i_cmd[OUT_COMMAND_WIDTH-1:0];
+                    o_cmd_inner = i_cmd>>1;
                 end
                 1'b0: // Pass to the next node
                 begin
                     o_data_bus_inner = {{DATA_WIDTH{1'b0}}, i_data_bus};
                     o_valid_inner = 2'b01;
 
-                    o_cmd_inner = i_cmd[OUT_COMMAND_WIDTH-1:0];
+                    o_cmd_inner = i_cmd>>1;
                 end
                 default:
                 begin

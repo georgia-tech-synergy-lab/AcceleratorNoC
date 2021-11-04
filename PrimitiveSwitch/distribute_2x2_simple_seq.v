@@ -537,7 +537,7 @@ module distribute_2x2_simple_seq#(
     end
 
     // control generation
-    // Note: generated control for merge swtich will be used 1 cycle after distribute switch
+    // Note: generated control for merge switch will be used 1 cycle after distribute switch
     always @(*) begin
         if(i_en)
         begin

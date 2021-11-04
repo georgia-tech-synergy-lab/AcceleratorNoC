@@ -9,13 +9,16 @@
     Dummy Data:  {DATA_WIDTH{1'b0}}
 
     Function:    Unicast  or  Multicast(arbitrary Multicast)
-                                  i_data_bus & i_valid     i_data_bus & i_valid
-     i_data_bus & i_valid  -->|¯¯¯|------------------>|¯¯¯|------------------>|¯¯¯|--> i_data_bus & i_valid
-             i_cmd[N-1:0]  -->|___|------------------>|___|------------------>|___|--> i_cmd[N-4:0]
-             (multi-hot)        |          i_cmd[N-2:0] |          i_cmd[N-3:0] |
-                                v                       v                       v
-                           o_data_bus              o_data_bus               o_data_bus
-            [0*DATA_WIDTH+:DATA_WIDTH]     [1*DATA_WIDTH+:DATA_WIDTH]    [2*DATA_WIDTH+:DATA_WIDTH]
+    
+                                   i_data_bus & i_valid     i_data_bus & i_valid
+    i_data_bus & i_valid  -->|¯¯¯|------------------>|¯¯¯|------------------>|¯¯¯|--> i_data_bus & i_valid
+            i_cmd[N-1:0]  -->|___|------------------>|___|------------------>|___|--> i_cmd[N-4:0]
+             (one-hot)         |     i_cmd[N-2:0]      |     i_cmd[N-3:0]      |
+                               v                       v                       v
+                           o_data_bus              o_data_bus              o_data_bus
+            [0*DATA_WIDTH+:DATA_WIDTH]     [1*DATA_WIDTH+:DATA_WIDTH]   [2*DATA_WIDTH+:DATA_WIDTH]
+ control signal:            i_cmd[0]                i_cmd[1]                i_cmd[2]
+   
 
     Control:
     Each stage takes one destination bit.
@@ -23,7 +26,6 @@
 
     Author:      Jianming Tong (jianming.tong@gatech.edu)
 */
-
 
 module linear_network_multicast_seq#(
     parameter DATA_WIDTH = 32,     // could be arbitrary number
@@ -43,9 +45,9 @@ module linear_network_multicast_seq#(
     i_en,           // distribute switch enable
     i_cmd           // command
 );
+
     //parameter
     localparam COMMAND_WIDTH = NUM_NODE;    // each node consume 1-bit command.
-
     localparam WIDTH_OUTPUT_DATA = DATA_WIDTH * NUM_NODE;
 
     // interface
@@ -65,8 +67,8 @@ module linear_network_multicast_seq#(
                                     // 0 --> Pass to the next node
 
     // inner logic
-    wire   [DATA_WIDTH-1:0]                      connection_data[0:NUM_NODE];
-    wire                                         connection_valid[0:NUM_NODE];
+    wire   [DATA_WIDTH-1:0]                      connection_data[0:NUM_NODE-1];
+    wire                                         connection_valid[0:NUM_NODE-1];
 
     genvar i;
     generate
@@ -75,7 +77,6 @@ module linear_network_multicast_seq#(
             localparam CONNECTION_COMMAND_WIDTH = COMMAND_WIDTH-i-1;
             wire  [CONNECTION_COMMAND_WIDTH-1:0] wire_cmd; // pipeline_i_cmd_reg[0][x] stores the i_cmd for stage 1 instead of stage 0.
         end
-
 
         // first switch
         distribute_1x2_one_hot_seq #(
@@ -99,7 +100,7 @@ module linear_network_multicast_seq#(
             distribute_1x2_one_hot_seq #(
                 .DATA_WIDTH(DATA_WIDTH),
                 .IN_COMMAND_WIDTH(COMMAND_WIDTH-i)
-            ) network_swtich_per_node(
+            ) network_switch_per_node(
                 .clk(clk),
                 .rst_n(rst_n),
                 .i_valid(connection_valid[i-1]),
